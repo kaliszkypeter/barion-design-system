@@ -41,6 +41,8 @@ body { margin: 0; background: var(--white-gray); color: var(--text-primary); fon
   .sidenav__toggle { display: inline-flex; }
   .sidenav.is-open { max-height: 88vh; overflow-y: auto; box-shadow: var(--shadow-overlay); }
   .content { padding: var(--s-4); }
+  /* Contain decorative overflow (tooltips, positioned demos) so the page never scrolls sideways */
+  .section { overflow-x: clip; }
 }
 
 /* ---------- SHELL / SECTIONS ---------- */
@@ -577,6 +579,17 @@ img.icon { object-fit: contain; }
 .toast__text { flex: 1; }
 .toast__action { color: var(--text-link-1); font-weight: var(--fw-semibold); text-decoration: none; white-space: nowrap; flex-shrink: 0; }
 .toast__action:hover { text-decoration: underline; }
+
+/* ---------- RESPONSIVE OVERRIDES (placed last so they win the cascade) ---------- */
+@media (max-width: 1023px) {
+  /* Wide tables scroll inside their own box instead of stretching the page */
+  .table, .token-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+  .table th, .table td { white-space: nowrap; }
+  /* Typography don'ts: stack instead of fixed 3 columns */
+  .dont-grid { grid-template-columns: 1fr; }
+  /* Specimen + comparison grids: single column on narrow screens */
+  .aa-specimen { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
