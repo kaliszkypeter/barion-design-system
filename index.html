@@ -318,7 +318,7 @@ img.icon { object-fit: contain; }
 .snackbar__close { background: transparent; border: 0; padding: 4px; cursor: pointer; color: var(--text-secondary); display: inline-flex; flex-shrink: 0; border-radius: var(--radius-xxs); transition: background var(--dur-fast) var(--ease-out); }
 .snackbar__close:hover { background: rgba(44, 52, 70, 0.06); }
 .snackbar--success { background: var(--surface-alert-success); border-color: var(--border-alert-success); }
-.snackbar--success .snackbar__icon { background: var(--green-700); color: var(--text-invert); }
+.snackbar--success .snackbar__icon { background: var(--green-600); color: var(--text-invert); }
 .snackbar--error { background: var(--surface-alert-error); border-color: var(--border-alert-error); }
 .snackbar--error .snackbar__icon { background: transparent; border: 1.5px solid var(--text-alert-error); color: var(--text-alert-error); }
 .snackbar--alert { background: var(--surface-alert-warning); border-color: var(--border-alert-warning); }
@@ -403,9 +403,9 @@ img.icon { object-fit: contain; }
 .sentiment--sm { width: 24px; height: 24px; font-size: 12px; --halo-size: 4px; }
 .sentiment--md { width: 48px; height: 48px; font-size: 24px; --halo-size: 8px; }
 .sentiment--lg { width: 80px; height: 80px; font-size: 40px; --halo-size: 14px; }
-.sentiment--success { background: radial-gradient(circle at 50% 42%, #7BE06A 0%, #4CBD39 72%); --halo-color: rgba(76, 189, 57, 0.20); }
-.sentiment--error   { background: radial-gradient(circle at 50% 42%, #FF96A8 0%, #F65574 72%); --halo-color: rgba(255, 128, 151, 0.22); }
-.sentiment--pending { background: radial-gradient(circle at 50% 42%, #AEDDF5 0%, #5BB8E8 72%); --halo-color: rgba(91, 184, 232, 0.20); }
+.sentiment--success { background: radial-gradient(circle at 50% 42%, #4EBB6A 0%, #1F8B3C 72%); --halo-color: rgba(31, 139, 60, 0.20); }
+.sentiment--error   { background: radial-gradient(circle at 50% 42%, #FF7B7F 0%, #E5484D 72%); --halo-color: rgba(229, 72, 77, 0.22); }
+.sentiment--pending { background: radial-gradient(circle at 50% 42%, #5BBFED 0%, #0097DB 72%); --halo-color: rgba(0, 151, 219, 0.20); }
 
 /* ---------- LIST SELECTORS — vertical radio-list with title + subtitle ---------- */
 .list-selector { display: flex; flex-direction: column; gap: var(--s-2); width: 280px; }
@@ -416,9 +416,8 @@ img.icon { object-fit: contain; }
 .list-selector-item:hover:not([aria-disabled="true"]) { background: var(--surface-tertiary); }
 .list-selector-item[aria-selected="true"] { background: var(--blue-50); border-color: var(--blue-200); }
 .list-selector-item[aria-disabled="true"] { background: var(--surface-secondary); color: var(--text-disabled); cursor: not-allowed; }
-.list-selector-item__radio { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border-strong); flex-shrink: 0; display: inline-grid; place-content: center; }
-.list-selector-item[aria-selected="true"] .list-selector-item__radio { border-color: var(--blue-500); }
-.list-selector-item[aria-selected="true"] .list-selector-item__radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-500); }
+.list-selector-item__radio { display: none; }
+.list-selector-item[aria-selected="true"]::after { content: "✓"; color: var(--text-brand); font-weight: var(--fw-bold); margin-left: auto; font-size: var(--fs-body-sm); }
 .list-selector-item__body { display: flex; flex-direction: column; gap: 0; min-width: 0; }
 .list-selector-item__title { font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-primary); line-height: 1.3; }
 .list-selector-item[aria-selected="true"] .list-selector-item__title { color: var(--text-brand); }
@@ -465,11 +464,13 @@ img.icon { object-fit: contain; }
 .phone-input__field { flex: 1; min-width: 0; border: 0; background: none; padding: 10px 12px; font: inherit; font-size: var(--fs-body); color: var(--text-primary); outline: none; }
 .card-input { display: flex; align-items: center; gap: var(--s-2); padding-right: var(--s-3); border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); background: var(--surface-primary); }
 .card-input:focus-within { border-color: var(--focus-blue); box-shadow: var(--shadow-focus); }
-.card-input--approved { border-color: var(--green-600); }
+.card-input--approved { border-color: var(--border-secondary); }
 .card-input--error { border-color: var(--border-error); }
 .card-input__field { flex: 1; min-width: 0; border: 0; background: none; padding: 10px 12px; font: inherit; font-size: var(--fs-body); color: var(--text-primary); outline: none; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
 .card-input__scheme { display: flex; align-items: center; color: var(--icon-secondary); }
-.card-input__check { width: 22px; height: 22px; border-radius: var(--radius-pill); background: var(--green-600); color: var(--text-invert); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.card-scheme-badge { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 6px; border-radius: 3px; font-weight: var(--fw-bold); font-size: 11px; letter-spacing: 0.05em; flex-shrink: 0; }
+.card-scheme-badge--visa { background: #1A1F71; color: #fff; }
+.card-scheme-badge--mc { background: transparent; font-size: 10px; font-weight: var(--fw-bold); color: var(--text-secondary); border: 1px solid var(--border-secondary); }
 
 /* ---------- TEXTAREA (§11) ---------- */
 .field__textarea { width: 100%; min-height: 96px; resize: vertical; padding: 10px 12px; border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); background: var(--surface-primary); font: inherit; font-size: var(--fs-body); color: var(--text-primary); line-height: 1.5; outline: none; }
@@ -526,7 +527,8 @@ img.icon { object-fit: contain; }
 .modal-card__close:hover { background: var(--white-gray); color: var(--icon-primary); }
 .modal-card__body { color: var(--text-secondary); margin: 0 0 var(--s-5); line-height: var(--lh-body); }
 .modal-card .actions { display: flex; justify-content: flex-end; gap: var(--s-3); }
-.modal-timer { font-family: "Inconsolata", ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; font-weight: var(--fw-semibold); color: var(--text-brand); background: var(--blue-50); border-radius: var(--radius-xs); padding: 2px 8px; flex-shrink: 0; }
+.modal-timer { font-family: var(--font-brand); font-variant-numeric: tabular-nums; font-weight: var(--fw-semibold); color: var(--text-primary); font-size: 56px; line-height: 1; letter-spacing: -0.02em; }
+.modal-timer-wrap { text-align: center; padding: var(--s-6) 0 var(--s-4); }
 .drawer-stage { background: var(--white-gray); border: 1px solid var(--border-secondary); border-radius: var(--radius-m); padding: var(--s-6) var(--s-6) 0; display: flex; justify-content: center; }
 .drawer { background: var(--surface-primary); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-modal); padding: var(--s-4) var(--s-5) var(--s-6); max-width: 380px; width: 100%; }
 .drawer__handle { display: block; width: 36px; height: 4px; border-radius: var(--radius-pill); background: var(--grey-300); margin: 0 auto var(--s-4); }
@@ -821,29 +823,29 @@ img.icon { object-fit: contain; }
 
   <div class="kicker">Anatomy — wordmark + standalone mark</div>
   <div class="logo-row">
-    <div class="logo-stage"><img src="assets/barion-wordmark.svg" alt="Barion wordmark" class="logo-stage__logo"><span class="logo-stage__tag">Wordmark — primary logo</span></div>
+    <div class="logo-stage"><img src="assets/barion-wordmark-blue.svg" alt="Barion wordmark" class="logo-stage__logo"><span class="logo-stage__tag">Wordmark — primary logo</span></div>
     <div class="logo-stage"><img src="assets/barion-mark.svg" alt="Barion mark" class="logo-stage__logo logo-stage__logo--mark"><span class="logo-stage__tag">Mark — app tile, avatar, favicon only</span></div>
   </div>
 
   <div class="kicker">Colour variants — in priority order</div>
   <div class="logo-row">
     <div class="logo-stage logo-stage--blue"><img src="assets/barion-wordmark-white.svg" alt="Barion logo, white on blue" class="logo-stage__logo"><span class="logo-stage__tag">1 · White on Barion Blue — preferred</span></div>
-    <div class="logo-stage"><img src="assets/barion-wordmark.svg" alt="Barion logo, dark on white" class="logo-stage__logo"><span class="logo-stage__tag">2 · Dark on white</span></div>
+    <div class="logo-stage"><img src="assets/barion-wordmark-blue.svg" alt="Barion logo, Barion blue on white" class="logo-stage__logo"><span class="logo-stage__tag">2 · Barion Blue on white</span></div>
     <div class="logo-stage logo-stage--dark"><img src="assets/barion-wordmark-white.svg" alt="Barion logo, white on blue-gray" class="logo-stage__logo"><span class="logo-stage__tag">3 · White on blue-gray</span></div>
   </div>
   <div class="callout">Reach for white-on-blue first. Dark-on-white is the everyday document default. Dark-gray-on-white is the last resort — only when colour isn't available.</div>
 
   <div class="kicker">Clearspace &amp; minimum size</div>
   <div class="row" style="align-items:center;gap:var(--s-8);flex-wrap:wrap">
-    <div class="logo-clearspace"><img src="assets/barion-wordmark.svg" alt="Barion logo with clear space" class="logo-clearspace__logo"></div>
+    <div class="logo-clearspace"><img src="assets/barion-wordmark-blue.svg" alt="Barion logo with clear space" class="logo-clearspace__logo"></div>
     <div>
-      <img src="assets/barion-wordmark.svg" alt="" style="height:18px;display:block;margin-bottom:var(--s-2)">
+      <img src="assets/barion-wordmark-blue.svg" alt="" style="height:18px;display:block;margin-bottom:var(--s-2)">
       <span class="body-xs">Minimum height — digital <strong>36px</strong> · print <strong>6&nbsp;mm</strong>. Clear space = the cap-height of the “b” on all four sides.</span>
     </div>
   </div>
 
   <div class="kicker">Tagline lockup</div>
-  <div class="logo-stage logo-tagline"><img src="assets/barion-wordmark.svg" alt="Barion" class="logo-stage__logo"><span class="logo-tagline__line">Accept. Automate. Grow.</span></div>
+  <div class="logo-stage logo-tagline"><img src="assets/barion-wordmark-blue.svg" alt="Barion" class="logo-stage__logo"><span class="logo-tagline__line">Accept. Automate. Grow.</span></div>
 
   <div class="kicker">Placement &amp; don'ts</div>
   <div class="rules">
@@ -927,11 +929,9 @@ img.icon { object-fit: contain; }
   <div class="kicker">Library</div>
   <div class="icon-grid">
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-home"/></svg><span class="icon-card__name">home</span></div>
+    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-user"/></svg><span class="icon-card__name">user</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-card"/></svg><span class="icon-card__name">card</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-bank-transfer"/></svg><span class="icon-card__name">bank-transfer</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-top-up"/></svg><span class="icon-card__name">top-up</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-send-money"/></svg><span class="icon-card__name">send-money</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-user"/></svg><span class="icon-card__name">user</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-statements"/></svg><span class="icon-card__name">statements</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-settings"/></svg><span class="icon-card__name">settings</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-search"/></svg><span class="icon-card__name">search</span></div>
@@ -939,19 +939,19 @@ img.icon { object-fit: contain; }
 
   <div class="kicker">Size scale (16 · 20 · 24 · 28 px)</div>
   <div class="row" style="align-items:center;gap:var(--s-4)">
-    <svg class="icon icon--sm"><use href="#i-card"/></svg>
-    <svg class="icon icon--md"><use href="#i-card"/></svg>
-    <svg class="icon icon--lg"><use href="#i-card"/></svg>
-    <svg class="icon icon--xl"><use href="#i-card"/></svg>
+    <svg class="icon icon--sm"><use href="#i-home"/></svg>
+    <svg class="icon icon--md"><use href="#i-home"/></svg>
+    <svg class="icon icon--lg"><use href="#i-home"/></svg>
+    <svg class="icon icon--xl"><use href="#i-home"/></svg>
     <span class="body-xs">SVG — crisp at every size</span>
   </div>
 
   <div class="kicker">Recolours with <code>currentColor</code> — default · brand · success · error</div>
   <div class="row" style="align-items:center;gap:var(--s-4)">
-    <svg class="icon icon--lg"><use href="#i-card"/></svg>
-    <svg class="icon icon--lg icon--brand"><use href="#i-card"/></svg>
-    <svg class="icon icon--lg icon--success"><use href="#i-card"/></svg>
-    <svg class="icon icon--lg icon--error"><use href="#i-card"/></svg>
+    <svg class="icon icon--lg"><use href="#i-home"/></svg>
+    <svg class="icon icon--lg icon--brand"><use href="#i-home"/></svg>
+    <svg class="icon icon--lg icon--success"><use href="#i-home"/></svg>
+    <svg class="icon icon--lg icon--error"><use href="#i-home"/></svg>
     <span class="body-xs">Same symbol — colour inherited from context. That's why active sidebar &amp; tab icons turn blue.</span>
   </div>
 </section>
@@ -1018,17 +1018,17 @@ img.icon { object-fit: contain; }
 
   <div class="kicker">Icon buttons — Large 36 · Medium 24 · Small 20 · Extra-small 16 (square, icon-only)</div>
   <div class="row" style="align-items:center;gap:var(--s-3)">
-    <button class="btn-icon btn-icon--l" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
-    <button class="btn-icon btn-icon--m" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
-    <button class="btn-icon btn-icon--s" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
-    <button class="btn-icon btn-icon--xs" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
+    <button class="btn-icon btn-icon--l" aria-label="Home"><svg class="icon"><use href="#i-home"/></svg></button>
+    <button class="btn-icon btn-icon--m" aria-label="Home"><svg class="icon"><use href="#i-home"/></svg></button>
+    <button class="btn-icon btn-icon--s" aria-label="Home"><svg class="icon"><use href="#i-home"/></svg></button>
+    <button class="btn-icon btn-icon--xs" aria-label="Home"><svg class="icon"><use href="#i-home"/></svg></button>
   </div>
 
   <div class="kicker">Icon button states (Medium) — default · pressed · disabled (hover is interactive)</div>
   <div class="row" style="align-items:center;gap:var(--s-3)">
-    <button class="btn-icon btn-icon--m" aria-label="Search"><svg class="icon"><use href="#i-search"/></svg></button>
-    <button class="btn-icon btn-icon--m is-pressed" aria-label="Search (pressed)"><svg class="icon"><use href="#i-search"/></svg></button>
-    <button class="btn-icon btn-icon--m" disabled aria-label="Search (disabled)"><svg class="icon"><use href="#i-search"/></svg></button>
+    <button class="btn-icon btn-icon--m" aria-label="User"><svg class="icon"><use href="#i-user"/></svg></button>
+    <button class="btn-icon btn-icon--m is-pressed" aria-label="User (pressed)"><svg class="icon"><use href="#i-user"/></svg></button>
+    <button class="btn-icon btn-icon--m" disabled aria-label="User (disabled)"><svg class="icon"><use href="#i-user"/></svg></button>
   </div>
   <div class="callout">Icon buttons are a distinct component from the text-button family. Always include <code>aria-label</code> describing the action since the visible icon alone isn't accessible.</div>
 </section>
@@ -1083,13 +1083,13 @@ img.icon { object-fit: contain; }
   </div>
 
 
-  <div class="kicker">Card payment — number + scheme icon · expiry · CVC (default · approved · error)</div>
+  <div class="kicker">Card payment — number + scheme badge · expiry · CVC (default · scheme detected · error)</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
     <div class="field" style="min-width:300px">
       <label class="field__label">Card number</label>
       <div class="card-input">
         <input class="card-input__field" value="4908 6611 1234 5678" inputmode="numeric">
-        <span class="card-input__scheme"><svg class="icon icon--lg"><use href="#i-card"/></svg></span>
+        <span class="card-input__scheme"><span class="card-scheme-badge card-scheme-badge--visa">VISA</span></span>
       </div>
       <div class="row" style="gap:var(--s-3);margin-top:var(--s-3)">
         <div class="field" style="flex:1"><label class="field__label">Expiry</label><input class="field__input" value="07 / 27" inputmode="numeric"></div>
@@ -1097,19 +1097,23 @@ img.icon { object-fit: contain; }
       </div>
       <span class="field__helper">We never store your full card number.</span>
     </div>
-    <div class="field" style="min-width:280px">
-      <label class="field__label">Card number — verified</label>
-      <div class="card-input card-input--approved">
-        <input class="card-input__field" value="4908 6611 1234 5678" inputmode="numeric">
-        <span class="card-input__check" aria-label="Card valid">✓</span>
+    <div class="field" style="min-width:300px">
+      <label class="field__label">Card number — Mastercard detected</label>
+      <div class="card-input">
+        <input class="card-input__field" value="5425 2334 3010 9903" inputmode="numeric">
+        <span class="card-input__scheme"><span class="card-scheme-badge card-scheme-badge--mc">MC</span></span>
       </div>
-      <span class="field__helper" style="color:var(--green-600)">Card verified — 3-D Secure ready.</span>
+      <div class="row" style="gap:var(--s-3);margin-top:var(--s-3)">
+        <div class="field" style="flex:1"><label class="field__label">Expiry</label><input class="field__input" value="11 / 28" inputmode="numeric"></div>
+        <div class="field" style="width:104px"><label class="field__label">CVC</label><input class="field__input" value="" inputmode="numeric"></div>
+      </div>
+      <span class="field__helper">We never store your full card number.</span>
     </div>
     <div class="field" style="min-width:280px">
       <label class="field__label">Card number — error</label>
       <div class="card-input card-input--error">
         <input class="card-input__field" value="4908 6611 0000" inputmode="numeric">
-        <span class="card-input__scheme"><svg class="icon icon--lg"><use href="#i-card"/></svg></span>
+        <span class="card-input__scheme"><span class="card-scheme-badge card-scheme-badge--visa">VISA</span></span>
       </div>
       <span class="field__helper" style="color:var(--text-error)">Card number is incomplete.</span>
     </div>
@@ -1355,8 +1359,8 @@ img.icon { object-fit: contain; }
       <span class="sidebar-section">Barion account</span>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-card"/></svg>Balances</a>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-statements"/></svg>Activity</a>
-      <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-top-up"/></svg>Top up</a>
-      <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-send-money"/></svg>Send money</a>
+      <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-home"/></svg>Top up</a>
+      <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-user"/></svg>Send money</a>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-bank-transfer"/></svg>Bank transfer</a>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-user"/></svg>Recipients</a>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-statements"/></svg>Statements</a>
@@ -1369,7 +1373,7 @@ img.icon { object-fit: contain; }
   <div class="tabs">
     <button class="tab tab--active"><svg class="tab__icon"><use href="#i-card"/></svg>Card</button>
     <button class="tab"><svg class="tab__icon"><use href="#i-bank-transfer"/></svg>Bank transfer</button>
-    <button class="tab"><svg class="tab__icon"><use href="#i-send-money"/></svg>Other methods</button>
+    <button class="tab"><svg class="tab__icon"><use href="#i-user"/></svg>Other methods</button>
   </div>
 
   <div class="kicker">Web top navigation — marketing / merchant header</div>
@@ -1406,7 +1410,7 @@ img.icon { object-fit: contain; }
     <div class="bottomnav">
       <a href="#" class="bottomnav__item bottomnav__item--active"><svg class="icon"><use href="#i-home"/></svg>Home</a>
       <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-card"/></svg>Balances</a>
-      <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-send-money"/></svg>Send</a>
+      <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-user"/></svg>Send</a>
       <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-statements"/></svg>Activity</a>
     </div>
   </div>
@@ -1552,6 +1556,9 @@ img.icon { object-fit: contain; }
       <div class="modal-card">
         <div class="modal-card__head">
           <h3 class="modal-card__title">Your session will expire soon</h3>
+          <button class="modal-card__close" aria-label="Close"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>
+        </div>
+        <div class="modal-timer-wrap">
           <span class="modal-timer">00:59</span>
         </div>
         <p class="modal-card__body">For your security, you'll be signed out when the timer runs out. Stay signed in to keep working.</p>
@@ -1620,7 +1627,7 @@ img.icon { object-fit: contain; }
 <!-- ============================================================ -->
 <section class="section" id="selectors">
   <h2>21 · Selectors (list)</h2>
-  <p class="hint">Vertical list-radio component. Each row pairs a title + subtitle with a radio circle on the left. Distinct from Dropdowns (section 12) — selectors stay open and are used when all options should be visible at once.</p>
+  <p class="hint">Vertical list selector. Each row pairs a title + subtitle; selected state uses blue highlight + check on the right. Distinct from Dropdowns (section 12) — selectors stay open and are used when all options should be visible at once.</p>
 
   <div class="kicker">Sizes — Profiles 36 · Default 24 · Mobile 20 · Web 16 px row height</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
