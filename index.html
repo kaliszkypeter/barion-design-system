@@ -26,10 +26,20 @@ body { margin: 0; background: var(--white-gray); color: var(--text-primary); fon
 .sidenav__link.is-active { background: var(--surface-nav-active); color: var(--text-brand); font-weight: var(--fw-semibold); }
 .sidenav__num { color: var(--text-inactive); font-family: var(--font-brand); font-variant-numeric: tabular-nums; font-size: 11px; min-width: 18px; }
 .sidenav__link.is-active .sidenav__num { color: var(--text-brand); }
+/* Mobile menu toggle — hidden on desktop */
+.sidenav__toggle { display: none; position: absolute; top: 10px; right: 12px; width: 40px; height: 40px; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); color: var(--text-primary); cursor: pointer; }
+.sidenav__toggle .icon { width: 22px; height: 22px; }
+.sidenav__toggle .sidenav__toggle-close { display: none; }
+.sidenav.is-open .sidenav__toggle .sidenav__toggle-open { display: none; }
+.sidenav.is-open .sidenav__toggle .sidenav__toggle-close { display: inline-flex; }
 
 @media (max-width: 1023px) {
   .app { display: block; max-width: 100%; }
-  .sidenav { position: sticky; top: 0; height: auto; max-height: 60vh; border-right: 0; border-bottom: 1px solid var(--border-secondary); z-index: 100; }
+  /* Collapsed compact bar by default; expands to a scrollable panel when open */
+  .sidenav { position: sticky; top: 0; height: auto; max-height: 60px; overflow: hidden; border-right: 0; border-bottom: 1px solid var(--border-secondary); z-index: 100; padding: 10px var(--s-3); gap: var(--s-2); }
+  .sidenav__brand { padding: var(--s-2) 0; }
+  .sidenav__toggle { display: inline-flex; }
+  .sidenav.is-open { max-height: 88vh; overflow-y: auto; box-shadow: var(--shadow-overlay); }
   .content { padding: var(--s-4); }
 }
 
@@ -650,6 +660,9 @@ img.icon { object-fit: contain; }
     <symbol id="i-clock-rewind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>
     </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 12h16"/><path d="M4 6h16"/><path d="M4 18h16"/>
+    </symbol>
     <!-- Neutral placeholder — used in component demos to avoid implying specific glyphs are canonical Barion icons -->
     <symbol id="i-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <rect x="4" y="4" width="16" height="16" rx="3" stroke-dasharray="2.5 2"/>
@@ -667,6 +680,10 @@ img.icon { object-fit: contain; }
     <span class="mark" aria-hidden="true"><img src="assets/barion-mark-white.svg" alt=""></span>
     <span>Barion<br><small>Design system · v3</small></span>
   </div>
+  <button class="sidenav__toggle" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">
+    <span class="sidenav__toggle-open"><svg class="icon"><use href="#i-menu"/></svg></span>
+    <span class="sidenav__toggle-close"><svg class="icon"><use href="#i-close"/></svg></span>
+  </button>
 
   <span class="sidenav__group-label">Foundations</span>
   <ul class="sidenav__list">
@@ -1878,6 +1895,24 @@ img.icon { object-fit: contain; }
 
     sections.forEach(function (s) { io.observe(s); });
     setActive(sections[0].id);
+  })();
+
+  // ---------- Mobile nav toggle ----------
+  (function () {
+    var sidenav = document.querySelector('.sidenav');
+    var toggle = document.querySelector('[data-nav-toggle]');
+    if (!sidenav || !toggle) return;
+    function setOpen(open) {
+      sidenav.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    toggle.addEventListener('click', function () {
+      setOpen(!sidenav.classList.contains('is-open'));
+    });
+    // Close after picking a destination
+    sidenav.querySelectorAll('[data-spy-link]').forEach(function (link) {
+      link.addEventListener('click', function () { setOpen(false); });
+    });
   })();
 
   // ---------- Tabs ----------
