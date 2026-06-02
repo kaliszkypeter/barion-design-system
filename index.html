@@ -403,9 +403,9 @@ img.icon { object-fit: contain; }
 .sentiment--sm { width: 24px; height: 24px; font-size: 12px; --halo-size: 4px; }
 .sentiment--md { width: 48px; height: 48px; font-size: 24px; --halo-size: 8px; }
 .sentiment--lg { width: 80px; height: 80px; font-size: 40px; --halo-size: 14px; }
-.sentiment--success { background: radial-gradient(circle at 50% 42%, #4EBB6A 0%, #1F8B3C 72%); --halo-color: rgba(31, 139, 60, 0.20); }
-.sentiment--error   { background: radial-gradient(circle at 50% 42%, #FF7B7F 0%, #E5484D 72%); --halo-color: rgba(229, 72, 77, 0.22); }
-.sentiment--pending { background: radial-gradient(circle at 50% 42%, #5BBFED 0%, #0097DB 72%); --halo-color: rgba(0, 151, 219, 0.20); }
+.sentiment--success { background: radial-gradient(circle at 50% 40%, #A7DF6F 0%, #7AC94B 74%); --halo-color: rgba(122, 201, 75, 0.20); }
+.sentiment--error   { background: radial-gradient(circle at 50% 40%, #FF8FA3 0%, #F4647D 74%); --halo-color: rgba(244, 100, 125, 0.22); }
+.sentiment--pending { background: radial-gradient(circle at 50% 40%, #A8DCF2 0%, #56B4E6 74%); --halo-color: rgba(86, 180, 230, 0.20); }
 
 /* ---------- LIST SELECTORS — vertical radio-list with title + subtitle ---------- */
 .list-selector { display: flex; flex-direction: column; gap: var(--s-2); width: 280px; }
@@ -549,69 +549,57 @@ img.icon { object-fit: contain; }
 <!-- ============================================================ -->
 <svg width="0" height="0" style="position:absolute;width:0;height:0" aria-hidden="true" focusable="false">
   <defs>
-    <symbol id="i-home" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M16.299 21.733h3.856c1.077 0 1.764-.761 1.764-1.483V9.775c0-.582-.308-1.172-.902-1.565L12 2.175l-9.12 6.035c-.594.393-.902.983-.902 1.565v10.51c.001.723.688 1.483 1.765 1.483h3.855c.058 0 .094-.02.112-.032V15.83c0-.917.792-1.484 1.54-1.484h5.508c.748 0 1.54.567 1.54 1.484v5.903zM24 20.283c-.001 2.01-1.78 3.463-3.744 3.463h-3.856c-1.052 0-2.091-.79-2.091-1.98v-5.441H9.69V21.765c0 1.19-1.04 1.98-2.091 1.98H3.743C1.779 23.745 0 22.292 0 20.283V9.775c0-1.304.69-2.489 1.788-3.216l9.67-6.395a1 1 0 011.092 0l9.67 6.395C23.31 7.286 24 8.471 24 9.775v10.508z"/>
+    <!-- Line icons — canonical Lucide 24×24 paths, uniform stroke. Inherit text colour via stroke="currentColor". -->
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
     </symbol>
-    <symbol id="i-bank-transfer" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M1.92 19.2V21H21.12v-1.8H1.92zM23.04 21a1.92 1.92 0 01-1.92 1.92H1.92A1.92 1.92 0 010 21v-1.8A1.92 1.92 0 011.92 17.28h19.2a1.92 1.92 0 011.92 1.92V21z"/>
-      <path d="M9.6 8.64V19.2H2.88V8.64H9.6zm-4.8 8.64h2.88V10.56H4.8v6.72z"/>
-      <path d="M20.16 8.64V19.2h-6.72V8.64h6.72zm-4.8 8.64h2.88V10.56H15.36v6.72z"/>
-      <path d="M19.2 6.48V3.518l-.762.763a1 1 0 01-1.414-1.415l2.4-2.4.073-.067A1 1 0 0121.12.52l2.4 2.4.065.073A1 1 0 0121.17 4.4l-.77-.762v2.842a1 1 0 01-2 0z"/>
+    <symbol id="i-bank-transfer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2 3 7v1h18V7z"/>
     </symbol>
     <symbol id="i-top-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 5.042V10a3 3 0 003 3h13a3 3 0 003-3V8a3 3 0 00-3-3H9.21"/>
-      <path d="M1 18.1V12a1 1 0 012 0v6.1A2.9 2.9 0 006 21h15"/>
-      <circle cx="14" cy="11.5" r="2"/>
-      <path d="M5.123 2L5.123 5.839M3 4.491L5.123 6.857L7.246 4.491"/>
+      <circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>
     </symbol>
     <symbol id="i-send-money" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10.09 7H21a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2v-3.958"/>
-      <path d="M2 13V21a2 2 0 002 2h16"/>
-      <circle cx="14.6" cy="11" r="2"/>
-      <path d="M4.88 4L4.88 8.357M2.5 6.491L4.88 8.857L7.26 6.491"/>
+      <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>
     </symbol>
-    <symbol id="i-statements" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M22 1a1 1 0 010 2H2a1 1 0 010-2h20zm0 4a1 1 0 010 2H2a1 1 0 010-2h20zM9 11a1 1 0 010 2H2a1 1 0 010-2h7zm0 5a1 1 0 010 2H2a1 1 0 010-2h7zm0 5a1 1 0 010 2H2a1 1 0 010-2h7z"/>
-      <path d="M18 12a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"/>
-      <path d="M18 18a1 1 0 010 2 1 1 0 010-2z"/>
+    <symbol id="i-statements" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>
     </symbol>
-    <symbol id="i-card" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.931 5H3.305C2.398 5.001 2 5.626 2 6v10c0 .375.398 1 3.305 1v2C1.479 18.999 0 17.657 0 16V6C0 4.343 1.479 3 3.305 3h17.626C22.777 3.084 24 4.395 24 6v10c0 1.605-1.223 2.916-3.069 2.996V17c.907 0 1.305-.625 1.305-1V6c0-.374-.398-.999-1.305-1z"/>
-      <path d="M22 9v2H2V9h20z"/>
+    <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>
     </symbol>
-    <symbol id="i-transfer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 2v20M18 6l-6-4-6 4M18 18l-6 4-6-4"/>
+    <symbol id="i-transfer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
     </symbol>
-    <symbol id="i-user" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.013 0C15.161 0 17.713 2.552 17.713 5.7c0 3.148-2.552 5.7-5.7 5.7-3.148 0-5.7-2.552-5.7-5.7C6.313 2.552 8.865 0 12.013 0zm0 2c-2.043 0-3.7 1.657-3.7 3.7s1.657 3.7 3.7 3.7 3.7-1.657 3.7-3.7S14.056 2 12.013 2z"/>
-      <path d="M12.013 12.5c3.319 0 5.879 1.102 7.594 2.19 2.059 1.305 2.923 3.543 3.183 5.633l.185 1.476a1 1 0 01-.824 1.102l-.358.076c-6.467 1.365-13.17 1.365-19.637 0l-.359-.076a1 1 0 01-.823-1.102l.185-1.476c.26-2.09 1.124-4.328 3.183-5.632C7.134 13.602 9.694 12.5 12.013 12.5zm0 2c-2.858 0-5.051.946-6.522 1.879-1.354.858-2.048 2.41-2.271 4.192l-.07.559c5.845 1.16 11.88 1.16 17.725 0l-.07-.559c-.222-1.782-.917-3.334-2.27-4.192C17.063 16.446 14.87 14.5 12.013 14.5z"/>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
     </symbol>
-    <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M7 15h3"/>
+    <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
     </symbol>
-    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12 9 6v4h10v4H9v4z"/>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>
     </symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 12h16M12 4l8 8-8 8"/>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
     </symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24" fill="currentColor">
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M9.536 1.458C10.701-.486 13.517-.486 14.682 1.458l.706 1.177c.227.378.674.564 1.101.457l1.332-.334c2.198-.551 4.19 1.441 3.64 3.639l-.334 1.332c-.107.427.078.874.456 1.101l1.178.706c1.944 1.165 1.944 3.981 0 5.146l-1.178.706c-.378.227-.563.674-.456 1.101l.334 1.332c.55 2.198-1.442 4.19-3.64 3.64l-1.332-.334c-.427-.107-.874.078-1.101.456l-.706 1.178c-1.165 1.944-3.981 1.944-5.146 0l-.706-1.178a1.1 1.1 0 00-1.101-.456l-1.332.334c-2.198.55-4.19-1.442-3.64-3.64l.334-1.332A1.1 1.1 0 002.11 15.36l-1.178-.706C-.012 13.49-.012 10.674 1.932 9.51l1.178-.706A1.1 1.1 0 003.566 7.7L3.232 6.37C2.682 4.171 4.674 2.18 6.872 2.73l1.332.334c.427.107.874-.078 1.101-.456l.231-.387zm2.55 1.028a1.1 1.1 0 00-1.897 0l-.706 1.178c-.68 1.133-2.021 1.689-3.303 1.368L4.848 4.698c-.733-.183-1.396.48-1.213 1.213l.334 1.332c.321 1.282-.235 2.623-1.368 3.303l-1.178.706a1.1 1.1 0 000 1.897l1.178.706c1.133.68 1.689 2.021 1.368 3.303l-.334 1.332c-.183.733.48 1.396 1.213 1.213l1.332-.334c1.282-.321 2.623.235 3.303 1.368l.706 1.178a1.1 1.1 0 001.897 0l.706-1.178c.68-1.133 2.021-1.689 3.303-1.368l1.332.334c.733.183 1.396-.48 1.213-1.213l-.334-1.332c-.321-1.282.235-2.623 1.368-3.303l1.178-.706a1.1 1.1 0 000-1.897l-1.178-.706c-1.133-.68-1.689-2.021-1.368-3.303l.334-1.332c.183-.733-.48-1.396-1.213-1.213l-1.332.334c-1.282.321-2.623-.235-3.303-1.368l-.706-1.178zM12 9a3 3 0 100 6 3 3 0 000-6zm-5 3a5 5 0 1110 0 5 5 0 01-10 0z"/>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
     </symbol>
-    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M20 7v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7M4 7l8-5 8 5"/>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
     </symbol>
-    <symbol id="i-search" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M11 1a10 10 0 017.196 16.896l3.511 3.511a1 1 0 01-1.414 1.414l-3.511-3.511A10 10 0 1111 1zm0 2a8 8 0 100 16 8 8 0 000-16z"/>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
     </symbol>
-    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6 6l12 12M18 6l-12 12"/>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
     </symbol>
-    <symbol id="i-chevron-down" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 6l4 4 4-4"/>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m6 9 6 6 6-6"/>
     </symbol>
-    <symbol id="i-calendar" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="2.5" y="3.5" width="13" height="12" rx="1.5"/><path d="M2.5 7.5h13M6 2v3M12 2v3"/>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>
     </symbol>
     <!-- Neutral placeholder — used in component demos to avoid implying specific glyphs are canonical Barion icons -->
     <symbol id="i-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -923,8 +911,8 @@ img.icon { object-fit: contain; }
 <!-- ============================================================ -->
 <section class="section" id="icons">
   <h2>8 · Icons</h2>
-  <p class="hint">Inline SVG symbols from the Figma System icons frame. 24×24 grid, colour set to <code>currentColor</code> so they inherit text colour — crisp at any size and they recolour on active/hover states.</p>
-  <div class="callout"><strong>Source:</strong> Figma System icons (node <code>1416:18786</code>). 9 icons inlined as SVG so far; the full library is ~130 system icons plus flags and payment-brand marks — pull more as components need them.</div>
+  <p class="hint">Inline SVG symbols on a 24×24 grid, single stroke weight, colour set to <code>currentColor</code> so they inherit text colour — crisp at any size and they recolour on active/hover states.</p>
+  <div class="callout"><strong>Source:</strong> the Barion Figma System-icon library (node <code>1416:18786</code>) doesn't export its glyphs as single SVGs, so this set uses matched-weight stand-ins (Lucide, the sanctioned substitution) for the 9 icons in use. Swap in the exact Figma exports per icon as they become available; the full library is ~130 system icons plus flags and payment-brand marks.</div>
 
   <div class="kicker">Library</div>
   <div class="icon-grid">
@@ -932,6 +920,8 @@ img.icon { object-fit: contain; }
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-user"/></svg><span class="icon-card__name">user</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-card"/></svg><span class="icon-card__name">card</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-bank-transfer"/></svg><span class="icon-card__name">bank-transfer</span></div>
+    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-top-up"/></svg><span class="icon-card__name">top-up</span></div>
+    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-send-money"/></svg><span class="icon-card__name">send-money</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-statements"/></svg><span class="icon-card__name">statements</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-settings"/></svg><span class="icon-card__name">settings</span></div>
     <div class="icon-card"><svg class="icon icon--lg"><use href="#i-search"/></svg><span class="icon-card__name">search</span></div>
@@ -1018,17 +1008,17 @@ img.icon { object-fit: contain; }
 
   <div class="kicker">Icon buttons — Large 36 · Medium 24 · Small 20 · Extra-small 16 (square, icon-only)</div>
   <div class="row" style="align-items:center;gap:var(--s-3)">
-    <button class="btn-icon btn-icon--l" aria-label="Home"><svg class="icon"><use href="#i-home"/></svg></button>
-    <button class="btn-icon btn-icon--m" aria-label="Home"><svg class="icon"><use href="#i-home"/></svg></button>
-    <button class="btn-icon btn-icon--s" aria-label="Home"><svg class="icon"><use href="#i-home"/></svg></button>
-    <button class="btn-icon btn-icon--xs" aria-label="Home"><svg class="icon"><use href="#i-home"/></svg></button>
+    <button class="btn-icon btn-icon--l" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
+    <button class="btn-icon btn-icon--m" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
+    <button class="btn-icon btn-icon--s" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
+    <button class="btn-icon btn-icon--xs" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
   </div>
 
   <div class="kicker">Icon button states (Medium) — default · pressed · disabled (hover is interactive)</div>
   <div class="row" style="align-items:center;gap:var(--s-3)">
-    <button class="btn-icon btn-icon--m" aria-label="User"><svg class="icon"><use href="#i-user"/></svg></button>
-    <button class="btn-icon btn-icon--m is-pressed" aria-label="User (pressed)"><svg class="icon"><use href="#i-user"/></svg></button>
-    <button class="btn-icon btn-icon--m" disabled aria-label="User (disabled)"><svg class="icon"><use href="#i-user"/></svg></button>
+    <button class="btn-icon btn-icon--m" aria-label="Search"><svg class="icon"><use href="#i-search"/></svg></button>
+    <button class="btn-icon btn-icon--m is-pressed" aria-label="Search (pressed)"><svg class="icon"><use href="#i-search"/></svg></button>
+    <button class="btn-icon btn-icon--m" disabled aria-label="Search (disabled)"><svg class="icon"><use href="#i-search"/></svg></button>
   </div>
   <div class="callout">Icon buttons are a distinct component from the text-button family. Always include <code>aria-label</code> describing the action since the visible icon alone isn't accessible.</div>
 </section>
@@ -1359,8 +1349,8 @@ img.icon { object-fit: contain; }
       <span class="sidebar-section">Barion account</span>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-card"/></svg>Balances</a>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-statements"/></svg>Activity</a>
-      <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-home"/></svg>Top up</a>
-      <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-user"/></svg>Send money</a>
+      <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-top-up"/></svg>Top up</a>
+      <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-send-money"/></svg>Send money</a>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-bank-transfer"/></svg>Bank transfer</a>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-user"/></svg>Recipients</a>
       <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-statements"/></svg>Statements</a>
@@ -1373,7 +1363,7 @@ img.icon { object-fit: contain; }
   <div class="tabs">
     <button class="tab tab--active"><svg class="tab__icon"><use href="#i-card"/></svg>Card</button>
     <button class="tab"><svg class="tab__icon"><use href="#i-bank-transfer"/></svg>Bank transfer</button>
-    <button class="tab"><svg class="tab__icon"><use href="#i-user"/></svg>Other methods</button>
+    <button class="tab"><svg class="tab__icon"><use href="#i-wallet"/></svg>Other methods</button>
   </div>
 
   <div class="kicker">Web top navigation — marketing / merchant header</div>
@@ -1410,7 +1400,7 @@ img.icon { object-fit: contain; }
     <div class="bottomnav">
       <a href="#" class="bottomnav__item bottomnav__item--active"><svg class="icon"><use href="#i-home"/></svg>Home</a>
       <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-card"/></svg>Balances</a>
-      <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-user"/></svg>Send</a>
+      <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-send-money"/></svg>Send</a>
       <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-statements"/></svg>Activity</a>
     </div>
   </div>
