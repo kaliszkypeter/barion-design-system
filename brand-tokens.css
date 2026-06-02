@@ -1,19 +1,18 @@
 /* ==========================================================================
    BARION DESIGN SYSTEM — Foundation tokens (v3 — Cowork-portable, unified)
    Source of truth: Figma Brand-Guidelines-Design-System
-   Primary brand colour: Barion Blue #0097DB
-   Primary typeface: WeblySleek UI → Fira Sans fallback (Cowork can't ship .ttf)
-   Load Fira Sans from Google Fonts in your HTML <head>:
-     <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,600;0,700;1,600&family=Inconsolata:wght@700&display=swap" rel="stylesheet">
+   Primary brand color: Barion Blue #0097DB
+   Primary typeface: WeblySleek UI (system sans fallback if not installed)
    ========================================================================== */
 
 :root {
   /* ------------------------------------------------------------------ */
   /* TYPOGRAPHY                                                         */
   /* ------------------------------------------------------------------ */
-  --font-brand: "WeblySleek UI", "Fira Sans", -apple-system, BlinkMacSystemFont,
+  --font-brand: "WeblySleek UI", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, sans-serif;
-  --font-mono: "Inconsolata", "JetBrains Mono", ui-monospace, monospace;
+  /* No mono typeface in the design system — Péter's call.
+     For data alignment, use font-variant-numeric: tabular-nums on the brand font. */
 
   --fw-light: 300;
   --fw-semilight: 300;        /* v3 fix: production weblysleek_uisemilight = 300 */
@@ -22,6 +21,10 @@
   --fw-bold: 700;
 
   /* Type scale */
+  /* Title — canonical large headings, aligned to Figma title styles (Archita audit, 2026-05-31) */
+  --fs-title-lg: 64px;       /* Figma title 1 */
+  --fs-title-md: 48px;       /* Figma title 2 */
+  /* Display — marketing-only extension, not in Figma. Never used in product UI (Archita audit) */
   --fs-display-xl: 100px;
   --fs-display-lg: 60px;
   --fs-display-md: 42px;
@@ -31,8 +34,9 @@
   --fs-h4: 18px;
   --fs-body-lg: 18px;
   --fs-body: 16px;
-  --fs-body-sm: 14px;
-  --fs-caption: 12px;
+  --fs-body-sm: 14px;        /* Archita audit: 14 / Semilight */
+  --fs-body-xs: 12px;        /* NEW — Archita audit, optional smaller body */
+  --fs-caption: 14px;        /* Archita audit: was 12, now matches Body SM */
   --fs-micro: 10px;
 
   --lh-tight: 0.9;
@@ -44,7 +48,9 @@
   --ls-ui: 0.007em;
 
   /* ------------------------------------------------------------------ */
-  /* COLOURS — primitives                                               */
+  /* COLORS — primitives                                                */
+  /* Token names retain --grey-* spelling for back-compat with the      */
+  /* barion-design skill and downstream consumers. Visible copy is US.  */
   /* ------------------------------------------------------------------ */
   --barion-blue: #0097DB;
   --blue-gray:   #2C3446;
@@ -62,7 +68,12 @@
   --blue-800: #007FDB;
   --blue-900: #045691;
 
-  --focus-blue: #66C1E9;      /* input focus border */
+  --focus-blue: #99D5F1;      /* input focus border — Archita audit amendment (was #66C1E9) */
+
+  /* Marketing edge-case extras — kept per Archita audit (2026-05-31). NOT for product UI;
+     used only in marketing layouts that need a half-step beyond the core palette. */
+  --marketing-blue: #087FE7;  /* between --blue-700 (#0772CF) and --blue-500 (#0097DB) */
+  --marketing-ink:  #252D3C;  /* darker than --blue-gray (#2C3446) — deep marketing backgrounds */
 
   --grey-100: #FFFFFF;
   --grey-200: #ECEDF1;
@@ -87,16 +98,18 @@
   --green-100: #B6F0C0;
   --green-400: #70D65F;
   --green-600: #1F8B3C;
+  --green-700: #207811;   /* Figma alert/notification success icon */
 
   /* Gradients */
   --gradient-brand:        linear-gradient(180deg, #007FDB 0%, #0097DB 52%, #99D5F1 100%);
+  /* DEPRECATED — off-brand: Figma brand guidelines forbid horizontal gradients. Kept for back-compat; do not use in new UI. */
   --gradient-brand-horiz:  linear-gradient(90deg, #0772CF 0%, #0097DB 50%, #33ACE2 100%);
   --gradient-accent:       linear-gradient(135deg, #F86B33 0%, #FFC39E 100%);
   --gradient-brand-button:      linear-gradient(158deg, #0074C7 22.75%, #0097DB 86.15%);
   --gradient-brand-button-pill: linear-gradient(158deg, #0772CF 22.75%, #0097DB 86.15%);
 
   /* ------------------------------------------------------------------ */
-  /* COLOURS — semantic                                                 */
+  /* COLORS — semantic                                                  */
   /* ------------------------------------------------------------------ */
   --text-primary:   var(--grey-900);
   --text-secondary: var(--grey-800);    /* v3 fix: #46516D */
@@ -132,7 +145,7 @@
   --border-alert-error:    #FF8097;
   --border-alert-warning:  #F89C63;
   --border-alert-message:  #ECEDF1;
-  /* Alert text colours (high contrast on pastel surfaces) */
+  /* Alert text colors (high contrast on pastel surfaces) */
   --text-alert-error:      #AD223B;
 
   /* Status chip surfaces (saturated — distinct family) */
@@ -168,16 +181,19 @@
   --icon-alert:     var(--accent-400);
 
   /* ------------------------------------------------------------------ */
-  /* SHAPE                                                              */
+  /* SHAPE — Archita audit spec                                         */
   /* ------------------------------------------------------------------ */
-  --radius-xs:   4px;
-  --radius-min:  6px;       /* inputs, chips */
-  --radius-sm:   8px;       /* CANONICAL primary button */
-  --radius-md:   12px;
-  --radius-lg:   16px;
+  --radius-xxs:  4px;       /* Chips */
+  --radius-xs:   6px;       /* Small button, Selectors, Alerts, Inputs */
+  --radius-min:  6px;       /* alias of --radius-xs for back-compat */
+  --radius-sm:   8px;       /* Medium/Large button, Accordions */
+  --radius-m:    10px;      /* Containers (NEW per audit) */
+  --radius-md:   12px;      /* retained alias */
+  --radius-mobile-lg: 14px; /* Large mobile — bottom sheets, cards on mobile (NEW per Archita audit) */
+  --radius-lg:   16px;      /* Modals */
   --radius-xl:   24px;
   --radius-2xl:  32px;
-  --radius-pill: 999px;     /* Onboarding-entry pill primaries */
+  --radius-pill: 999px;     /* Contingency — onboarding-entry pill primaries */
 
   /* ------------------------------------------------------------------ */
   /* SHADOW / ELEVATION — flat by default. Overlays only.               */
@@ -234,16 +250,18 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, .h1 { font-family: var(--font-brand); font-weight: var(--fw-bold); font-size: var(--fs-h1); line-height: var(--lh-heading); color: var(--text-primary); margin: 0; }
-h2, .h2 { font-weight: var(--fw-bold); font-size: var(--fs-h2); line-height: var(--lh-heading); color: var(--text-primary); margin: 0; }
-h3, .h3 { font-weight: var(--fw-bold); font-size: var(--fs-h3); line-height: var(--lh-heading); color: var(--text-primary); margin: 0; }
-h4, .h4 { font-weight: var(--fw-bold); font-size: var(--fs-h4); line-height: var(--lh-heading); color: var(--text-primary); margin: 0; }
+h1, .h1 { font-family: var(--font-brand); font-weight: var(--fw-semibold); font-size: var(--fs-h1); line-height: var(--lh-heading); color: var(--text-primary); margin: 0; }
+h2, .h2 { font-weight: var(--fw-semibold); font-size: var(--fs-h2); line-height: var(--lh-heading); color: var(--text-primary); margin: 0; }
+h3, .h3 { font-weight: var(--fw-semibold); font-size: var(--fs-h3); line-height: var(--lh-heading); color: var(--text-primary); margin: 0; }
+h4, .h4 { font-weight: var(--fw-semibold); font-size: var(--fs-h4); line-height: var(--lh-heading); color: var(--text-primary); margin: 0; }
 
 p, .body { font-weight: var(--fw-semilight); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-primary); margin: 0; }
 .body-lg { font-weight: var(--fw-semilight); font-size: var(--fs-body-lg); line-height: 1.55; }
 .body-strong { font-weight: var(--fw-semibold); }
 small, .caption { font-size: var(--fs-caption); font-weight: var(--fw-semilight); line-height: 1.5; color: var(--text-secondary); }
+.body-sm { font-size: var(--fs-body-sm); font-weight: var(--fw-semilight); line-height: 1.5; color: var(--text-primary); }
+.body-xs { font-size: var(--fs-body-xs); font-weight: var(--fw-semilight); line-height: 1.5; color: var(--text-secondary); }
 a { color: var(--text-link-1); text-decoration: none; font-weight: var(--fw-semibold); transition: color var(--dur-fast) var(--ease-out); }
 a:hover { color: var(--text-link-2); text-decoration: underline; }
-code, pre, .mono { font-family: var(--font-mono); font-weight: var(--fw-bold); }
-.display { font-weight: var(--fw-bold); font-size: var(--fs-display-xl); line-height: var(--lh-tight); letter-spacing: var(--ls-tight); color: var(--text-invert); }
+code, pre, .mono { font-family: var(--font-brand); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+.display { font-weight: var(--fw-semibold); font-size: var(--fs-display-xl); line-height: var(--lh-tight); letter-spacing: var(--ls-tight); color: var(--text-invert); }
