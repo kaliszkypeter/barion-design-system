@@ -16,8 +16,8 @@ body { margin: 0; background: var(--white-gray); color: var(--text-primary); fon
 /* ---------- SIDENAV (page-level, sticky) ---------- */
 .sidenav { position: sticky; top: 0; align-self: start; height: 100vh; padding: var(--s-6) var(--s-4); background: var(--surface-primary); border-right: 1px solid var(--border-secondary); display: flex; flex-direction: column; gap: var(--s-3); overflow-y: auto; }
 .sidenav__brand { display: flex; align-items: center; gap: var(--s-2); padding: var(--s-2) var(--s-3); font-weight: var(--fw-bold); font-size: var(--fs-body); color: var(--text-primary); line-height: 1.2; }
-.sidenav__brand .mark { width: 24px; height: 24px; border-radius: 6px; background: var(--gradient-brand-button); flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
-.sidenav__brand .mark img { width: 15px; height: 15px; }
+.sidenav__brand .mark { width: 34px; height: 34px; border-radius: 9px; background: var(--gradient-brand-button); flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+.sidenav__brand .mark img { width: 21px; height: 21px; }
 .sidenav__brand small { display: block; font-weight: var(--fw-semilight); font-size: var(--fs-body-xs); color: var(--text-secondary); }
 .sidenav__list { display: flex; flex-direction: column; gap: 2px; list-style: none; padding: 0; margin: 0; }
 .sidenav__group-label { font-size: var(--fs-body-xs); color: var(--text-secondary); padding: var(--s-3) var(--s-3) var(--s-1); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -441,6 +441,14 @@ img.icon { object-fit: contain; }
 .sentiment--success { background: linear-gradient(135deg, #BBE678 0%, #6AC74C 100%); --halo-color: rgba(122, 201, 75, 0.22); }
 .sentiment--error   { background: linear-gradient(135deg, #FFC0CB 0%, #F65A72 100%); --halo-color: rgba(246, 90, 114, 0.22); }
 .sentiment--pending { background: linear-gradient(135deg, #BCE4F6 0%, #57B6E6 100%); --halo-color: rgba(87, 182, 230, 0.22); }
+/* Animated sentiment (looping demo) */
+.sentiment__glyph { display: inline-flex; }
+.sentiment-anim--spin .sentiment__glyph { animation: sentiment-spin 1.1s linear infinite; }
+.sentiment-anim--pop { animation: sentiment-pop 2.6s var(--ease-out) infinite, sentiment-halo 2.6s var(--ease-out) infinite; }
+@keyframes sentiment-spin { to { transform: rotate(360deg); } }
+@keyframes sentiment-pop { 0% { transform: scale(0.3); opacity: 0; } 10% { opacity: 1; } 42% { transform: scale(1.07); } 56% { transform: scale(1); } 100% { transform: scale(1); } }
+@keyframes sentiment-halo { 0%, 10% { box-shadow: 0 0 0 0 var(--halo-color); } 56% { box-shadow: 0 0 0 14px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@media (prefers-reduced-motion: reduce) { .sentiment-anim, .sentiment-anim .sentiment__glyph { animation: none !important; } }
 
 /* ---------- PROGRESS INDICATORS (§ progress) ---------- */
 .progress { width: 100%; max-width: 340px; }
@@ -1738,6 +1746,14 @@ img.icon { object-fit: contain; }
   </div>
 
   <div class="callout">Use after a transaction or async confirmation completes. The halo width scales with badge size (4 / 8 / 14 px).</div>
+
+  <div class="kicker">Animated — pending → resolves to success / error (loops; paired with haptics in-app)</div>
+  <div class="row" style="align-items:center;gap:var(--s-12);padding:var(--s-8) var(--s-6)">
+    <div class="sentiment sentiment--lg sentiment--pending sentiment-anim sentiment-anim--spin" aria-label="Pending (animated)"><svg class="icon sentiment__glyph"><use href="#i-clock-rewind"/></svg></div>
+    <div class="sentiment sentiment--lg sentiment--success sentiment-anim sentiment-anim--pop" aria-label="Success (animated)"><svg class="icon sentiment__glyph"><use href="#i-check"/></svg></div>
+    <div class="sentiment sentiment--lg sentiment--error sentiment-anim sentiment-anim--pop" aria-label="Error (animated)"><svg class="icon sentiment__glyph"><use href="#i-x"/></svg></div>
+  </div>
+  <div class="callout">In product the pending spinner runs while the request is in flight, then swaps to a success or error badge that pops in with its halo. The full multi-stage illustrations live in <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=10223-64168" target="_blank" rel="noopener">Figma ↗</a> — these are CSS approximations. Respects <code>prefers-reduced-motion</code>.</div>
 </section>
 
 <!-- ============================================================ -->
