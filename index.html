@@ -85,6 +85,18 @@ img.icon { object-fit: contain; }
 .token-table td.token-cell { font-family: var(--font-brand); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--text-tertiary); }
 .token-table td.hex-cell { font-family: var(--font-brand); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--text-secondary); width: 90px; }
 .token-table td.usage-cell { color: var(--text-secondary); font-size: var(--fs-body-sm); }
+/* Align columns identically across every color-reference table */
+#color .token-table { table-layout: fixed; }
+#color .token-table th:nth-child(1), #color .token-table td:nth-child(1) { width: 60px; }
+#color .token-table th:nth-child(2), #color .token-table td:nth-child(2) { width: 248px; }
+#color .token-table th:nth-child(3), #color .token-table td:nth-child(3) { width: 96px; }
+#color .token-table td.token-cell, #color .token-table td.usage-cell { white-space: normal; overflow-wrap: anywhere; }
+/* Align columns identically across every colour table (swatch · token · hex · usage) */
+#color .token-table { table-layout: fixed; }
+#color .token-table th:nth-child(1), #color .token-table td:nth-child(1) { width: 60px; }
+#color .token-table th:nth-child(2), #color .token-table td:nth-child(2) { width: 248px; }
+#color .token-table th:nth-child(3), #color .token-table td:nth-child(3) { width: 96px; }
+#color .token-table td.token-cell, #color .token-table td.usage-cell { white-space: normal; overflow-wrap: anywhere; }
 .swatch-chip { width: 36px; height: 36px; border-radius: var(--radius-xs); border: 1px solid rgba(44, 52, 70, 0.08); display: inline-block; }
 
 /* ---------- TYPOGRAPHY ---------- */
@@ -447,11 +459,14 @@ img.icon { object-fit: contain; }
 .list-selector--mobile   { width: 260px; }
 .list-selector--web      { width: 240px; }
 .list-selector-item { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3); background: var(--surface-primary); border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); cursor: pointer; transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
-.list-selector-item:hover:not([aria-disabled="true"]) { background: var(--surface-tertiary); }
+.list-selector-item:hover:not([aria-disabled="true"]):not([aria-selected="true"]) { background: var(--blue-50); }
 .list-selector-item[aria-selected="true"] { background: var(--blue-50); border-color: var(--blue-200); }
 .list-selector-item[aria-disabled="true"] { background: var(--surface-secondary); color: var(--text-disabled); cursor: not-allowed; }
-.list-selector-item__radio { display: none; }
-.list-selector-item[aria-selected="true"]::after { content: "✓"; color: var(--text-brand); font-weight: var(--fw-bold); margin-left: auto; font-size: var(--fs-body-sm); }
+/* Radio sits on the LEFT (Figma 8543:3905) — hollow by default, blue filled when selected */
+.list-selector-item__radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border-strong); flex-shrink: 0; position: relative; transition: border-color var(--dur-fast) var(--ease-out); }
+.list-selector-item[aria-selected="true"] .list-selector-item__radio { border-color: var(--blue-500); border-width: 2px; }
+.list-selector-item[aria-selected="true"] .list-selector-item__radio::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--blue-500); }
+.list-selector-item[aria-disabled="true"] .list-selector-item__radio { border-color: var(--border-secondary); }
 .list-selector-item__body { display: flex; flex-direction: column; gap: 0; min-width: 0; }
 .list-selector-item__title { font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-primary); line-height: 1.3; }
 .list-selector-item[aria-selected="true"] .list-selector-item__title { color: var(--text-brand); }
@@ -498,8 +513,9 @@ img.icon { object-fit: contain; }
 .phone-input__field { flex: 1; min-width: 0; border: 0; background: none; padding: 10px 12px; font: inherit; font-size: var(--fs-body); color: var(--text-primary); outline: none; }
 /* Unified card-details block — number row + split expiry|CVC row in one bordered container (Figma 7978:15866) */
 .card-block { border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); background: var(--surface-primary); overflow: hidden; transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
-.card-block:focus-within { border-color: var(--focus-blue); box-shadow: var(--shadow-focus); }
 .card-block--error { border-color: var(--border-error); }
+/* Focus is per-field: only the focused sub-input highlights, not the whole block (Figma 7978:15866) */
+.card-block__number:focus-within, .card-block__cell:focus-within { box-shadow: inset 0 0 0 2px var(--blue-500); border-radius: var(--radius-xs); position: relative; z-index: 1; }
 .card-block__number { display: flex; align-items: center; gap: var(--s-2); padding-right: var(--s-3); border-bottom: 1px solid var(--border-secondary); }
 .card-block__split { display: flex; }
 .card-block__cell { flex: 1; min-width: 0; display: flex; }
@@ -556,7 +572,7 @@ img.icon { object-fit: contain; }
 .bottomnav__item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--s-2) var(--s-3); color: var(--text-secondary); font-size: var(--fs-body-xs); text-decoration: none; border-radius: var(--radius-xs); }
 .bottomnav__item--active { color: var(--text-brand); font-weight: var(--fw-semibold); }
 .bottomnav__item .icon { width: 22px; height: 22px; color: var(--icon-secondary); }
-.bottomnav__item--active .icon { color: var(--icon-brand); }
+.bottomnav__item--active .icon { color: var(--text-brand); }
 
 /* ---------- MODAL VARIANTS (§19) ---------- */
 .modal-scrim { background: rgba(44, 52, 70, 0.55); border-radius: var(--radius-m); padding: var(--s-10) var(--s-8); display: flex; justify-content: center; }
@@ -1679,7 +1695,7 @@ img.icon { object-fit: contain; }
           <button class="modal-card__close" aria-label="Close"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>
         </div>
         <div class="modal-timer-wrap">
-          <span class="modal-timer">00:59</span>
+          <span class="modal-timer" data-countdown data-countdown-start="59">00:59</span>
         </div>
         <p class="modal-card__body">For your security, you'll be signed out when the timer runs out. Stay signed in to keep working.</p>
         <div class="actions">
@@ -1747,7 +1763,7 @@ img.icon { object-fit: contain; }
 <!-- ============================================================ -->
 <section class="section" id="selectors">
   <h2>21 · Selectors (list)</h2>
-  <p class="hint">Vertical list selector. Each row pairs a title + subtitle; selected state uses blue highlight + check on the right. Distinct from Dropdowns (section 12) — selectors stay open and are used when all options should be visible at once.</p>
+  <p class="hint">Vertical list selector. Each row pairs a radio control (left) with a title + subtitle. Selected = blue filled radio + blue title on a light-blue surface; rows also have hover and disabled states. Distinct from Dropdowns (section 12) — selectors stay open and are used when all options should be visible at once.</p>
 
   <div class="kicker">Sizes — Profiles 36 · Default 24 · Mobile 20 · Web 16 px row height</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
@@ -1886,6 +1902,23 @@ img.icon { object-fit: contain; }
 </div>
 
 <script>
+  // ---------- Session-expiry countdown (demo: loops) ----------
+  (function () {
+    var el = document.querySelector('[data-countdown]');
+    if (!el) return;
+    var start = parseInt(el.getAttribute('data-countdown-start'), 10) || 59;
+    var remaining = start;
+    function render() {
+      var m = Math.floor(remaining / 60), s = remaining % 60;
+      el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    render();
+    setInterval(function () {
+      remaining = remaining > 0 ? remaining - 1 : start; // loop for the demo
+      render();
+    }, 1000);
+  })();
+
   // ---------- Scroll-spy: highlight active sidenav link ----------
   (function () {
     var links = Array.prototype.slice.call(document.querySelectorAll('[data-spy-link]'));
