@@ -146,9 +146,9 @@ img.icon { object-fit: contain; }
 .btn:focus-visible { box-shadow: var(--shadow-focus); outline: none; }
 .btn:disabled { background: var(--surface-disabled); color: var(--text-disabled); cursor: not-allowed; }
 .btn__icon { width: 18px; height: 18px; flex-shrink: 0; }
-.btn--primary { background: var(--gradient-brand-button); color: var(--text-invert); transform: translateY(0); }
+.btn--primary { background: var(--gradient-brand-button); color: var(--text-invert); }
 .btn--primary:hover:not(:disabled) { filter: brightness(0.95); }
-.btn--primary:active:not(:disabled), .btn--primary.is-pressed { filter: brightness(0.82); transform: translateY(1px); }
+.btn--primary:active:not(:disabled), .btn--primary.is-pressed { filter: brightness(0.82); }
 .btn--primary .btn__icon { color: var(--text-invert); }
 /* Secondary (White variant by default) */
 .btn--secondary { background: var(--surface-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); font-size: var(--fs-body-lg); height: 46px; padding: 10px 16px; }
@@ -462,11 +462,13 @@ img.icon { object-fit: contain; }
 .list-selector-item:hover:not([aria-disabled="true"]):not([aria-selected="true"]) { background: var(--blue-50); }
 .list-selector-item[aria-selected="true"] { background: var(--blue-50); border-color: var(--blue-200); }
 .list-selector-item[aria-disabled="true"] { background: var(--surface-secondary); color: var(--text-disabled); cursor: not-allowed; }
-/* Radio sits on the LEFT (Figma 8543:3905) — hollow by default, blue filled when selected */
-.list-selector-item__radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border-strong); flex-shrink: 0; position: relative; transition: border-color var(--dur-fast) var(--ease-out); }
-.list-selector-item[aria-selected="true"] .list-selector-item__radio { border-color: var(--blue-500); border-width: 2px; }
-.list-selector-item[aria-selected="true"] .list-selector-item__radio::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--blue-500); }
-.list-selector-item[aria-disabled="true"] .list-selector-item__radio { border-color: var(--border-secondary); }
+/* Leading circle is a media/avatar placeholder (e.g. profile pic), NOT a radio control (Figma 8543:3905) */
+.list-selector-item__radio { width: 28px; height: 28px; border-radius: 50%; background: var(--blue-100); flex-shrink: 0; position: relative; overflow: hidden; }
+.list-selector-item__radio::before { content: ""; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--blue-300); top: 5px; left: 9px; } /* head */
+.list-selector-item__radio::after { content: ""; position: absolute; width: 18px; height: 11px; border-radius: 9px 9px 0 0; background: var(--blue-300); bottom: 0; left: 5px; } /* shoulders */
+.list-selector-item[aria-selected="true"] .list-selector-item__radio { box-shadow: 0 0 0 2px var(--blue-500); }
+.list-selector-item[aria-disabled="true"] .list-selector-item__radio { background: var(--surface-tertiary); }
+.list-selector-item[aria-disabled="true"] .list-selector-item__radio::before, .list-selector-item[aria-disabled="true"] .list-selector-item__radio::after { background: var(--grey-300); }
 .list-selector-item__body { display: flex; flex-direction: column; gap: 0; min-width: 0; }
 .list-selector-item__title { font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-primary); line-height: 1.3; }
 .list-selector-item[aria-selected="true"] .list-selector-item__title { color: var(--text-brand); }
@@ -596,6 +598,14 @@ img.icon { object-fit: contain; }
 .toast__text { flex: 1; }
 .toast__action { color: var(--text-link-1); font-weight: var(--fw-semibold); text-decoration: none; white-space: nowrap; flex-shrink: 0; }
 .toast__action:hover { text-decoration: underline; }
+
+/* ---------- FIGMA REFERENCE LINK ---------- */
+.figma-link { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-brand); font-size: 13px; font-weight: var(--fw-semibold); color: var(--text-link-1); text-decoration: none; padding: 3px 10px; border: 1px solid var(--border-secondary); border-radius: var(--radius-pill); white-space: nowrap; transition: background var(--dur-fast) var(--ease-out); }
+.figma-link:hover { background: var(--blue-50); text-decoration: none; }
+.section h2 .figma-link { float: right; font-size: 13px; margin-top: 2px; }
+.title-strip__ref { margin-top: var(--s-4); }
+.title-strip .figma-link { border-color: rgba(255,255,255,0.55); color: #fff; background: rgba(255,255,255,0.08); }
+.title-strip .figma-link:hover { background: rgba(255,255,255,0.18); }
 
 /* ---------- RESPONSIVE OVERRIDES (placed last so they win the cascade) ---------- */
 @media (max-width: 1023px) {
@@ -770,6 +780,8 @@ img.icon { object-fit: contain; }
 
 <header class="title-strip">
   <h1>Barion design system <span style="opacity:0.7;font-size:0.6em">v3</span></h1>
+  <p>A living reference for Barion's brand foundations and UI components. Source of truth: the Figma <strong>Brand Guidelines &amp; Design System</strong>. Where a component can't be reproduced 1:1 here (real system icons, illustrations), follow the Figma link in that section.</p>
+  <div class="title-strip__ref"><a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Open the full guide in Figma ↗</a></div>
 </header>
 
 <!-- ============================================================ -->
@@ -1019,7 +1031,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="icons">
-  <h2>8 · Icons</h2>
+  <h2>8 · Icons <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=1-865" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Inline SVG symbols on a 24×24 grid, single stroke weight, colour set to <code>currentColor</code> so they inherit text colour — crisp at any size and they recolour on active/hover states.</p>
   <div class="callout"><strong>Source:</strong> the Barion Figma System-icon library (node <code>1416:18786</code>) doesn't export its glyphs as single SVGs, so this set uses matched-weight stand-ins (Lucide, the sanctioned substitution) for the 9 icons in use. Swap in the exact Figma exports per icon as they become available; the full library is ~130 system icons plus flags and payment-brand marks.</div>
 
@@ -1057,7 +1069,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="buttons">
-  <h2>9 · Buttons</h2>
+  <h2>9 · Buttons <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=7978-13198" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">8px radius for in-app product UI. Pill (999px) is the contingency for onboarding-entry surfaces. Never use shadow on a button.</p>
 
   <div class="kicker">Primary CTAs — Large · Medium · Small (per Figma brand-guideline)</div>
@@ -1068,7 +1080,7 @@ img.icon { object-fit: contain; }
     <button class="btn btn--primary is-pressed">Pressed</button>
     <button class="btn btn--primary" disabled>Disabled</button>
   </div>
-  <div class="callout">Every button variant darkens and nudges down 1px on <code>:active</code> (the <code>is-pressed</code> state shown above). Click and hold any button to see it live.</div>
+  <div class="callout">Every button variant darkens on <code>:active</code> (the <code>is-pressed</code> state shown above) — no movement or bounce. Click and hold any button to see it live.</div>
 
   <div class="kicker">Secondary — White · Large · Medium · Small</div>
   <div class="row" style="align-items:center">
@@ -1108,12 +1120,6 @@ img.icon { object-fit: contain; }
   </div>
   <div class="callout">Apply <code>.btn--loading</code> while an async action runs. Pointer events are disabled automatically. Spinner color inherits from the button variant.</div>
 
-  <div class="kicker">Onboarding-entry (pill — contingency only)</div>
-  <div class="row">
-    <button class="btn btn--primary btn--pill">Next</button>
-    <button class="btn btn--primary btn--pill">Sign up</button>
-  </div>
-  <div class="callout">Pill buttons (999px radius) are a contingency for the onboarding entry flow — login email entry, post-login redirect to shop creation. Use 8px everywhere else.</div>
 
   <div class="kicker">Icon buttons — Large 36 · Medium 24 · Small 20 · Extra-small 16 (square, icon-only)</div>
   <div class="row" style="align-items:center;gap:var(--s-3)">
@@ -1145,7 +1151,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="inputs">
-  <h2>11 · Inputs</h2>
+  <h2>11 · Inputs <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=7978-14800" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">6px radius, 10×12 padding, 16px Semilight body. Border <code>#ECEDF1</code>. Focus = border <code>#99D5F1</code> + 4px <code>--shadow-focus</code> halo (Archita audit). Helper text is 16px to match field content.</p>
 
   <div class="row">
@@ -1182,23 +1188,10 @@ img.icon { object-fit: contain; }
   </div>
 
 
-  <div class="kicker">Card details — one block: number + scheme mark, then expiry · CVC (default · Mastercard detected · error)</div>
+  <div class="kicker">Card details — one block: number + scheme mark, then expiry · CVC</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
-    <div class="field" style="min-width:300px">
+    <div class="field" style="min-width:300px;max-width:340px">
       <label class="field__label">Card details</label>
-      <div class="card-block">
-        <div class="card-block__number">
-          <input value="1234 1234 1234 1234" inputmode="numeric" aria-label="Card number">
-        </div>
-        <div class="card-block__split">
-          <div class="card-block__cell"><input placeholder="MM / YY" inputmode="numeric" aria-label="Expiry"></div>
-          <div class="card-block__cell"><input placeholder="CVC" inputmode="numeric" aria-label="CVC"></div>
-        </div>
-      </div>
-      <span class="field__helper">We never store your full card number.</span>
-    </div>
-    <div class="field" style="min-width:300px">
-      <label class="field__label">Card details — Mastercard detected</label>
       <div class="card-block">
         <div class="card-block__number">
           <input value="5329 8089 1456 8938" inputmode="numeric" aria-label="Card number">
@@ -1215,22 +1208,10 @@ img.icon { object-fit: contain; }
           <div class="card-block__cell"><input placeholder="CVC" inputmode="numeric" aria-label="CVC"></div>
         </div>
       </div>
-      <span class="field__helper">We never store your full card number.</span>
-    </div>
-    <div class="field" style="min-width:300px">
-      <label class="field__label">Card details — error</label>
-      <div class="card-block card-block--error">
-        <div class="card-block__number">
-          <input value="4908 6611 0000" inputmode="numeric" aria-label="Card number">
-        </div>
-        <div class="card-block__split">
-          <div class="card-block__cell"><input placeholder="MM / YY" inputmode="numeric" aria-label="Expiry"></div>
-          <div class="card-block__cell"><input placeholder="CVC" inputmode="numeric" aria-label="CVC"></div>
-        </div>
-      </div>
-      <span class="field__helper" style="color:var(--text-error)">Card number is incomplete.</span>
+      <span class="field__helper">One bordered container; the focused sub-field (number / expiry / CVC) highlights on its own. Scheme mark appears once detected.</span>
     </div>
   </div>
+  <div class="callout">The card field has more states than shown here (empty, scheme-detected, per-field focus, error + supporting text, in both light and dark). For the complete spec, see <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=7978-15866" target="_blank" rel="noopener">Card field in Figma ↗</a></div>
 
   <div class="kicker">Textarea — multi-line / expandable field (default · error)</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
@@ -1388,7 +1369,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="snackbars">
-  <h2>15 · Alerts &amp; snackbars</h2>
+  <h2>15 · Alerts &amp; snackbars <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=8496-11873" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Two transient-feedback components. <strong>Alerts / notifications</strong> use the pastel <code>--surface-alert-*</code> family (one- or two-line, light + dark themes in Figma). The <strong>snackbar</strong> is a plain white toast — text + optional action, no sentiment colour. Both are distinct from chips, which are persistent.</p>
 
   <div class="kicker">Alert / notification variants — success · error · warning · message</div>
@@ -1462,7 +1443,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="nav">
-  <h2>16 · Navigation (sidebar) + Tabs</h2>
+  <h2>16 · Navigation (sidebar) + Tabs <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=10223-6929" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Sidebar text 14px · icons 16px · WeblySleek UI Semibold. Active item: <code>#0772CF</code> text + <code>#EEFAFF</code> background, 6px radius. Tabs: 2px solid <code>#0772CF</code> underline indicator.</p>
 
   <div class="kicker">Sidebar component</div>
@@ -1569,7 +1550,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="avatars">
-  <h2>18 · Avatars &amp; transaction lists</h2>
+  <h2>18 · Avatars &amp; transaction lists <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=9205-66010" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Avatars are circular containers for initials or product marks. Three sizes (32 · 40 · 48) with brand-coordinated tints. Transaction list pairs an avatar with name, secondary line, and right-aligned amount.</p>
 
   <div class="kicker">Sizes — 32 · 40 · 48</div>
@@ -1627,7 +1608,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="overlays">
-  <h2>19 · Overlays — shadow is allowed here</h2>
+  <h2>19 · Overlays — shadow is allowed here <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=10223-78939" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Modals, dropdowns, tooltips. Only these get elevation tokens. Modal cancel uses tertiary button (flat) per Archita audit.</p>
 
   <div class="row" style="align-items:flex-start;gap:var(--s-8)">
@@ -1740,7 +1721,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="sentiment">
-  <h2>20 · Sentiment indicators</h2>
+  <h2>20 · Sentiment indicators <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=10223-64168" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Confirmation badges for transaction outcomes. Coloured circle + white glyph + soft halo. Animated in production with haptic feedback paired.</p>
 
   <div class="kicker">Variants — success · error · pending</div>
@@ -1762,8 +1743,8 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="selectors">
-  <h2>21 · Selectors (list)</h2>
-  <p class="hint">Vertical list selector. Each row pairs a radio control (left) with a title + subtitle. Selected = blue filled radio + blue title on a light-blue surface; rows also have hover and disabled states. Distinct from Dropdowns (section 12) — selectors stay open and are used when all options should be visible at once.</p>
+  <h2>21 · Selectors (list) <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=8543-3905" target="_blank" rel="noopener">Figma ↗</a></h2>
+  <p class="hint">Vertical list selector. Each row leads with a media slot (a placeholder for a profile picture or icon — <em>not</em> a radio control), then a title + subtitle. Selected = blue title on a light-blue surface with a blue ring on the avatar; rows also have hover and disabled states. Distinct from Dropdowns (section 12) — selectors stay open and are used when all options should be visible at once.</p>
 
   <div class="kicker">Sizes — Profiles 36 · Default 24 · Mobile 20 · Web 16 px row height</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
