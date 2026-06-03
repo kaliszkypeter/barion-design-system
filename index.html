@@ -148,7 +148,7 @@ img.icon { object-fit: contain; }
 .btn__icon { width: 18px; height: 18px; flex-shrink: 0; }
 .btn--primary { background: var(--gradient-brand-button); color: var(--text-invert); }
 .btn--primary:hover:not(:disabled) { filter: brightness(0.95); }
-.btn--primary:active:not(:disabled), .btn--primary.is-pressed { filter: brightness(0.82); }
+.btn--primary:active:not(:disabled), .btn--primary.is-pressed { filter: brightness(0.78); box-shadow: inset 0 2px 5px rgba(4, 86, 145, 0.45); }
 .btn--primary .btn__icon { color: var(--text-invert); }
 /* Secondary (White variant by default) */
 .btn--secondary { background: var(--surface-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); font-size: var(--fs-body-lg); height: 46px; padding: 10px 16px; }
@@ -1070,17 +1070,16 @@ img.icon { object-fit: contain; }
 <!-- ============================================================ -->
 <section class="section" id="buttons">
   <h2>9 · Buttons <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=7978-13198" target="_blank" rel="noopener">Figma ↗</a></h2>
-  <p class="hint">8px radius for in-app product UI. Pill (999px) is the contingency for onboarding-entry surfaces. Never use shadow on a button.</p>
+  <p class="hint">8px radius for in-app product UI. Never use a drop shadow on a button (the pressed state uses a subtle inset shadow only).</p>
 
   <div class="kicker">Primary CTAs — Large · Medium · Small (per Figma brand-guideline)</div>
   <div class="row" style="align-items:center">
     <button class="btn btn--primary">Top up</button>
     <button class="btn btn--primary btn--md">Top up</button>
     <button class="btn btn--primary btn--sm">Top up</button>
-    <button class="btn btn--primary is-pressed">Pressed</button>
     <button class="btn btn--primary" disabled>Disabled</button>
   </div>
-  <div class="callout">Every button variant darkens on <code>:active</code> (the <code>is-pressed</code> state shown above) — no movement or bounce. Click and hold any button to see it live.</div>
+  <div class="callout">Press any button (click and hold) to see the <code>:active</code> state — it darkens with a subtle inset shadow, no movement or bounce.</div>
 
   <div class="kicker">Secondary — White · Large · Medium · Small</div>
   <div class="row" style="align-items:center">
