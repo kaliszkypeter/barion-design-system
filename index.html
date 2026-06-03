@@ -1749,7 +1749,7 @@ img.icon { object-fit: contain; }
 
   <div class="kicker">Animated — pending → resolves to success / error (loops; paired with haptics in-app)</div>
   <div class="row" style="align-items:center;gap:var(--s-12);padding:var(--s-8) var(--s-6)">
-    <div class="sentiment sentiment--lg sentiment--pending sentiment-anim sentiment-anim--spin" aria-label="Pending (animated)"><svg class="icon sentiment__glyph"><use href="#i-clock-rewind"/></svg></div>
+    <div class="sentiment sentiment--lg sentiment--pending sentiment-anim sentiment-anim--pop" aria-label="Pending (animated)"><svg class="icon sentiment__glyph"><use href="#i-clock-rewind"/></svg></div>
     <div class="sentiment sentiment--lg sentiment--success sentiment-anim sentiment-anim--pop" aria-label="Success (animated)"><svg class="icon sentiment__glyph"><use href="#i-check"/></svg></div>
     <div class="sentiment sentiment--lg sentiment--error sentiment-anim sentiment-anim--pop" aria-label="Error (animated)"><svg class="icon sentiment__glyph"><use href="#i-x"/></svg></div>
   </div>
@@ -1761,86 +1761,29 @@ img.icon { object-fit: contain; }
   <h2>21 · Selectors (list) <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=8543-3905" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Vertical list selector. Each row leads with a media slot (a placeholder for a profile picture or icon — <em>not</em> a radio control), then a title + subtitle. Selected = blue title on a light-blue surface with a blue ring on the avatar; rows also have hover and disabled states. Distinct from Dropdowns (section 12) — selectors stay open and are used when all options should be visible at once.</p>
 
-  <div class="kicker">Sizes — Profiles 36 · Default 24 · Mobile 20 · Web 16 px row height</div>
+  <div class="kicker">One list, four row states — default · selected · default · disabled</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
-    <div class="list-selector list-selector--profiles">
+    <div class="list-selector" style="width:340px">
       <div class="list-selector-item">
         <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Anna Kovács</span><span class="list-selector-item__sub">anna.kovacs@gmail.com</span></div>
       </div>
       <div class="list-selector-item" aria-selected="true">
         <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Bence Tóth</span><span class="list-selector-item__sub">bence.toth@gmail.com</span></div>
+      </div>
+      <div class="list-selector-item">
+        <span class="list-selector-item__radio"></span>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Csilla Nagy</span><span class="list-selector-item__sub">csilla.nagy@gmail.com</span></div>
       </div>
       <div class="list-selector-item" aria-disabled="true">
         <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-    </div>
-
-    <div class="list-selector">
-      <div class="list-selector-item">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item" aria-selected="true">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item" aria-disabled="true">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-    </div>
-
-    <div class="list-selector list-selector--mobile">
-      <div class="list-selector-item">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item" aria-selected="true">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item" aria-disabled="true">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-    </div>
-
-    <div class="list-selector list-selector--web">
-      <div class="list-selector-item">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item" aria-selected="true">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item" aria-disabled="true">
-        <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">John Doe</span><span class="list-selector-item__sub">johndoe@gmail.com</span></div>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Dávid Szabó</span><span class="list-selector-item__sub">david.szabo@gmail.com</span></div>
       </div>
     </div>
   </div>
 
-  <div class="callout">States per row: default · hover · selected (blue tint) · disabled. Use the Selector pattern when the user should see every option without expanding a menu — for example, account picker, payment-method picker, KYC document type.</div>
+  <div class="callout">One component, four row states: default · hover · selected (blue tint + ring) · disabled. Row height comes in four sizes (Profiles 36 · Default 24 · Mobile 20 · Web 16 px) — see Figma for the size set. Use the Selector when the user should see every option without expanding a menu — account picker, payment-method picker, KYC document type.</div>
 </section>
 
 <!-- ============================================================ -->
