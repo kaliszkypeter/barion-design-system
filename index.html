@@ -555,7 +555,8 @@ img.icon { object-fit: contain; }
 .bottomnav { display: flex; align-items: stretch; justify-content: space-around; gap: var(--s-2); padding: var(--s-2) var(--s-3); background: var(--surface-primary); border: 1px solid var(--border-secondary); border-radius: var(--radius-m); max-width: 380px; }
 .bottomnav__item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--s-2) var(--s-3); color: var(--text-secondary); font-size: var(--fs-body-xs); text-decoration: none; border-radius: var(--radius-xs); }
 .bottomnav__item--active { color: var(--text-brand); font-weight: var(--fw-semibold); }
-.bottomnav__item .icon { width: 22px; height: 22px; }
+.bottomnav__item .icon { width: 22px; height: 22px; color: var(--icon-secondary); }
+.bottomnav__item--active .icon { color: var(--icon-brand); }
 
 /* ---------- MODAL VARIANTS (§19) ---------- */
 .modal-scrim { background: rgba(44, 52, 70, 0.55); border-radius: var(--radius-m); padding: var(--s-10) var(--s-8); display: flex; justify-content: center; }
@@ -589,6 +590,18 @@ img.icon { object-fit: contain; }
   .dont-grid { grid-template-columns: 1fr; }
   /* Specimen + comparison grids: single column on narrow screens */
   .aa-specimen { grid-template-columns: 1fr; }
+  /* Mobile top bar: reserve room for the toggle so the brand never collides with it; drop the
+     subtitle in the collapsed bar to avoid clipping (restored when the menu is open) */
+  .sidenav { padding-right: 64px; }
+  .sidenav__brand { min-width: 0; }
+  .sidenav__brand small { display: none; }
+  .sidenav.is-open .sidenav__brand small { display: block; }
+  /* Hard rules / do-&-don't: tint each row so dos (green) and don'ts (red) stay
+     visually distinct when the two columns collapse into one */
+  .rules { gap: var(--s-2); }
+  .rule { padding: 8px 12px; border-radius: var(--radius-xs); align-items: center; }
+  .rule:has(.y) { background: var(--surface-alert-success); }
+  .rule:has(.n) { background: var(--surface-alert-error); }
 }
 </style>
 </head>
