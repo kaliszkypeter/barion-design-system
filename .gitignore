@@ -1,3 +1,7 @@
 .vercel
 .DS_Store
 node_modules/
+
+# Local dev tooling — not for the public repo
+CLAUDE.md
+.claude/

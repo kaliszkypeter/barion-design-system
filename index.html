@@ -57,7 +57,7 @@ body { margin: 0; background: var(--white-gray); color: var(--text-primary); fon
 .title-strip p { font-size: var(--fs-body-lg); font-weight: var(--fw-semilight); margin: var(--s-2) 0 0; max-width: 720px; opacity: 0.95; color: var(--text-invert); }
 .kicker { font-size: var(--fs-body-xs); font-weight: var(--fw-bold); letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-secondary); margin: var(--s-6) 0 var(--s-3); }
 .row { display: flex; gap: var(--s-3); flex-wrap: wrap; align-items: flex-start; }
-.callout { background: var(--surface-fill-1); border-left: 3px solid var(--blue-500); padding: var(--s-3) var(--s-4); border-radius: var(--radius-xs); font-size: var(--fs-body-sm); color: var(--text-primary); margin: var(--s-3) 0; font-weight: var(--fw-semilight); }
+.callout { background: var(--blue-50); border-left: 3px solid var(--blue-500); padding: var(--s-3) var(--s-4); border-radius: var(--radius-xs); font-size: var(--fs-body-sm); color: var(--text-primary); margin: var(--s-3) 0; font-weight: var(--fw-semilight); }
 .callout strong { font-weight: var(--fw-semibold); }
 .flag { background: var(--surface-alert-warning); border-left: 3px solid var(--border-alert-warning); padding: var(--s-3) var(--s-4); border-radius: var(--radius-xs); font-size: var(--fs-body-sm); color: var(--text-primary); margin: var(--s-3) 0; font-weight: var(--fw-semilight); }
 
@@ -123,7 +123,7 @@ img.icon { object-fit: contain; }
 /* ---------- SHAPE ---------- */
 .shape-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--s-3); }
 .shape-card { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3); border: 1px solid var(--border-secondary); border-radius: var(--radius-m); }
-.shape-tile { background: var(--gradient-brand-button); color: var(--text-invert); width: 56px; height: 56px; display: grid; place-content: center; font-weight: var(--fw-bold); font-size: var(--fs-body-xs); flex-shrink: 0; }
+.shape-tile { background: var(--gradient-brand-button); color: var(--text-invert); width: 56px; height: 56px; display: grid; place-content: center; font-weight: var(--fw-bold); font-size: var(--fs-body-sm); font-variant-numeric: tabular-nums; flex-shrink: 0; }
 .shape-meta { display: flex; flex-direction: column; gap: 2px; }
 .shape-meta .label { font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-primary); }
 .shape-meta .usage { font-size: var(--fs-body-xs); color: var(--text-secondary); font-weight: var(--fw-semilight); }
@@ -150,25 +150,30 @@ img.icon { object-fit: contain; }
 .btn:disabled { background: var(--surface-disabled); color: var(--text-disabled); cursor: not-allowed; }
 .btn__icon { width: 18px; height: 18px; flex-shrink: 0; }
 .btn--primary { background: var(--gradient-brand-button); color: var(--text-invert); }
-.btn--primary:hover:not(:disabled) { filter: brightness(0.95); }
+/* Hover = flat darker blue #0074C7 (Figma Primary/Hover = Blues/1000), not a dimmed gradient */
+.btn--primary:hover:not(:disabled) { background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)), var(--gradient-brand-button); }
 .btn--primary:active:not(:disabled), .btn--primary.is-pressed { filter: brightness(0.78); box-shadow: inset 0 2px 5px rgba(4, 86, 145, 0.45); }
+/* Disabled = faded brand blue with white label (Figma Primary/Disabled), not neutral grey */
+.btn--primary:disabled { background: var(--gradient-brand-button); color: var(--text-invert); opacity: 0.4; }
 .btn--primary .btn__icon { color: var(--text-invert); }
+.btn--primary:disabled { background: linear-gradient(172deg, rgba(0, 116, 199, 0.6) 22.75%, rgba(0, 151, 219, 0.6) 86.15%); color: var(--text-invert); opacity: 1; }
 /* Secondary (White variant by default) */
 .btn--secondary { background: var(--surface-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); font-size: var(--fs-body-lg); height: 46px; padding: 10px 16px; }
-.btn--secondary:hover:not(:disabled) { background-image: linear-gradient(rgba(44, 52, 70, 0.04), rgba(44, 52, 70, 0.04)); border-color: var(--border-secondary); }
-.btn--secondary:active:not(:disabled), .btn--secondary.is-pressed { background-image: linear-gradient(rgba(44, 52, 70, 0.10), rgba(44, 52, 70, 0.10)); border-color: var(--border-strong); }
+/* White secondary — hover = #F9F9F9, pressed = #ECEDF1 (Figma Secondary-White states; hover distinct from pressed) */
+.btn--secondary:hover:not(:disabled) { background: var(--white-gray); border-color: var(--border-secondary); }
+.btn--secondary:active:not(:disabled), .btn--secondary.is-pressed { background: var(--grey-200); border-color: var(--border-strong); box-shadow: inset 0 2px 4px rgba(44, 52, 70, 0.12); }
 .btn--secondary:focus-visible { border-width: 2px; box-shadow: none; }
 .btn--secondary:disabled { background: rgba(255, 255, 255, 0.8); color: var(--text-disabled); border-color: var(--border-secondary); }
 /* Secondary — Light Blue color variant */
 .btn--secondary.btn--blue { background: #EEFAFF; color: var(--text-link-1); border: 0; }
-.btn--secondary.btn--blue:hover:not(:disabled) { background-image: linear-gradient(rgba(44, 52, 70, 0.04), rgba(44, 52, 70, 0.04)); }
-.btn--secondary.btn--blue:active:not(:disabled), .btn--secondary.btn--blue.is-pressed { background: var(--blue-100); }
+.btn--secondary.btn--blue:hover:not(:disabled) { background: #DBF3FF; }
+.btn--secondary.btn--blue:active:not(:disabled), .btn--secondary.btn--blue.is-pressed { background: var(--blue-100); box-shadow: inset 0 2px 4px rgba(7, 114, 207, 0.22); }
 .btn--secondary.btn--blue:focus-visible { box-shadow: 0 0 0 3px var(--blue-200); }
 .btn--secondary.btn--blue:disabled { background: #EEFAFF; color: var(--text-brand); opacity: 0.6; }
 /* Secondary — Red/Delete color variant */
 .btn--secondary.btn--delete { background: var(--surface-alert-error); color: var(--text-alert-error); border: 0; }
-.btn--secondary.btn--delete:hover:not(:disabled) { background-image: linear-gradient(rgba(119, 21, 39, 0.03), rgba(119, 21, 39, 0.03)); }
-.btn--secondary.btn--delete:active:not(:disabled), .btn--secondary.btn--delete.is-pressed { background-image: linear-gradient(rgba(119, 21, 39, 0.08), rgba(119, 21, 39, 0.08)); }
+.btn--secondary.btn--delete:hover:not(:disabled) { background: #FFDBE3; }
+.btn--secondary.btn--delete:active:not(:disabled), .btn--secondary.btn--delete.is-pressed { background: #FFCBD5; }
 .btn--secondary.btn--delete:focus-visible { box-shadow: 0 0 0 3px rgba(249, 135, 156, 0.3); }
 .btn--secondary.btn--delete:disabled { background: var(--surface-alert-error); opacity: 0.6; }
 /* Size modifiers — Medium and Small (default = Large 46px). Apply to any .btn variant. */
@@ -176,15 +181,15 @@ img.icon { object-fit: contain; }
 .btn--sm { height: 32px; padding: 4px 10px 6px; font-size: var(--fs-body-sm); border-radius: var(--radius-xs); }
 /* Tertiary — flat, no fill, no border, button-height padding (for modal actions, inline CTAs) */
 .btn--tertiary { background: transparent; color: var(--text-link-1); border: 0; box-shadow: none; }
-.btn--tertiary:hover:not(:disabled) { background: var(--blue-50); color: var(--text-link-2); }
-.btn--tertiary:active:not(:disabled), .btn--tertiary.is-pressed { background: var(--blue-100); color: var(--text-link-2); }
+/* Hover = neutral grey #F9F9F9, Pressed = light-blue #EEFAFF — per Figma Tertiary states (Archita: hover must read distinct from pressed; modal Cancel uses #F9F9F9) */
+.btn--tertiary:hover:not(:disabled) { background: var(--white-gray); color: var(--text-link-1); }
+.btn--tertiary:active:not(:disabled), .btn--tertiary.is-pressed { background: var(--blue-50); color: var(--text-link-2); box-shadow: inset 0 2px 4px rgba(7, 114, 207, 0.18); }
 .btn--tertiary:focus-visible { box-shadow: var(--shadow-focus); }
-.btn--tertiary:disabled { background: transparent; color: var(--text-disabled); }
+/* Disabled = faded brand-blue label (Figma Tertiary/Disabled), not neutral grey */
+.btn--tertiary:disabled { background: transparent; color: var(--text-brand); opacity: 0.5; }
 /* Link — inline text link with no padding, distinct family */
 .btn--link { background: transparent; color: var(--text-link-1); font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); padding: 0; height: auto; }
 .btn--link:hover:not(:disabled) { text-decoration: underline; color: var(--text-link-2); }
-/* Pill — onboarding-entry only (contingency) */
-.btn--pill { border-radius: var(--radius-pill); background: var(--gradient-brand-button-pill); height: 50px; padding: 14px var(--s-6); }
 
 /* Icon button — square, icon-only. 4 sizes per brand guide (Archita audit): L36 / M24 / S20 / XS16. Distinct from .btn family. */
 .btn-icon { display: inline-grid; place-content: center; background: transparent; border: 0; border-radius: var(--radius-xs); color: var(--icon-primary); cursor: pointer; transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); outline: none; flex-shrink: 0; }
@@ -206,10 +211,32 @@ img.icon { object-fit: contain; }
 .btn--loading::after { content: ""; position: absolute; inset: 0; margin: auto; width: 18px; height: 18px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: btn-spin 600ms linear infinite; color: var(--text-invert); }
 .btn--primary.btn--loading::after { color: var(--text-invert); }
 .btn--secondary.btn--blue.btn--loading::after { color: var(--text-link-1); }
+.btn--tertiary.btn--loading { background: var(--white-gray); }
 .btn--tertiary.btn--loading::after { color: var(--text-link-1); }
 .btn--secondary.btn--loading::after { color: var(--text-primary); }
 .btn--secondary.btn--delete.btn--loading::after { color: var(--text-alert-error); }
 @keyframes btn-spin { to { transform: rotate(360deg); } }
+
+/* ---------- BUTTON STATIC-STATE HELPERS (state matrix only; mirror the live :hover / :focus-visible rules) ---------- */
+.btn--primary.is-hover { background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)), var(--gradient-brand-button); }
+.btn--secondary.is-hover { background: var(--white-gray); border-color: var(--border-secondary); }
+.btn--secondary.btn--blue.is-hover { background: #DBF3FF; }
+.btn--secondary.btn--delete.is-hover { background: #FFDBE3; }
+.btn--tertiary.is-hover { background: var(--white-gray); color: var(--text-link-1); }
+.btn.is-focus { box-shadow: var(--shadow-focus); }
+.btn--secondary.is-focus { border-width: 2px; box-shadow: none; }
+.btn--secondary.btn--blue.is-focus { box-shadow: 0 0 0 3px var(--blue-200); }
+.btn--secondary.btn--delete.is-focus { box-shadow: 0 0 0 3px rgba(249, 135, 156, 0.3); }
+.btn--tertiary.is-focus { box-shadow: var(--shadow-focus); }
+/* State matrix grid (mirrors Figma 7978-13203 — variant x size x state) */
+.btn-matrix-wrap { overflow-x: auto; margin: var(--s-3) 0 var(--s-6); padding-bottom: var(--s-2); }
+.btn-matrix { display: grid; grid-template-columns: 96px repeat(5, minmax(112px, 1fr)); gap: var(--s-3) var(--s-4); align-items: center; min-width: 680px; }
+.btn-matrix__head { font-size: var(--fs-body-xs); font-weight: var(--fw-semibold); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+.btn-matrix__group { grid-column: 1 / -1; font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); border-bottom: 1px solid var(--border-secondary); padding-bottom: var(--s-1); margin-top: var(--s-3); }
+.btn-matrix__size { font-size: var(--fs-body-xs); font-weight: var(--fw-semibold); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.btn-matrix .btn { width: 100%; pointer-events: none; }
+.btn-matrix .btn:focus-visible { box-shadow: none; }
+.btn-matrix .btn--secondary:focus-visible { border-width: 1px; }
 
 /* ---------- INPUTS — Archita audit: focus border #99D5F1 ---------- */
 .field { display: flex; flex-direction: column; gap: 4px; min-width: 240px; }
@@ -240,19 +267,19 @@ img.icon { object-fit: contain; }
 .check__box::after { content: ""; width: 10px; height: 5px; border-left: 2px solid var(--icon-invert); border-bottom: 2px solid var(--icon-invert); transform: rotate(-45deg) translate(1px, -1px); opacity: 0; }
 .check:hover .check__box { border-color: var(--blue-500); }
 .check input:focus-visible + .check__box { box-shadow: var(--shadow-focus); }
-.check input:checked + .check__box { background: var(--blue-500); border-color: var(--blue-500); }
+.check input:checked + .check__box { background: var(--blue-700); border-color: var(--blue-700); }
 .check input:checked + .check__box::after { opacity: 1; }
-.check--indeterminate .check__box { background: var(--blue-500); border-color: var(--blue-500); }
+.check--indeterminate .check__box { background: var(--blue-700); border-color: var(--blue-700); }
 .check--indeterminate .check__box::after { content: ""; width: 10px; height: 0; border-left: 0; border-bottom: 2px solid var(--icon-invert); opacity: 1; transform: none; }
 .check--error .check__box { border-color: var(--border-error); }
 .check--error.check__check-on input:checked + .check__box { background: var(--red-200); border-color: var(--red-200); }
 .check input:disabled + .check__box { background: var(--surface-disabled); border-color: var(--border-secondary); cursor: not-allowed; }
 .check:has(input:disabled) { color: var(--text-disabled); cursor: not-allowed; }
 .radio__circle { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--surface-primary); display: inline-grid; place-content: center; transition: border-color var(--dur-fast) var(--ease-out); }
-.radio__circle::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-500); transform: scale(0); transition: transform var(--dur-fast) var(--ease-out); }
+.radio__circle::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-700); transform: scale(0); transition: transform var(--dur-fast) var(--ease-out); }
 .radio:hover .radio__circle { border-color: var(--blue-500); }
 .radio input:focus-visible + .radio__circle { box-shadow: var(--shadow-focus); }
-.radio input:checked + .radio__circle { border-color: var(--blue-500); }
+.radio input:checked + .radio__circle { border-color: var(--blue-700); }
 .radio input:checked + .radio__circle::after { transform: scale(1); }
 .radio input:disabled + .radio__circle { background: var(--surface-disabled); border-color: var(--border-secondary); cursor: not-allowed; }
 .radio:has(input:disabled) { color: var(--text-disabled); cursor: not-allowed; }
@@ -265,7 +292,7 @@ img.icon { object-fit: contain; }
 .switch__thumb { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--surface-primary); transition: left var(--dur-base) var(--ease-out); box-shadow: 0 1px 2px rgba(44, 52, 70, 0.18); }
 .switch:hover .switch__track { background: var(--grey-500); }
 .switch input:focus-visible + .switch__track { box-shadow: var(--shadow-focus); }
-.switch input:checked + .switch__track { background: var(--blue-500); }
+.switch input:checked + .switch__track { background: var(--blue-700); }
 .switch input:checked + .switch__track .switch__thumb { left: 18px; }
 .switch input:disabled + .switch__track { background: var(--surface-disabled); cursor: not-allowed; }
 .switch:has(input:disabled) { color: var(--text-disabled); cursor: not-allowed; }
@@ -381,17 +408,25 @@ img.icon { object-fit: contain; }
 .sidebar-section { font-size: var(--fs-body-xs); color: var(--text-secondary); padding: var(--s-3) var(--s-3) var(--s-2); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.05em; }
 
 /* ---------- AVATARS ---------- */
-.avatar { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--blue-100); color: var(--blue-700); font-family: var(--font-brand); font-weight: var(--fw-semibold); flex-shrink: 0; user-select: none; }
+.avatar { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--grey-200); color: var(--grey-700); font-family: var(--font-brand); font-weight: var(--fw-semibold); flex-shrink: 0; user-select: none; overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
 .avatar--sm { width: 32px; height: 32px; font-size: 12px; }
 .avatar--md { width: 40px; height: 40px; font-size: 14px; }
 .avatar--lg { width: 48px; height: 48px; font-size: 16px; }
 .avatar--gray { background: var(--grey-200); color: var(--grey-800); }
 .avatar--darkblue { background: #047CD2; color: var(--text-invert); }
 .avatar--shop { background: #195796; color: var(--text-invert); }
+.avatar .icon { width: 58%; height: 58%; color: var(--icon-secondary); }
+/* Avatar with status indicator badge (examples — full set in Figma) */
+.avatar-ind { position: relative; display: inline-flex; }
+.avatar-ind__badge { position: absolute; right: -1px; bottom: -1px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--surface-canvas); display: inline-grid; place-content: center; box-sizing: border-box; }
+.avatar-ind__badge .icon { width: 8px; height: 8px; color: var(--text-invert); }
+.avatar-ind__badge--online { background: var(--green-400); }
+.avatar-ind__badge--brand  { background: var(--icon-brand); }
+.avatar-ind__badge--alert  { background: var(--accent-400); }
 
 .txn-list { background: var(--surface-primary); border: 1px solid var(--border-secondary); border-radius: var(--radius-md); overflow: hidden; max-width: 520px; }
-.txn-row { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--border-secondary); }
-.txn-row:last-child { border-bottom: 0; }
+.txn-row { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); }
 .txn-row__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .txn-row__name { font-weight: var(--fw-semibold); font-size: var(--fs-body); color: var(--text-primary); }
 .txn-row__meta { font-weight: var(--fw-semilight); font-size: var(--fs-body-xs); color: var(--text-secondary); }
@@ -470,16 +505,15 @@ img.icon { object-fit: contain; }
 .list-selector--mobile   { width: 260px; }
 .list-selector--web      { width: 240px; }
 .list-selector-item { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3); background: var(--surface-primary); border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); cursor: pointer; transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
-.list-selector-item:hover:not([aria-disabled="true"]):not([aria-selected="true"]) { background: var(--blue-50); }
+.list-selector-item:hover:not([aria-disabled="true"]):not([aria-selected="true"]), .list-selector-item.is-hover { background: var(--white-gray); }
 .list-selector-item[aria-selected="true"] { background: var(--blue-50); border-color: var(--blue-200); }
 .list-selector-item[aria-disabled="true"] { background: var(--surface-secondary); color: var(--text-disabled); cursor: not-allowed; }
 /* Leading circle is a media/avatar placeholder (e.g. profile pic), NOT a radio control (Figma 8543:3905) */
-.list-selector-item__radio { width: 28px; height: 28px; border-radius: 50%; background: var(--blue-100); flex-shrink: 0; position: relative; overflow: hidden; }
-.list-selector-item__radio::before { content: ""; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--blue-300); top: 5px; left: 9px; } /* head */
-.list-selector-item__radio::after { content: ""; position: absolute; width: 18px; height: 11px; border-radius: 9px 9px 0 0; background: var(--blue-300); bottom: 0; left: 5px; } /* shoulders */
-.list-selector-item[aria-selected="true"] .list-selector-item__radio { box-shadow: 0 0 0 2px var(--blue-500); }
-.list-selector-item[aria-disabled="true"] .list-selector-item__radio { background: var(--surface-tertiary); }
-.list-selector-item[aria-disabled="true"] .list-selector-item__radio::before, .list-selector-item[aria-disabled="true"] .list-selector-item__radio::after { background: var(--grey-300); }
+.list-selector-item__radio { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-strong); background: transparent; flex-shrink: 0; }
+.list-selector-item[aria-selected="true"] .list-selector-item__radio { border-color: var(--blue-700); }
+.list-selector-item[aria-disabled="true"] .list-selector-item__radio { border-color: var(--grey-300); }
+.list-selector-item__state { margin-left: auto; font-size: var(--fs-body-xs); font-weight: var(--fw-semibold); color: var(--text-tertiary); flex-shrink: 0; }
+.list-selector-item.is-pressed { background: var(--white-gray); box-shadow: inset 0 2px 4px rgba(44, 52, 70, 0.10); }
 .list-selector-item__body { display: flex; flex-direction: column; gap: 0; min-width: 0; }
 .list-selector-item__title { font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-primary); line-height: 1.3; }
 .list-selector-item[aria-selected="true"] .list-selector-item__title { color: var(--text-brand); }
@@ -504,8 +538,8 @@ img.icon { object-fit: contain; }
 
 /* ---------- LOGO (§3) ---------- */
 .logo-row { display: flex; gap: var(--s-4); flex-wrap: wrap; }
-.logo-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s-3); min-width: 200px; min-height: 124px; padding: var(--s-6); border-radius: var(--radius-m); border: 1px solid var(--border-secondary); background: var(--surface-primary); }
-.logo-stage--blue { background: var(--barion-blue); border-color: transparent; }
+.logo-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s-3); min-width: 200px; min-height: 124px; padding: var(--s-6); border-radius: var(--radius-m); border: 0; background: var(--surface-tertiary); }
+.logo-stage--blue { background: var(--gradient-brand-button); border-color: transparent; }
 .logo-stage--dark { background: var(--blue-gray); border-color: transparent; }
 .logo-stage__logo { height: 26px; width: auto; }
 .logo-stage__logo--mark { height: 44px; }
@@ -854,9 +888,10 @@ img.icon { object-fit: contain; }
   <table class="token-table">
     <thead><tr><th></th><th>Token</th><th>Hex</th><th>Usage</th></tr></thead>
     <tbody>
-      <tr><td class="swatch-cell"><span class="swatch-chip" style="background: var(--accent-400)"></span></td><td class="token-cell">--accent-400</td><td class="hex-cell">#F86B33</td><td class="usage-cell">Accent gradient end — marketing only, never dominant in product UI</td></tr>
-      <tr><td class="swatch-cell"><span class="swatch-chip" style="background: var(--green-600)"></span></td><td class="token-cell">--green-600 / --icon-success</td><td class="hex-cell">#1F8B3C</td><td class="usage-cell">Success icon fill (snackbar)</td></tr>
-      <tr><td class="swatch-cell"><span class="swatch-chip" style="background: var(--red-200)"></span></td><td class="token-cell">--red-200 / --text-error / --border-error</td><td class="hex-cell">#E5484D</td><td class="usage-cell">Error states, validation</td></tr>
+      <tr><td class="swatch-cell"><span class="swatch-chip" style="background: var(--accent-200)"></span></td><td class="token-cell">--accent-200 / Accent-300</td><td class="hex-cell">#F89C63</td><td class="usage-cell">Status accent — Figma Accent/300</td></tr>
+      <tr><td class="swatch-cell"><span class="swatch-chip" style="background: var(--icon-success)"></span></td><td class="token-cell">--icon-success</td><td class="hex-cell">#207811</td><td class="usage-cell">Success icon fill (snackbar) — Figma value</td></tr>
+      <tr><td class="swatch-cell"><span class="swatch-chip" style="background: var(--text-error)"></span></td><td class="token-cell">--text-error / --border-error</td><td class="hex-cell">#C32D48</td><td class="usage-cell">Error states, validation — Figma value</td></tr>
+      <tr><td class="swatch-cell"><span class="swatch-chip" style="background: var(--icon-error)"></span></td><td class="token-cell">--icon-error</td><td class="hex-cell">#D1314F</td><td class="usage-cell">Error icon fill — Figma value</td></tr>
     </tbody>
   </table>
 
@@ -949,7 +984,7 @@ img.icon { object-fit: contain; }
 
   <div class="kicker">Colour variants — in priority order</div>
   <div class="logo-row">
-    <div class="logo-stage logo-stage--blue"><img src="assets/barion-wordmark-white.svg" alt="Barion logo, white on blue" class="logo-stage__logo"><span class="logo-stage__tag">1 · White on Barion Blue — preferred</span></div>
+    <div class="logo-stage logo-stage--blue"><img src="assets/barion-wordmark-white.svg" alt="Barion logo, white on blue gradient" class="logo-stage__logo"><span class="logo-stage__tag">1 · White on Barion Blue gradient — preferred</span></div>
     <div class="logo-stage"><img src="assets/barion-wordmark-blue.svg" alt="Barion logo, Barion blue on white" class="logo-stage__logo"><span class="logo-stage__tag">2 · Barion Blue on white</span></div>
     <div class="logo-stage logo-stage--dark"><img src="assets/barion-wordmark-white.svg" alt="Barion logo, white on blue-gray" class="logo-stage__logo"><span class="logo-stage__tag">3 · White on blue-gray</span></div>
   </div>
@@ -983,13 +1018,12 @@ img.icon { object-fit: contain; }
   <p class="hint">Each radius maps to specific components per Archita audit. Pill (999) is a contingency reserved for the onboarding-entry surface.</p>
 
   <div class="shape-grid">
-    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-xxs)">4 · xxs</div><div class="shape-meta"><span class="label">XXS — 4px</span><span class="usage">Chips</span></div></div>
-    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-xs)">6 · xs</div><div class="shape-meta"><span class="label">XS — 6px</span><span class="usage">Small button, selectors, alerts, inputs</span></div></div>
-    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-sm)">8 · sm</div><div class="shape-meta"><span class="label">S — 8px</span><span class="usage">Medium / large button, accordions</span></div></div>
-    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-m)">10 · m</div><div class="shape-meta"><span class="label">M — 10px</span><span class="usage">Containers</span></div></div>
-    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-mobile-lg)">14 · mobile</div><div class="shape-meta"><span class="label">Mobile L — 14px</span><span class="usage">Large mobile — bottom sheets, cards</span></div></div>
-    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-lg)">16 · lg</div><div class="shape-meta"><span class="label">L — 16px</span><span class="usage">Modals</span></div></div>
-    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-pill)">∞ pill</div><div class="shape-meta"><span class="label">Pill — 999px</span><span class="usage">Contingency — onboarding entry pill primaries</span></div></div>
+    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-xxs)">4px</div><div class="shape-meta"><span class="label">XXS — 4px</span><span class="usage">Chips</span></div></div>
+    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-xs)">6px</div><div class="shape-meta"><span class="label">XS — 6px</span><span class="usage">Small button, selectors, alerts, inputs</span></div></div>
+    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-sm)">8px</div><div class="shape-meta"><span class="label">S — 8px</span><span class="usage">Medium / large button, accordions</span></div></div>
+    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-m)">10px</div><div class="shape-meta"><span class="label">M — 10px</span><span class="usage">Containers</span></div></div>
+    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-mobile-lg)">14px</div><div class="shape-meta"><span class="label">Mobile L — 14px</span><span class="usage">Large mobile — bottom sheets, cards</span></div></div>
+    <div class="shape-card"><div class="shape-tile" style="border-radius: var(--radius-lg)">16px</div><div class="shape-meta"><span class="label">L — 16px</span><span class="usage">Modals</span></div></div>
   </div>
 
   <div class="callout"><strong>The system is flat.</strong> No shadows on buttons, cards, or inputs. Shadows reserved for overlays — modals (<code>--shadow-modal</code>), dropdowns/popovers (<code>--shadow-overlay</code>), tooltips (<code>--shadow-tooltip</code>), keyboard focus (<code>--shadow-focus</code>).</div>
@@ -1031,11 +1065,10 @@ img.icon { object-fit: contain; }
 <!-- ============================================================ -->
 <section class="section" id="gradients">
   <h2>7 · Gradients</h2>
-  <p class="hint">Brand vertical = hero/marketing only. Button gradient = primary CTA. Pill gradient = onboarding-entry pill primaries.</p>
+  <p class="hint">Brand vertical = hero/marketing only. Button gradient = primary CTA.</p>
   <div class="row">
     <div class="gradient-tile" style="background: var(--gradient-brand); flex:1">Brand vertical (hero)<br><span style="font-weight:300;font-size:var(--fs-body-xs);opacity:0.9">--gradient-brand · 180°</span></div>
     <div class="gradient-tile" style="background: var(--gradient-brand-button); flex:1">Primary button<br><span style="font-weight:300;font-size:var(--fs-body-xs);opacity:0.9">--gradient-brand-button · 158° · #0074C7 → #0097DB</span></div>
-    <div class="gradient-tile" style="background: var(--gradient-brand-button-pill); flex:1">Pill primary<br><span style="font-weight:300;font-size:var(--fs-body-xs);opacity:0.9">--gradient-brand-button-pill · 158° · #0772CF → #0097DB</span></div>
   </div>
   <div class="flag"><strong>Always vertical.</strong> Per Figma brand guidelines, gradients never run horizontally and Barion Blue must stay the dominant stop. <code>--gradient-brand-horiz</code> is <strong>deprecated</strong> — kept only for back-compat, never use it in new UI.</div>
 </section>
@@ -1043,38 +1076,25 @@ img.icon { object-fit: contain; }
 <!-- ============================================================ -->
 <section class="section" id="icons">
   <h2>8 · Icons <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=1-865" target="_blank" rel="noopener">Figma ↗</a></h2>
-  <p class="hint">Inline SVG symbols on a 24×24 grid, single stroke weight, colour set to <code>currentColor</code> so they inherit text colour — crisp at any size and they recolour on active/hover states.</p>
-  <div class="callout"><strong>Source:</strong> the Barion Figma System-icon library (node <code>1416:18786</code>) doesn't export its glyphs as single SVGs, so this set uses matched-weight stand-ins (Lucide, the sanctioned substitution) for the 9 icons in use. Swap in the exact Figma exports per icon as they become available; the full library is ~130 system icons plus flags and payment-brand marks.</div>
+  <p class="hint">This page is a <strong>reference</strong>, not the icon set. The Barion <strong>Figma System-icon library is the single source of truth</strong> — go there for the actual glyphs. The example below illustrates how icons behave technically, not which icons exist.</p>
+  <div class="flag"><strong>Not the icon catalogue.</strong> The full library (~130 system icons plus flags and payment-brand marks) lives in <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=1-865" target="_blank" rel="noopener">Figma <code>node 1-865</code> ↗</a>. To avoid confusion this page intentionally does <strong>not</strong> reproduce the set — the single glyph shown is an illustrative stand-in (Lucide, the sanctioned substitution) for behaviour only. Always pull the real exports from Figma.</div>
 
-  <div class="kicker">Library</div>
-  <div class="icon-grid">
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-home"/></svg><span class="icon-card__name">home</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-user"/></svg><span class="icon-card__name">user</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-card"/></svg><span class="icon-card__name">card</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-bank-transfer"/></svg><span class="icon-card__name">bank-transfer</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-top-up"/></svg><span class="icon-card__name">top-up</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-send-money"/></svg><span class="icon-card__name">send-money</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-statements"/></svg><span class="icon-card__name">statements</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-settings"/></svg><span class="icon-card__name">settings</span></div>
-    <div class="icon-card"><svg class="icon icon--lg"><use href="#i-search"/></svg><span class="icon-card__name">search</span></div>
-  </div>
-
-  <div class="kicker">Size scale (16 · 20 · 24 · 28 px)</div>
+  <div class="kicker">One illustrative example — size scale (16 · 20 · 24 · 28 px)</div>
   <div class="row" style="align-items:center;gap:var(--s-4)">
     <svg class="icon icon--sm"><use href="#i-home"/></svg>
     <svg class="icon icon--md"><use href="#i-home"/></svg>
     <svg class="icon icon--lg"><use href="#i-home"/></svg>
     <svg class="icon icon--xl"><use href="#i-home"/></svg>
-    <span class="body-xs">SVG — crisp at every size</span>
+    <span class="body-xs">Inline SVG on a 24×24 grid, single stroke weight — crisp at every size</span>
   </div>
 
-  <div class="kicker">Recolours with <code>currentColor</code> — default · brand · success · error</div>
+  <div class="kicker">Same example — recolours with <code>currentColor</code> — default · brand · success · error</div>
   <div class="row" style="align-items:center;gap:var(--s-4)">
     <svg class="icon icon--lg"><use href="#i-home"/></svg>
     <svg class="icon icon--lg icon--brand"><use href="#i-home"/></svg>
     <svg class="icon icon--lg icon--success"><use href="#i-home"/></svg>
     <svg class="icon icon--lg icon--error"><use href="#i-home"/></svg>
-    <span class="body-xs">Same symbol — colour inherited from context. That's why active sidebar &amp; tab icons turn blue.</span>
+    <span class="body-xs">Colour set to <code>currentColor</code>, inherited from context. That's why active sidebar &amp; tab icons turn blue.</span>
   </div>
 </section>
 
@@ -1082,6 +1102,11 @@ img.icon { object-fit: contain; }
 <section class="section" id="buttons">
   <h2>9 · Buttons <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=7978-13198" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">8px radius for in-app product UI. Never use a drop shadow on a button (the pressed state uses a subtle inset shadow only).</p>
+
+  <div class="kicker">Static state matrix — default, hover, pressed, focused &amp; disabled side by side (mirrors the Figma brand guideline, node 7978-13203). Loading is demoed live below.</div>
+  <div class="btn-matrix-wrap"><div class="btn-matrix"><div class="btn-matrix__head"></div><div class="btn-matrix__head">Default</div><div class="btn-matrix__head">Hover</div><div class="btn-matrix__head">Pressed</div><div class="btn-matrix__head">Focused</div><div class="btn-matrix__head">Disabled</div><div class="btn-matrix__group">Primary</div><div class="btn-matrix__size">L</div><button class="btn btn--primary" aria-label="Primary L Default">Top up</button><button class="btn btn--primary is-hover" aria-label="Primary L Hover">Top up</button><button class="btn btn--primary is-pressed" aria-label="Primary L Pressed">Top up</button><button class="btn btn--primary is-focus" aria-label="Primary L Focused">Top up</button><button class="btn btn--primary" disabled aria-label="Primary L Disabled">Top up</button><div class="btn-matrix__size">M</div><button class="btn btn--primary btn--md" aria-label="Primary M Default">Top up</button><button class="btn btn--primary btn--md is-hover" aria-label="Primary M Hover">Top up</button><button class="btn btn--primary btn--md is-pressed" aria-label="Primary M Pressed">Top up</button><button class="btn btn--primary btn--md is-focus" aria-label="Primary M Focused">Top up</button><button class="btn btn--primary btn--md" disabled aria-label="Primary M Disabled">Top up</button><div class="btn-matrix__size">S</div><button class="btn btn--primary btn--sm" aria-label="Primary S Default">Top up</button><button class="btn btn--primary btn--sm is-hover" aria-label="Primary S Hover">Top up</button><button class="btn btn--primary btn--sm is-pressed" aria-label="Primary S Pressed">Top up</button><button class="btn btn--primary btn--sm is-focus" aria-label="Primary S Focused">Top up</button><button class="btn btn--primary btn--sm" disabled aria-label="Primary S Disabled">Top up</button><div class="btn-matrix__group">Secondary · White</div><div class="btn-matrix__size">L</div><button class="btn btn--secondary" aria-label="Secondary · White L Default">Cancel</button><button class="btn btn--secondary is-hover" aria-label="Secondary · White L Hover">Cancel</button><button class="btn btn--secondary is-pressed" aria-label="Secondary · White L Pressed">Cancel</button><button class="btn btn--secondary is-focus" aria-label="Secondary · White L Focused">Cancel</button><button class="btn btn--secondary" disabled aria-label="Secondary · White L Disabled">Cancel</button><div class="btn-matrix__size">M</div><button class="btn btn--secondary btn--md" aria-label="Secondary · White M Default">Cancel</button><button class="btn btn--secondary btn--md is-hover" aria-label="Secondary · White M Hover">Cancel</button><button class="btn btn--secondary btn--md is-pressed" aria-label="Secondary · White M Pressed">Cancel</button><button class="btn btn--secondary btn--md is-focus" aria-label="Secondary · White M Focused">Cancel</button><button class="btn btn--secondary btn--md" disabled aria-label="Secondary · White M Disabled">Cancel</button><div class="btn-matrix__size">S</div><button class="btn btn--secondary btn--sm" aria-label="Secondary · White S Default">Cancel</button><button class="btn btn--secondary btn--sm is-hover" aria-label="Secondary · White S Hover">Cancel</button><button class="btn btn--secondary btn--sm is-pressed" aria-label="Secondary · White S Pressed">Cancel</button><button class="btn btn--secondary btn--sm is-focus" aria-label="Secondary · White S Focused">Cancel</button><button class="btn btn--secondary btn--sm" disabled aria-label="Secondary · White S Disabled">Cancel</button><div class="btn-matrix__group">Secondary · Light blue</div><div class="btn-matrix__size">L</div><button class="btn btn--secondary btn--blue" aria-label="Secondary · Light blue L Default">Modify</button><button class="btn btn--secondary btn--blue is-hover" aria-label="Secondary · Light blue L Hover">Modify</button><button class="btn btn--secondary btn--blue is-pressed" aria-label="Secondary · Light blue L Pressed">Modify</button><button class="btn btn--secondary btn--blue is-focus" aria-label="Secondary · Light blue L Focused">Modify</button><button class="btn btn--secondary btn--blue" disabled aria-label="Secondary · Light blue L Disabled">Modify</button><div class="btn-matrix__size">M</div><button class="btn btn--secondary btn--blue btn--md" aria-label="Secondary · Light blue M Default">Modify</button><button class="btn btn--secondary btn--blue btn--md is-hover" aria-label="Secondary · Light blue M Hover">Modify</button><button class="btn btn--secondary btn--blue btn--md is-pressed" aria-label="Secondary · Light blue M Pressed">Modify</button><button class="btn btn--secondary btn--blue btn--md is-focus" aria-label="Secondary · Light blue M Focused">Modify</button><button class="btn btn--secondary btn--blue btn--md" disabled aria-label="Secondary · Light blue M Disabled">Modify</button><div class="btn-matrix__size">S</div><button class="btn btn--secondary btn--blue btn--sm" aria-label="Secondary · Light blue S Default">Modify</button><button class="btn btn--secondary btn--blue btn--sm is-hover" aria-label="Secondary · Light blue S Hover">Modify</button><button class="btn btn--secondary btn--blue btn--sm is-pressed" aria-label="Secondary · Light blue S Pressed">Modify</button><button class="btn btn--secondary btn--blue btn--sm is-focus" aria-label="Secondary · Light blue S Focused">Modify</button><button class="btn btn--secondary btn--blue btn--sm" disabled aria-label="Secondary · Light blue S Disabled">Modify</button><div class="btn-matrix__group">Secondary · Delete</div><div class="btn-matrix__size">L</div><button class="btn btn--secondary btn--delete" aria-label="Secondary · Delete L Default">Delete</button><button class="btn btn--secondary btn--delete is-hover" aria-label="Secondary · Delete L Hover">Delete</button><button class="btn btn--secondary btn--delete is-pressed" aria-label="Secondary · Delete L Pressed">Delete</button><button class="btn btn--secondary btn--delete is-focus" aria-label="Secondary · Delete L Focused">Delete</button><button class="btn btn--secondary btn--delete" disabled aria-label="Secondary · Delete L Disabled">Delete</button><div class="btn-matrix__size">M</div><button class="btn btn--secondary btn--delete btn--md" aria-label="Secondary · Delete M Default">Delete</button><button class="btn btn--secondary btn--delete btn--md is-hover" aria-label="Secondary · Delete M Hover">Delete</button><button class="btn btn--secondary btn--delete btn--md is-pressed" aria-label="Secondary · Delete M Pressed">Delete</button><button class="btn btn--secondary btn--delete btn--md is-focus" aria-label="Secondary · Delete M Focused">Delete</button><button class="btn btn--secondary btn--delete btn--md" disabled aria-label="Secondary · Delete M Disabled">Delete</button><div class="btn-matrix__size">S</div><button class="btn btn--secondary btn--delete btn--sm" aria-label="Secondary · Delete S Default">Delete</button><button class="btn btn--secondary btn--delete btn--sm is-hover" aria-label="Secondary · Delete S Hover">Delete</button><button class="btn btn--secondary btn--delete btn--sm is-pressed" aria-label="Secondary · Delete S Pressed">Delete</button><button class="btn btn--secondary btn--delete btn--sm is-focus" aria-label="Secondary · Delete S Focused">Delete</button><button class="btn btn--secondary btn--delete btn--sm" disabled aria-label="Secondary · Delete S Disabled">Delete</button><div class="btn-matrix__group">Tertiary</div><div class="btn-matrix__size">L</div><button class="btn btn--tertiary" aria-label="Tertiary L Default">Cancel</button><button class="btn btn--tertiary is-hover" aria-label="Tertiary L Hover">Cancel</button><button class="btn btn--tertiary is-pressed" aria-label="Tertiary L Pressed">Cancel</button><button class="btn btn--tertiary is-focus" aria-label="Tertiary L Focused">Cancel</button><button class="btn btn--tertiary" disabled aria-label="Tertiary L Disabled">Cancel</button><div class="btn-matrix__size">M</div><button class="btn btn--tertiary btn--md" aria-label="Tertiary M Default">Cancel</button><button class="btn btn--tertiary btn--md is-hover" aria-label="Tertiary M Hover">Cancel</button><button class="btn btn--tertiary btn--md is-pressed" aria-label="Tertiary M Pressed">Cancel</button><button class="btn btn--tertiary btn--md is-focus" aria-label="Tertiary M Focused">Cancel</button><button class="btn btn--tertiary btn--md" disabled aria-label="Tertiary M Disabled">Cancel</button><div class="btn-matrix__size">S</div><button class="btn btn--tertiary btn--sm" aria-label="Tertiary S Default">Cancel</button><button class="btn btn--tertiary btn--sm is-hover" aria-label="Tertiary S Hover">Cancel</button><button class="btn btn--tertiary btn--sm is-pressed" aria-label="Tertiary S Pressed">Cancel</button><button class="btn btn--tertiary btn--sm is-focus" aria-label="Tertiary S Focused">Cancel</button><button class="btn btn--tertiary btn--sm" disabled aria-label="Tertiary S Disabled">Cancel</button></div></div>
+
+  <div class="kicker">Live / interactive — hover, click &amp; hold, or tab to focus</div>
 
   <div class="kicker">Primary CTAs — Large · Medium · Small (per Figma brand-guideline)</div>
   <div class="row" style="align-items:center">
@@ -1195,46 +1220,6 @@ img.icon { object-fit: contain; }
     <label class="switch"><input type="checkbox" checked><span class="switch__track"><span class="switch__thumb"></span></span><span>SMS receipts</span></label>
     <label class="switch"><input type="checkbox" disabled><span class="switch__track"><span class="switch__thumb"></span></span><span>Disabled · off</span></label>
     <label class="switch"><input type="checkbox" checked disabled><span class="switch__track"><span class="switch__thumb"></span></span><span>Disabled · on</span></label>
-  </div>
-
-
-  <div class="kicker">Card details — one block: number + scheme mark, then expiry · CVC</div>
-  <div class="row" style="align-items:flex-start;gap:var(--s-6)">
-    <div class="field" style="min-width:300px;max-width:340px">
-      <label class="field__label">Card details</label>
-      <div class="card-block">
-        <div class="card-block__number">
-          <input value="5329 8089 1456 8938" inputmode="numeric" aria-label="Card number">
-          <span class="card-block__scheme">
-            <svg class="card-scheme" viewBox="0 0 48 32" role="img" aria-label="Mastercard">
-              <circle cx="19" cy="16" r="11" fill="#EB001B"/>
-              <circle cx="29" cy="16" r="11" fill="#F79E1B"/>
-              <path d="M24 7.6a11 11 0 0 0 0 16.8 11 11 0 0 0 0-16.8Z" fill="#FF5F00"/>
-            </svg>
-          </span>
-        </div>
-        <div class="card-block__split">
-          <div class="card-block__cell"><input value="01 / 26" inputmode="numeric" aria-label="Expiry"></div>
-          <div class="card-block__cell"><input placeholder="CVC" inputmode="numeric" aria-label="CVC"></div>
-        </div>
-      </div>
-      <span class="field__helper">One bordered container; the focused sub-field (number / expiry / CVC) highlights on its own. Scheme mark appears once detected.</span>
-    </div>
-  </div>
-  <div class="callout">The card field has more states than shown here (empty, scheme-detected, per-field focus, error + supporting text, in both light and dark). For the complete spec, see <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=7978-15866" target="_blank" rel="noopener">Card field in Figma ↗</a></div>
-
-  <div class="kicker">Textarea — multi-line / expandable field (default · error)</div>
-  <div class="row" style="align-items:flex-start;gap:var(--s-6)">
-    <div class="field" style="min-width:320px;flex:1">
-      <label class="field__label">Payment note</label>
-      <textarea class="field__textarea" rows="3">Invoice #2026-0518 — thanks for shopping with Acme.</textarea>
-      <span class="field__helper">Shown to the customer on the receipt.</span>
-    </div>
-    <div class="field field--error" style="min-width:320px;flex:1">
-      <label class="field__label">Reason for refund</label>
-      <textarea class="field__textarea" placeholder="Tell us what went wrong…"></textarea>
-      <span class="field__helper" style="color:var(--text-error)">A reason is required for refunds over €500.</span>
-    </div>
   </div>
 </section>
 
@@ -1527,20 +1512,6 @@ img.icon { object-fit: contain; }
     <span class="breadcrumb__current" aria-current="page">Acme Webshop</span>
   </nav>
 
-  <div class="kicker">Mobile — top app bar · bottom tab bar</div>
-  <div class="row" style="align-items:flex-start;gap:var(--s-6);flex-wrap:wrap">
-    <div class="appbar">
-      <button class="appbar__icon" aria-label="Back"><svg class="icon icon--sm" style="transform:rotate(90deg)"><use href="#i-chevron-down"/></svg></button>
-      <span class="appbar__title">Activity</span>
-      <button class="appbar__icon" aria-label="Search"><svg class="icon icon--sm"><use href="#i-search"/></svg></button>
-    </div>
-    <div class="bottomnav">
-      <a href="#" class="bottomnav__item bottomnav__item--active"><svg class="icon"><use href="#i-home"/></svg>Home</a>
-      <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-card"/></svg>Balances</a>
-      <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-send-money"/></svg>Send</a>
-      <a href="#" class="bottomnav__item"><svg class="icon"><use href="#i-statements"/></svg>Activity</a>
-    </div>
-  </div>
 </section>
 
 <!-- ============================================================ -->
@@ -1561,28 +1532,27 @@ img.icon { object-fit: contain; }
 <!-- ============================================================ -->
 <section class="section" id="avatars">
   <h2>18 · Avatars &amp; transaction lists <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=9205-66010" target="_blank" rel="noopener">Figma ↗</a></h2>
-  <p class="hint">Avatars are circular containers for initials or product marks. Three sizes (32 · 40 · 48) with brand-coordinated tints. Transaction list pairs an avatar with name, secondary line, and right-aligned amount.</p>
+  <p class="hint">Avatars are circular profile containers. Three sizes (32 · 40 · 48). The default is the profile (user) avatar; a small corner badge can carry a status indicator. Transaction list pairs an avatar with name, secondary line, and right-aligned amount.</p>
 
-  <div class="kicker">Sizes — 32 · 40 · 48</div>
+  <div class="kicker">Profile avatars — 32 · 40 · 48</div>
   <div class="row" style="align-items:center;gap:var(--s-3)">
-    <span class="avatar avatar--sm">AB</span>
-    <span class="avatar avatar--md">AB</span>
-    <span class="avatar avatar--lg">AB</span>
+    <span class="avatar avatar--sm"><svg class="icon" style="width:16px;height:16px"><use href="#i-user"/></svg></span>
+    <span class="avatar avatar--md"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg></span>
+    <span class="avatar avatar--lg"><svg class="icon" style="width:24px;height:24px"><use href="#i-user"/></svg></span>
   </div>
 
-  <div class="kicker">Background tints — light blue · grey · dark blue · shop</div>
-  <div class="row" style="align-items:center;gap:var(--s-3)">
-    <span class="avatar avatar--md">AB</span>
-    <span class="avatar avatar--md avatar--gray">JK</span>
-    <span class="avatar avatar--md avatar--darkblue">TG</span>
-    <span class="avatar avatar--md avatar--shop">SH</span>
+  <div class="kicker">With status indicators — examples (see Figma for the full set)</div>
+  <div class="row" style="align-items:center;gap:var(--s-5)">
+    <span class="avatar-ind"><span class="avatar avatar--md"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg></span><span class="avatar-ind__badge avatar-ind__badge--online" title="Online"></span></span>
+    <span class="avatar-ind"><span class="avatar avatar--md"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg></span><span class="avatar-ind__badge avatar-ind__badge--brand" title="Verified"><svg class="icon"><use href="#i-check"/></svg></span></span>
+    <span class="avatar-ind"><span class="avatar avatar--md"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg></span><span class="avatar-ind__badge avatar-ind__badge--alert" title="Action needed"></span></span>
   </div>
-  <div class="callout">Barion avatar backgrounds stay in the white→navy blue family (light blue <code>#EEFAFF</code>, grey <code>#ECEDF1</code>, dark blue <code>#047CD2</code>, shop <code>#195796</code>) plus a photo variant. No green/orange/red fills.</div>
+  <div class="callout">The profile avatar is the default. Status is carried by a small corner indicator badge (online · verified · action-needed shown here) — the full indicator set lives in <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=10659-15505" target="_blank" rel="noopener">Figma ↗</a>.</div>
 
   <div class="kicker">Transaction list</div>
   <div class="txn-list">
     <div class="txn-row">
-      <span class="avatar avatar--md">AC</span>
+      <span class="avatar avatar--md"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg></span>
       <div class="txn-row__body">
         <span class="txn-row__name">Acme Webshop</span>
         <span class="txn-row__meta">Card payment · May 21 14:32</span>
@@ -1590,7 +1560,7 @@ img.icon { object-fit: contain; }
       <span class="txn-row__amount txn-row__amount--out">−€12.50</span>
     </div>
     <div class="txn-row">
-      <span class="avatar avatar--md avatar--darkblue">CB</span>
+      <span class="avatar avatar--md"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg></span>
       <div class="txn-row__body">
         <span class="txn-row__name">Coffee Bean</span>
         <span class="txn-row__meta">Card payment · May 20 09:00</span>
@@ -1598,7 +1568,7 @@ img.icon { object-fit: contain; }
       <span class="txn-row__amount txn-row__amount--out">−€3.90</span>
     </div>
     <div class="txn-row">
-      <span class="avatar avatar--md avatar--gray">VI</span>
+      <span class="avatar avatar--md"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg></span>
       <div class="txn-row__body">
         <span class="txn-row__name">VISA •••• 5559</span>
         <span class="txn-row__meta">Bank card topup · May 19 18:11</span>
@@ -1606,7 +1576,7 @@ img.icon { object-fit: contain; }
       <span class="txn-row__amount txn-row__amount--in">+€100.00</span>
     </div>
     <div class="txn-row">
-      <span class="avatar avatar--md avatar--gray">??</span>
+      <span class="avatar avatar--md"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg></span>
       <div class="txn-row__body">
         <span class="txn-row__name">Unknown merchant</span>
         <span class="txn-row__meta">Pending verification · May 18 22:04</span>
@@ -1697,17 +1667,6 @@ img.icon { object-fit: contain; }
     </div>
   </div>
 
-  <div class="kicker">Bottom drawer (mobile sheet)</div>
-  <div class="drawer-stage">
-    <div class="drawer">
-      <span class="drawer__handle" aria-hidden="true"></span>
-      <h3 class="modal-card__title" style="margin-bottom:var(--s-3)">Choose account</h3>
-      <div class="drawer__item"><span class="avatar avatar--sm">AW</span><div class="txn-row__body"><span class="txn-row__name">Acme Webshop</span><span class="txn-row__meta">Business · €12,480.00</span></div><svg class="icon icon--sm" style="transform:rotate(-90deg);color:var(--icon-secondary)"><use href="#i-chevron-down"/></svg></div>
-      <div class="drawer__item"><span class="avatar avatar--sm avatar--darkblue">PW</span><div class="txn-row__body"><span class="txn-row__name">Personal wallet</span><span class="txn-row__meta">€340.20</span></div><svg class="icon icon--sm" style="transform:rotate(-90deg);color:var(--icon-secondary)"><use href="#i-chevron-down"/></svg></div>
-      <button class="btn btn--secondary btn--blue" style="width:100%;margin-top:var(--s-4)">+ Add account</button>
-    </div>
-  </div>
-
   <div class="kicker">Tooltip variants — dark top · light top · dark bottom · dark right</div>
   <div class="row" style="align-items:center;gap:var(--s-12);padding:var(--s-12) var(--s-4) var(--s-12)">
     <div class="tooltip-demo">
@@ -1761,32 +1720,35 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="selectors">
-  <h2>21 · Selectors (list) <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=8543-3905" target="_blank" rel="noopener">Figma ↗</a></h2>
-  <p class="hint">Vertical list selector. Each row leads with a media slot (a placeholder for a profile picture or icon — <em>not</em> a radio control), then a title + subtitle. Selected = blue title on a light-blue surface with a blue ring on the avatar; rows also have hover and disabled states. Distinct from Dropdowns (section 12) — selectors stay open and are used when all options should be visible at once.</p>
+  <h2>21 · Selectors (list) <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=8543-4036" target="_blank" rel="noopener">Figma ↗</a></h2>
+  <p class="hint">Continuous vertical list of options — each row a circle indicator + title + subtitle. Stays open so every option is visible at once (account picker, payment-method picker, KYC document type). Distinct from Dropdowns (§12). One row per state below, labelled on the right: <strong>default · pressed · selected · disabled</strong>. Selected = light-blue surface + blue ring + blue label. Sizes: Profiles 36 · Default 24 · Mobile 20 · Web 16 px (see Figma).</p>
 
-  <div class="kicker">One list, four row states — default · selected · default · disabled</div>
+  <div class="kicker">One list, one row per state — default · pressed · selected · disabled</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
-    <div class="list-selector" style="width:340px">
+    <div class="list-selector" style="width:380px">
       <div class="list-selector-item">
         <span class="list-selector-item__radio"></span>
         <div class="list-selector-item__body"><span class="list-selector-item__title">Anna Kovács</span><span class="list-selector-item__sub">anna.kovacs@gmail.com</span></div>
+        <span class="list-selector-item__state">Default</span>
+      </div>
+      <div class="list-selector-item is-pressed">
+        <span class="list-selector-item__radio"></span>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Bence Tóth</span><span class="list-selector-item__sub">bence.toth@gmail.com</span></div>
+        <span class="list-selector-item__state">Pressed</span>
       </div>
       <div class="list-selector-item" aria-selected="true">
         <span class="list-selector-item__radio"></span>
-        <div class="list-selector-item__body"><span class="list-selector-item__title">Bence Tóth</span><span class="list-selector-item__sub">bence.toth@gmail.com</span></div>
-      </div>
-      <div class="list-selector-item">
-        <span class="list-selector-item__radio"></span>
         <div class="list-selector-item__body"><span class="list-selector-item__title">Csilla Nagy</span><span class="list-selector-item__sub">csilla.nagy@gmail.com</span></div>
+        <span class="list-selector-item__state">Selected</span>
       </div>
       <div class="list-selector-item" aria-disabled="true">
         <span class="list-selector-item__radio"></span>
         <div class="list-selector-item__body"><span class="list-selector-item__title">Dávid Szabó</span><span class="list-selector-item__sub">david.szabo@gmail.com</span></div>
+        <span class="list-selector-item__state">Disabled</span>
       </div>
     </div>
   </div>
-
-  <div class="callout">One component, four row states: default · hover · selected (blue tint + ring) · disabled. Row height comes in four sizes (Profiles 36 · Default 24 · Mobile 20 · Web 16 px) — see Figma for the size set. Use the Selector when the user should see every option without expanding a menu — account picker, payment-method picker, KYC document type.</div>
+  <div class="callout">Each row shows one distinct state (labelled on the right). <strong>Selected</strong> = light-blue surface, blue ring on the circle, and a blue title. <strong>Pressed</strong> = neutral grey with a subtle inset depression. The live interactive <code>:hover</code> is a neutral grey — distinct from the blue selected state.</div>
 </section>
 
 <!-- ============================================================ -->
@@ -1844,6 +1806,15 @@ img.icon { object-fit: contain; }
 </div>
 
 <script>
+  // ---------- Inert demo links: placeholder a[href="#"] inside demo components
+  //            must not jump to top of page (Archita audit). Sidenav links use real
+  //            #section hrefs and are unaffected. ----------
+  (function () {
+    document.querySelectorAll('a[href="#"]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); });
+    });
+  })();
+
   // ---------- Session-expiry countdown (demo: loops) ----------
   (function () {
     var el = document.querySelector('[data-countdown]');

@@ -105,7 +105,7 @@
   /* DEPRECATED — off-brand: Figma brand guidelines forbid horizontal gradients. Kept for back-compat; do not use in new UI. */
   --gradient-brand-horiz:  linear-gradient(90deg, #0772CF 0%, #0097DB 50%, #33ACE2 100%);
   --gradient-accent:       linear-gradient(135deg, #F86B33 0%, #FFC39E 100%);
-  --gradient-brand-button:      linear-gradient(158deg, #0074C7 22.75%, #0097DB 86.15%);
+  --gradient-brand-button:      linear-gradient(172deg, #0772CF 22.75%, #0097DB 86.15%);
   --gradient-brand-button-pill: linear-gradient(158deg, #0772CF 22.75%, #0097DB 86.15%);
 
   /* ------------------------------------------------------------------ */
@@ -120,7 +120,7 @@
   --text-link-2:    var(--blue-500);
   --text-disabled:  var(--grey-500);
   --text-inactive:  var(--grey-600);
-  --text-error:     var(--red-200);
+  --text-error:     #C32D48;            /* Figma text-error */
   --text-button:    #FFFFFF;
 
   --surface-primary:   #FFFFFF;
@@ -165,20 +165,20 @@
   --border-strong:    var(--grey-400);
   --border-brand:     var(--blue-500);
   --border-active:    var(--focus-blue);
-  --border-error:     var(--red-200);
+  --border-error:     #C32D48;            /* Figma border-error */
   --border-success:   var(--green-400);
   --border-warning:   var(--accent-400);
 
-  /* Icons */
-  --icon-primary:   var(--grey-900);
-  --icon-secondary: var(--grey-700);
-  --icon-brand:     var(--blue-500);
-  --icon-brand-2:   var(--blue-300);
+  /* Icons — values from Figma Colours page (Icons/* variables), Archita audit 2.0 */
+  --icon-primary:   var(--grey-900);   /* #2C3446 */
+  --icon-secondary: var(--grey-800);   /* #46516D (Figma Icon-Secondary) */
+  --icon-brand:     var(--blue-700);   /* #0772CF (Figma Icon-Brand) */
+  --icon-brand-2:   #087FE7;           /* Figma Icon-Brand 2 */
   --icon-invert:    #FFFFFF;
-  --icon-disabled:  var(--grey-500);
-  --icon-error:     var(--red-200);
-  --icon-success:   var(--green-400);
-  --icon-alert:     var(--accent-400);
+  --icon-disabled:  var(--grey-400);   /* #C4CAD7 (Figma Icon-Disabled) */
+  --icon-error:     #D1314F;           /* Figma Icon-Error */
+  --icon-success:   var(--green-700);  /* #207811 (Figma Icon-Success) */
+  --icon-alert:     var(--accent-400); /* #F86B33 (Figma Icon-Alert) */
 
   /* ------------------------------------------------------------------ */
   /* SHAPE — Archita audit spec                                         */
