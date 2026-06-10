@@ -621,6 +621,22 @@ img.icon { object-fit: contain; }
 .bottomnav__item .icon { width: 22px; height: 22px; color: var(--icon-secondary); }
 .bottomnav__item--active .icon { color: var(--text-brand); }
 
+/* ---------- APP SCREEN LAYOUT (§24) ---------- */
+.screen-frame { display: flex; flex-direction: column; border: 1px solid var(--border-secondary); border-radius: var(--radius-lg); overflow: hidden; max-width: 860px; background: var(--surface-primary); }
+.screen-frame__topbar { height: 56px; padding: 0 var(--s-5); display: flex; align-items: center; border-bottom: 1px solid var(--border-secondary); flex-shrink: 0; }
+.screen-frame__topbar-logo { height: 20px; }
+.screen-frame__main { display: grid; grid-template-columns: 220px 1fr; min-height: 300px; flex: 1; }
+.screen-frame__sidebar { background: var(--surface-primary); border-right: 1px solid var(--border-secondary); display: flex; flex-direction: column; padding: var(--s-2) var(--s-3); gap: 2px; }
+.screen-frame__profile { display: flex; align-items: center; gap: var(--s-2); padding: var(--s-2); border: 0; background: none; border-radius: var(--radius-xs); cursor: pointer; width: 100%; text-align: left; margin-bottom: var(--s-1); }
+.screen-frame__profile:hover { background: var(--white-gray); }
+.screen-frame__profile-text { flex: 1; min-width: 0; }
+.screen-frame__profile-name { display: block; font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.screen-frame__profile-sub { display: block; font-size: var(--fs-body-xs); color: var(--text-secondary); font-weight: var(--fw-semilight); }
+.screen-frame__content { display: flex; flex-direction: column; background: var(--white-gray); }
+.screen-frame__page-header { padding: var(--s-3) var(--s-5); display: flex; align-items: center; justify-content: space-between; background: var(--surface-primary); border-bottom: 1px solid var(--border-secondary); }
+.screen-frame__page-title { font-size: var(--fs-h3); font-weight: var(--fw-semibold); color: var(--text-primary); margin: 0; }
+.screen-frame__body { padding: var(--s-4) var(--s-5); }
+
 /* ---------- MODAL VARIANTS (§19) ---------- */
 .modal-scrim { background: rgba(44, 52, 70, 0.55); border-radius: var(--radius-m); padding: var(--s-10) var(--s-8); display: flex; justify-content: center; }
 .modal-card { background: var(--surface-primary); border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); padding: var(--s-6); max-width: 420px; width: 100%; }
@@ -815,6 +831,7 @@ img.icon { object-fit: contain; }
   <span class="sidenav__group-label">Reference</span>
   <ul class="sidenav__list">
     <li><a href="#rules" class="sidenav__link" data-spy-link><span class="sidenav__num">23</span>Hard rules</a></li>
+    <li><a href="#screen-layout" class="sidenav__link" data-spy-link><span class="sidenav__num">24</span>Screen layout</a></li>
   </ul>
 </aside>
 
@@ -1799,6 +1816,58 @@ img.icon { object-fit: contain; }
     <div class="rule"><span class="n">✗</span> Stretching, rotating, recolouring off-palette, or adding effects to the logo</div>
     <div class="rule"><span class="y">✓</span> Text/background pairs meet WCAG AA contrast (4.5:1 body, 3:1 large text)</div>
     <div class="rule"><span class="n">✗</span> Low-contrast pairings that fail AA — including placeholder and disabled copy</div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="screen-layout">
+  <h2>24 · App screen layout</h2>
+  <p class="hint">The Barion logo sits in a shared full-width top bar. This keeps the profile / account switcher and the page title in the same first row below that bar — vertically aligned across both the sidebar and the content column.</p>
+
+  <div class="kicker">Desktop — logo top-left · profile switch + page title aligned</div>
+  <div class="screen-frame">
+    <!-- Full-width top bar: Barion logo anchored to the left -->
+    <div class="screen-frame__topbar">
+      <img src="assets/barion-wordmark-blue.svg" alt="Barion" class="screen-frame__topbar-logo">
+    </div>
+    <!-- Sidebar + content — both start flush below the top bar -->
+    <div class="screen-frame__main">
+      <aside class="screen-frame__sidebar">
+        <!-- Profile / account switcher: first element, aligned with page title -->
+        <button class="screen-frame__profile">
+          <span class="avatar avatar--sm avatar--shop" aria-hidden="true">AC</span>
+          <span class="screen-frame__profile-text">
+            <span class="screen-frame__profile-name">Aviation company</span>
+            <span class="screen-frame__profile-sub">Business account</span>
+          </span>
+          <svg class="icon icon--sm" aria-hidden="true" style="color:var(--icon-secondary);flex-shrink:0"><use href="#i-chevron-down"/></svg>
+        </button>
+        <nav>
+          <a href="#" class="sidebar-item sidebar-item--active"><svg class="icon"><use href="#i-home"/></svg>Home</a>
+          <span class="sidebar-section">Barion account</span>
+          <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-card"/></svg>Balances</a>
+          <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-statements"/></svg>Activities</a>
+          <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-top-up"/></svg>Add money</a>
+          <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-bank-transfer"/></svg>Transfers</a>
+          <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-send-money"/></svg>Send money</a>
+          <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-user"/></svg>Recipients</a>
+        </nav>
+      </aside>
+      <main class="screen-frame__content">
+        <!-- Page header: first element, aligned with profile switcher -->
+        <div class="screen-frame__page-header">
+          <h2 class="screen-frame__page-title">Home</h2>
+          <span class="avatar avatar--sm"><svg class="icon" style="width:16px;height:16px"><use href="#i-user"/></svg></span>
+        </div>
+        <div class="screen-frame__body">
+          <div class="row">
+            <div class="card card--currency"><div class="label">HUF</div><div class="amount">1 000 Ft</div></div>
+            <div class="card card--currency"><div class="label">EUR</div><div class="amount">€ 0.00</div></div>
+            <div class="card card--currency"><div class="label">CZK</div><div class="amount">2 300 Kč</div></div>
+          </div>
+        </div>
+      </main>
+    </div>
   </div>
 </section>
 
