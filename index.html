@@ -134,7 +134,7 @@ img.icon { object-fit: contain; }
 .spacer-label { font-family: var(--font-brand); font-variant-numeric: tabular-nums; font-size: 10px; color: var(--text-secondary); text-align: center; margin-top: var(--s-1); }
 
 /* ---------- MOTION ---------- */
-.motion-tile { background: var(--surface-fill-1); color: var(--text-primary); padding: var(--s-4) var(--s-5); border-radius: var(--radius-xs); cursor: pointer; font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); }
+.motion-tile { background: #EEFAFF; color: var(--text-link-1); padding: var(--s-4) var(--s-5); border-radius: var(--radius-xs); cursor: pointer; font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); }
 .motion-tile:hover { background: var(--blue-500); color: var(--text-invert); }
 .motion-tile.fast { transition: all var(--dur-fast) var(--ease-out); }
 .motion-tile.base { transition: all var(--dur-base) var(--ease-out); }
@@ -152,28 +152,28 @@ img.icon { object-fit: contain; }
 .btn--primary { background: var(--gradient-brand-button); color: var(--text-invert); }
 /* Hover = flat darker blue #0074C7 (Figma Primary/Hover = Blues/1000), not a dimmed gradient */
 .btn--primary:hover:not(:disabled) { background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)), var(--gradient-brand-button); }
-.btn--primary:active:not(:disabled), .btn--primary.is-pressed { filter: brightness(0.78); box-shadow: inset 0 2px 5px rgba(4, 86, 145, 0.45); }
+.btn--primary:active:not(:disabled), .btn--primary.is-pressed { filter: brightness(0.78); box-shadow: none; }
 /* Disabled = faded brand blue with white label (Figma Primary/Disabled), not neutral grey */
 .btn--primary:disabled { background: var(--gradient-brand-button); color: var(--text-invert); opacity: 0.4; }
 .btn--primary .btn__icon { color: var(--text-invert); }
 .btn--primary:disabled { background: linear-gradient(172deg, rgba(0, 116, 199, 0.6) 22.75%, rgba(0, 151, 219, 0.6) 86.15%); color: var(--text-invert); opacity: 1; }
 /* Secondary (White variant by default) */
 .btn--secondary { background: var(--surface-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); font-size: var(--fs-body-lg); height: 46px; padding: 10px 16px; }
-/* White secondary — hover = #F9F9F9, pressed = #ECEDF1 (Figma Secondary-White states; hover distinct from pressed) */
+/* White secondary — hover = #F9F9F9, pressed = #EFEFEF flat (Figma 7978-13309: surface +4% darken, light border, no shadow) */
 .btn--secondary:hover:not(:disabled) { background: var(--white-gray); border-color: var(--border-secondary); }
-.btn--secondary:active:not(:disabled), .btn--secondary.is-pressed { background: var(--grey-200); border-color: var(--border-strong); box-shadow: inset 0 2px 4px rgba(44, 52, 70, 0.12); }
+.btn--secondary:active:not(:disabled), .btn--secondary.is-pressed { background: #EFEFEF; box-shadow: none; }
 .btn--secondary:focus-visible { border-width: 2px; box-shadow: none; }
 .btn--secondary:disabled { background: rgba(255, 255, 255, 0.8); color: var(--text-disabled); border-color: var(--border-secondary); }
 /* Secondary — Light Blue color variant */
 .btn--secondary.btn--blue { background: #EEFAFF; color: var(--text-link-1); border: 0; }
 .btn--secondary.btn--blue:hover:not(:disabled) { background: #DBF3FF; }
-.btn--secondary.btn--blue:active:not(:disabled), .btn--secondary.btn--blue.is-pressed { background: var(--blue-100); box-shadow: inset 0 2px 4px rgba(7, 114, 207, 0.22); }
+.btn--secondary.btn--blue:active:not(:disabled), .btn--secondary.btn--blue.is-pressed { background: var(--blue-100); box-shadow: none; }
 .btn--secondary.btn--blue:focus-visible { box-shadow: 0 0 0 3px var(--blue-200); }
 .btn--secondary.btn--blue:disabled { background: #EEFAFF; color: var(--text-brand); opacity: 0.6; }
-/* Secondary — Red/Delete color variant */
+/* Secondary — Red/Delete color variant. Default #FFE8ED → Hover #FFD7DF (surface-error_hover) → Pressed #FFB9C7 (surface-error_pressed) per Figma 7978-13418/13422 — flat, differentiated, no shadow */
 .btn--secondary.btn--delete { background: var(--surface-alert-error); color: var(--text-alert-error); border: 0; }
-.btn--secondary.btn--delete:hover:not(:disabled) { background: #FFDBE3; }
-.btn--secondary.btn--delete:active:not(:disabled), .btn--secondary.btn--delete.is-pressed { background: #FFCBD5; }
+.btn--secondary.btn--delete:hover:not(:disabled) { background: #FFD7DF; }
+.btn--secondary.btn--delete:active:not(:disabled), .btn--secondary.btn--delete.is-pressed { background: #FFB9C7; }
 .btn--secondary.btn--delete:focus-visible { box-shadow: 0 0 0 3px rgba(249, 135, 156, 0.3); }
 .btn--secondary.btn--delete:disabled { background: var(--surface-alert-error); opacity: 0.6; }
 /* Size modifiers — Medium and Small (default = Large 46px). Apply to any .btn variant. */
@@ -181,9 +181,9 @@ img.icon { object-fit: contain; }
 .btn--sm { height: 32px; padding: 4px 10px 6px; font-size: var(--fs-body-sm); border-radius: var(--radius-xs); }
 /* Tertiary — flat, no fill, no border, button-height padding (for modal actions, inline CTAs) */
 .btn--tertiary { background: transparent; color: var(--text-link-1); border: 0; box-shadow: none; }
-/* Hover = neutral grey #F9F9F9, Pressed = light-blue #EEFAFF — per Figma Tertiary states (Archita: hover must read distinct from pressed; modal Cancel uses #F9F9F9) */
+/* Hover = neutral grey #F9F9F9, Pressed = flat light-blue #EEFAFF with label kept at text-link-1, no inset shadow — per Figma Tertiary/Pressed 10216:65765 */
 .btn--tertiary:hover:not(:disabled) { background: var(--white-gray); color: var(--text-link-1); }
-.btn--tertiary:active:not(:disabled), .btn--tertiary.is-pressed { background: var(--blue-50); color: var(--text-link-2); box-shadow: inset 0 2px 4px rgba(7, 114, 207, 0.18); }
+.btn--tertiary:active:not(:disabled), .btn--tertiary.is-pressed { background: var(--blue-50); color: var(--text-link-1); box-shadow: none; }
 .btn--tertiary:focus-visible { box-shadow: var(--shadow-focus); }
 /* Disabled = faded brand-blue label (Figma Tertiary/Disabled), not neutral grey */
 .btn--tertiary:disabled { background: transparent; color: var(--text-brand); opacity: 0.5; }
@@ -221,9 +221,11 @@ img.icon { object-fit: contain; }
 .btn--primary.is-hover { background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)), var(--gradient-brand-button); }
 .btn--secondary.is-hover { background: var(--white-gray); border-color: var(--border-secondary); }
 .btn--secondary.btn--blue.is-hover { background: #DBF3FF; }
-.btn--secondary.btn--delete.is-hover { background: #FFDBE3; }
+.btn--secondary.btn--delete.is-hover { background: #FFD7DF; }
 .btn--tertiary.is-hover { background: var(--white-gray); color: var(--text-link-1); }
 .btn.is-focus { box-shadow: var(--shadow-focus); }
+/* Primary focus (Figma 7978-13233): solid 3px Blues/500 (#33ACE2) ring + 10% darken — replaces the faint glow that read too light */
+.btn--primary:focus-visible:not(:disabled), .btn--primary.is-focus { background-image: linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)), var(--gradient-brand-button); box-shadow: 0 0 0 3px var(--blue-300); }
 .btn--secondary.is-focus { border-width: 2px; box-shadow: none; }
 .btn--secondary.btn--blue.is-focus { box-shadow: 0 0 0 3px var(--blue-200); }
 .btn--secondary.btn--delete.is-focus { box-shadow: 0 0 0 3px rgba(249, 135, 156, 0.3); }
@@ -450,7 +452,8 @@ img.icon { object-fit: contain; }
 .pagination { display: flex; align-items: center; gap: var(--s-1); }
 .page-btn { width: 32px; height: 32px; border: 0; border-radius: var(--radius-xs); background: transparent; color: var(--text-primary); font-family: var(--font-brand); font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); cursor: pointer; }
 .page-btn:hover:not(.page-btn--active):not(:disabled) { background: var(--surface-tertiary); }
-.page-btn--active { background: var(--blue-500); color: var(--text-invert); }
+/* Active page = light-blue fill + blue text, not solid blue + white (Figma pagination 9305:75462: surface-fill #EEFAFF + text-link-1 #0772CF) */
+.page-btn--active { background: var(--blue-50); color: var(--text-link-1); }
 .page-btn:disabled { color: var(--text-disabled); cursor: not-allowed; }
 
 /* ---------- TOOLTIPS — multiple variants ---------- */
@@ -500,23 +503,24 @@ img.icon { object-fit: contain; }
 @keyframes bp-spin { to { transform: rotate(360deg); } }
 
 /* ---------- LIST SELECTORS — vertical radio-list with title + subtitle ---------- */
-.list-selector { display: flex; flex-direction: column; gap: var(--s-2); width: 280px; }
+.list-selector { display: flex; flex-direction: column; gap: var(--s-2); width: 280px; background: var(--white-gray); padding: var(--s-2); border-radius: var(--radius-sm); }
 .list-selector--profiles { width: 320px; }
 .list-selector--mobile   { width: 260px; }
 .list-selector--web      { width: 240px; }
-.list-selector-item { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3); background: var(--surface-primary); border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); cursor: pointer; transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.list-selector-item { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3); background: var(--surface-primary); border-radius: var(--radius-xs); cursor: pointer; transition: background var(--dur-fast) var(--ease-out); }
 .list-selector-item:hover:not([aria-disabled="true"]):not([aria-selected="true"]), .list-selector-item.is-hover { background: var(--white-gray); }
-.list-selector-item[aria-selected="true"] { background: var(--blue-50); border-color: var(--blue-200); }
+.list-selector-item[aria-selected="true"] { background: var(--blue-50); }
 .list-selector-item[aria-disabled="true"] { background: var(--surface-secondary); color: var(--text-disabled); cursor: not-allowed; }
 /* Leading circle is a media/avatar placeholder (e.g. profile pic), NOT a radio control (Figma 8543:3905) */
 .list-selector-item__radio { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-strong); background: transparent; flex-shrink: 0; }
 .list-selector-item[aria-selected="true"] .list-selector-item__radio { border-color: var(--blue-700); }
 .list-selector-item[aria-disabled="true"] .list-selector-item__radio { border-color: var(--grey-300); }
 .list-selector-item__state { margin-left: auto; font-size: var(--fs-body-xs); font-weight: var(--fw-semibold); color: var(--text-tertiary); flex-shrink: 0; }
-.list-selector-item.is-pressed { background: var(--white-gray); box-shadow: inset 0 2px 4px rgba(44, 52, 70, 0.10); }
+.list-selector-item.is-pressed { background: #EFEFEF; }
 .list-selector-item__body { display: flex; flex-direction: column; gap: 0; min-width: 0; }
 .list-selector-item__title { font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-primary); line-height: 1.3; }
 .list-selector-item[aria-selected="true"] .list-selector-item__title { color: var(--text-brand); }
+.list-selector-item[aria-selected="true"] .list-selector-item__sub { color: var(--text-brand); }
 .list-selector-item__sub { font-weight: var(--fw-semilight); font-size: var(--fs-body-xs); color: var(--text-secondary); line-height: 1.3; }
 .list-selector--profiles .list-selector-item { padding: var(--s-3) var(--s-4); }
 .list-selector--mobile .list-selector-item { padding: var(--s-2) var(--s-3); }
@@ -647,10 +651,12 @@ img.icon { object-fit: contain; }
 /* ---------- FIGMA REFERENCE LINK ---------- */
 .figma-link { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-brand); font-size: 13px; font-weight: var(--fw-semibold); color: var(--text-link-1); text-decoration: none; padding: 3px 10px; border: 1px solid var(--border-secondary); border-radius: var(--radius-pill); white-space: nowrap; transition: background var(--dur-fast) var(--ease-out); }
 .figma-link:hover { background: var(--blue-50); text-decoration: none; }
-.section h2 .figma-link { float: right; font-size: 13px; margin-top: 2px; }
+.section h2 .figma-link { float: right; font-size: 13px; margin-top: 2px; border: none; border-radius: var(--radius-sm); }
+.section h2 .figma-link:hover { background: var(--white-gray); }
 .title-strip__ref { margin-top: var(--s-4); }
 .title-strip .figma-link { border-color: rgba(255,255,255,0.55); color: #fff; background: rgba(255,255,255,0.08); }
 .title-strip .figma-link:hover { background: rgba(255,255,255,0.18); }
+.callout .figma-link { padding: 1px 7px; font-size: 12px; vertical-align: middle; }
 
 /* ---------- RESPONSIVE OVERRIDES (placed last so they win the cascade) ---------- */
 @media (max-width: 1023px) {
@@ -775,7 +781,7 @@ img.icon { object-fit: contain; }
 <aside class="sidenav" aria-label="Page navigation">
   <div class="sidenav__brand">
     <span class="mark" aria-hidden="true"><img src="assets/barion-mark-white.svg" alt=""></span>
-    <span>Barion<br><small>Design system · v3</small></span>
+    <span>Barion<br><small>Design system</small></span>
   </div>
   <button class="sidenav__toggle" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">
     <span class="sidenav__toggle-open"><svg class="icon"><use href="#i-menu"/></svg></span>
@@ -824,14 +830,14 @@ img.icon { object-fit: contain; }
 <main class="content">
 
 <header class="title-strip">
-  <h1>Barion design system <span style="opacity:0.7;font-size:0.6em">v3</span></h1>
+  <h1>Barion design system</h1>
   <p>A living reference for Barion's brand foundations and UI components. Source of truth: the Figma <strong>Brand Guidelines &amp; Design System</strong>. Where a component can't be reproduced 1:1 here (real system icons, illustrations), follow the Figma link in that section.</p>
   <div class="title-strip__ref"><a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Open the full guide in Figma ↗</a></div>
 </header>
 
 <!-- ============================================================ -->
 <section class="section" id="color">
-  <h2>1 · Color</h2>
+  <h2>1 · Color <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">All swatches reference tokens. Every primitive and semantic alias from <code>brand-tokens.css</code> is listed below with its intended usage.</p>
 
   <div class="kicker">Primary brand</div>
@@ -923,7 +929,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="typography">
-  <h2>2 · Typography</h2>
+  <h2>2 · Typography <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">WeblySleek UI → system fallback. Body is Semilight (300). Buttons and headings are Semibold (600). H1 is Semibold at 32px per Figma brand-guideline spec. Caption and Body SM both 14px Semilight per Archita audit.</p>
 
   <div class="kicker">Typeface specimen — WeblySleek UI Semibold and Semilight</div>
@@ -973,7 +979,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="logo">
-  <h2>3 · Logo</h2>
+  <h2>3 · Logo <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">The wordmark is the primary logo; the circular-arrow mark is its standalone icon. Both come from one form — never redraw, stretch, rotate, recolour off-palette, or add effects.</p>
 
   <div class="kicker">Anatomy — wordmark + standalone mark</div>
@@ -1014,7 +1020,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="shape">
-  <h2>4 · Shape</h2>
+  <h2>4 · Shape <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Each radius maps to specific components per Archita audit. Pill (999) is a contingency reserved for the onboarding-entry surface.</p>
 
   <div class="shape-grid">
@@ -1031,7 +1037,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="spacing">
-  <h2>5 · Spacing</h2>
+  <h2>5 · Spacing <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Modular scale — tighter control at smaller values, broader spatial jumps at larger ones. Not a strict 4pt grid.</p>
   <div class="spacer-track">
     <div><div class="spacer" style="width: var(--s-1); height: var(--s-1)"></div><div class="spacer-label">s-1 · 4</div></div>
@@ -1052,7 +1058,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="motion">
-  <h2>6 · Motion</h2>
+  <h2>6 · Motion <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Hover the tiles. Buttons use 300ms ease-in-out per Figma spec. No bounce.</p>
   <div class="row">
     <div class="motion-tile fast">120ms · fast (links, micro)</div>
@@ -1064,7 +1070,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="gradients">
-  <h2>7 · Gradients</h2>
+  <h2>7 · Gradients <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Brand vertical = hero/marketing only. Button gradient = primary CTA.</p>
   <div class="row">
     <div class="gradient-tile" style="background: var(--gradient-brand); flex:1">Brand vertical (hero)<br><span style="font-weight:300;font-size:var(--fs-body-xs);opacity:0.9">--gradient-brand · 180°</span></div>
@@ -1175,7 +1181,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="links">
-  <h2>10 · Tertiary links</h2>
+  <h2>10 · Tertiary links <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Links are a distinct component family from tertiary buttons. Use for inline calls-to-action that sit in body text — "See all", "Read the docs", "Forgot password". No padding, no background, just underlined-on-hover text.</p>
   <div class="row" style="align-items:center;gap:var(--s-6)">
     <a href="#" class="btn--link">See all</a>
@@ -1225,7 +1231,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="dropdowns">
-  <h2>12 · Dropdowns &amp; selectors</h2>
+  <h2>12 · Dropdowns &amp; selectors <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Trigger button + popover menu. Default trigger height matches input field (44–46 px). Menu items follow Single-selector (Figma 8543:4049) — 5 states × 4 sizes. Leading icons sit in 16×16 slots.</p>
 
   <div class="kicker">Single-select dropdown — closed · open · disabled</div>
@@ -1293,7 +1299,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="date-pickers">
-  <h2>13 · Date pickers</h2>
+  <h2>13 · Date pickers <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Input field with calendar icon trigger and popover calendar grid. Built from brand tokens.</p>
 
   <div class="kicker">Single date — closed · open</div>
@@ -1335,7 +1341,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="chips">
-  <h2>14 · Chips</h2>
+  <h2>14 · Chips <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Chips use saturated <code>--surface-status-*</code> for persistent state on entities — tables, cards, lists. Alerts use the pastel <code>--surface-alert-*</code> family — see section 15.</p>
 
   <div class="kicker">Status chips</div>
@@ -1516,7 +1522,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="tables">
-  <h2>17 · Tables</h2>
+  <h2>17 · Tables <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Header: 14px Semibold, NOT uppercase caption. Row height: ~48px (compact) up to 69px (activity). Subtle zebra: even rows white, odd transparent.</p>
   <table class="table">
     <thead><tr><th>Action</th><th>To / from</th><th>Date</th><th class="num">Amount</th><th>Status</th></tr></thead>
@@ -1723,9 +1729,9 @@ img.icon { object-fit: contain; }
   <h2>21 · Selectors (list) <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System?node-id=8543-4036" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Continuous vertical list of options — each row a circle indicator + title + subtitle. Stays open so every option is visible at once (account picker, payment-method picker, KYC document type). Distinct from Dropdowns (§12). One row per state below, labelled on the right: <strong>default · pressed · selected · disabled</strong>. Selected = light-blue surface + blue ring + blue label. Sizes: Profiles 36 · Default 24 · Mobile 20 · Web 16 px (see Figma).</p>
 
-  <div class="kicker">One list, one row per state — default · pressed · selected · disabled</div>
+  <div class="kicker">Static state matrix — default · pressed · selected · disabled (labelled, non-interactive)</div>
   <div class="row" style="align-items:flex-start;gap:var(--s-6)">
-    <div class="list-selector" style="width:380px">
+    <div class="list-selector" style="width:380px;pointer-events:none">
       <div class="list-selector-item">
         <span class="list-selector-item__radio"></span>
         <div class="list-selector-item__body"><span class="list-selector-item__title">Anna Kovács</span><span class="list-selector-item__sub">anna.kovacs@gmail.com</span></div>
@@ -1748,12 +1754,34 @@ img.icon { object-fit: contain; }
       </div>
     </div>
   </div>
-  <div class="callout">Each row shows one distinct state (labelled on the right). <strong>Selected</strong> = light-blue surface, blue ring on the circle, and a blue title. <strong>Pressed</strong> = neutral grey with a subtle inset depression. The live interactive <code>:hover</code> is a neutral grey — distinct from the blue selected state.</div>
+  <div class="callout"><strong>Selected</strong> = light-blue surface, blue ring on the circle, and a blue title. <strong>Pressed</strong> = neutral grey with a subtle inset depression.</div>
+
+  <div class="kicker">Live / interactive — click to select, hover for hover state</div>
+  <div class="row" style="align-items:flex-start;gap:var(--s-6)">
+    <div class="list-selector" style="width:380px" data-selector-demo>
+      <div class="list-selector-item" role="option" tabindex="0">
+        <span class="list-selector-item__radio"></span>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Anna Kovács</span><span class="list-selector-item__sub">anna.kovacs@gmail.com</span></div>
+      </div>
+      <div class="list-selector-item" role="option" tabindex="0">
+        <span class="list-selector-item__radio"></span>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Bence Tóth</span><span class="list-selector-item__sub">bence.toth@gmail.com</span></div>
+      </div>
+      <div class="list-selector-item" role="option" tabindex="0">
+        <span class="list-selector-item__radio"></span>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Csilla Nagy</span><span class="list-selector-item__sub">csilla.nagy@gmail.com</span></div>
+      </div>
+      <div class="list-selector-item" aria-disabled="true" role="option" tabindex="-1">
+        <span class="list-selector-item__radio"></span>
+        <div class="list-selector-item__body"><span class="list-selector-item__title">Dávid Szabó</span><span class="list-selector-item__sub">david.szabo@gmail.com</span></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ============================================================ -->
 <section class="section" id="progress">
-  <h2>22 · Progress indicators</h2>
+  <h2>22 · Progress indicators <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Determinate <strong>progress bars</strong> for known-length tasks; indeterminate <strong>spinners</strong> for indefinite loading. Blue fill / arc on a light blue track. No bounce — spinners rotate linearly.</p>
 
   <div class="kicker">Progress bar — determinate (25% · 60% · 100%)</div>
@@ -1778,7 +1806,7 @@ img.icon { object-fit: contain; }
 
 <!-- ============================================================ -->
 <section class="section" id="rules">
-  <h2>23 · Hard rules</h2>
+  <h2>23 · Hard rules <a class="figma-link" href="https://www.figma.com/design/OmeynxsvYTEtnkZ4d6gWrR/Brand-Guidelines---Design-System" target="_blank" rel="noopener">Figma ↗</a></h2>
   <p class="hint">Cross-cutting principles. Per-component specs (radii, focus colors, typography sizes) live in their own sections above.</p>
   <div class="rules">
     <div class="rule"><span class="y">✓</span> Sentence case — headings, buttons, nav, labels</div>
@@ -1946,6 +1974,24 @@ img.icon { object-fit: contain; }
     btn.addEventListener('click', function () {
       var sb = btn.closest('.snackbar');
       if (sb) sb.style.display = 'none';
+    });
+  });
+
+  // ---------- Selector demo (interactive list) ----------
+  document.querySelectorAll('[data-selector-demo]').forEach(function (list) {
+    list.addEventListener('click', function (e) {
+      var item = e.target.closest('.list-selector-item');
+      if (!item || item.getAttribute('aria-disabled') === 'true') return;
+      list.querySelectorAll('.list-selector-item').forEach(function (i) { i.removeAttribute('aria-selected'); });
+      item.setAttribute('aria-selected', 'true');
+    });
+    list.addEventListener('keydown', function (e) {
+      if (e.key !== ' ' && e.key !== 'Enter') return;
+      var item = document.activeElement && document.activeElement.closest('.list-selector-item');
+      if (!item || item.getAttribute('aria-disabled') === 'true') return;
+      e.preventDefault();
+      list.querySelectorAll('.list-selector-item').forEach(function (i) { i.removeAttribute('aria-selected'); });
+      item.setAttribute('aria-selected', 'true');
     });
   });
 
