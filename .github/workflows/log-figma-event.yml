@@ -1,0 +1,71 @@
+name: Log Figma Brand Update
+
+on:
+  repository_dispatch:
+    types: [figma-library-publish]
+
+jobs:
+  log-event:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Create figma-update label if missing
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'figma-update',
+              });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: 'figma-update',
+                  color: 'a259ff',
+                  description: 'Figma library published a brand change',
+                });
+              } else { throw e; }
+            }
+
+      - name: Open tracking issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const p = context.payload.client_payload;
+            const ts = p.timestamp ? new Date(p.timestamp).toUTCString() : new Date().toUTCString();
+            const fileUrl = p.file_key
+              ? `https://www.figma.com/file/${p.file_key}`
+              : 'https://www.figma.com/file/OmeynxsvYTEtnkZ4d6gWrR';
+
+            const body = [
+              '## Figma brand library was published',
+              '',
+              `| Field | Value |`,
+              `|---|---|`,
+              `| **Event** | \`${p.figma_event ?? 'LIBRARY_PUBLISH'}\` |`,
+              `| **Timestamp** | ${ts} |`,
+              `| **Published by** | ${p.triggered_by ?? 'unknown'} |`,
+              `| **Figma file** | [Open in Figma](${fileUrl}) |`,
+              p.description ? `| **Description** | ${p.description} |` : '',
+              '',
+              '---',
+              '',
+              '### What to do when you\'re back',
+              '1. Go to **Actions → Sync Figma Tokens** → **Run workflow**',
+              '2. Review the opened PR',
+              '3. Merge → Vercel auto-deploys updated `brand-tokens.css`',
+            ].filter(Boolean).join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Figma brand update – ${ts}`,
+              body,
+              labels: ['figma-update'],
+            });
