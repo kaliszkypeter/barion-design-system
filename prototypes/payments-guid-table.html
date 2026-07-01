@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Barion — Payments GUID table (prototype)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../brand-tokens.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--white-gray);
+  padding: var(--s-10);
+}
+
+.card {
+  max-width: 1280px;
+  margin: 0 auto;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--s-6);
+}
+
+.card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--s-4);
+}
+
+.hint {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semilight);
+  color: var(--text-tertiary);
+  margin: 0 0 var(--s-4);
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: var(--fs-body-sm);
+}
+
+col.date { width: 110px; }
+col.id { width: 160px; }
+col.preqid { width: 154px; }
+col.ordernum { width: 134px; }
+col.email { width: auto; }
+col.amount { width: 90px; }
+col.currency { width: 100px; }
+col.risk { width: 64px; }
+col.status { width: 102px; }
+col.type { width: 110px; }
+
+thead th {
+  text-align: left;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  padding: var(--s-2-5) var(--s-3);
+  border-bottom: 1px solid var(--border-primary);
+}
+thead th.amount { text-align: right; }
+thead th.risk { text-align: right; }
+
+.th-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+.th-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.th-icon--sort { color: var(--icon-brand); }
+.th-icon--filter { color: var(--icon-secondary); }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+tbody tr { height: 48px; }
+tbody tr:nth-child(even) { background: var(--surface-primary); }
+tbody tr:nth-child(odd) { background: transparent; }
+
+tbody td {
+  padding: var(--s-2) var(--s-3);
+  border-bottom: 1px solid var(--border-secondary);
+  color: var(--text-primary);
+  font-weight: var(--fw-semilight);
+  vertical-align: middle;
+}
+
+td.amount { text-align: right; font-weight: var(--fw-regular); font-variant-numeric: tabular-nums; }
+td.currency { text-align: left; font-weight: var(--fw-regular); }
+td.email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+td.date { color: var(--text-tertiary); font-size: var(--fs-body-xs); }
+td.type { font-weight: var(--fw-semilight); }
+td.risk { text-align: right; }
+
+/* Fraud risk score — 0-100 numeric score, colour communicates tier; native title attr carries the label */
+.risk-score {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-regular);
+}
+.risk-score.low    { color: var(--text-status-success); }
+.risk-score.medium { color: var(--text-status-warning); }
+.risk-score.high   { color: var(--text-status-error); }
+.risk-score.none   { color: var(--text-tertiary); }
+
+/* Payment identifier — real link (navigation) + separate copy icon-button.
+   Link color/hover-underline comes from the base `a` rule in brand-tokens.css;
+   only truncation/GUID typography is added here. */
+.id-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+.id-link {
+  font-family: var(--font-brand);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-body-xs);
+}
+.id-link .dots { color: var(--text-inactive); font-weight: var(--fw-regular); letter-spacing: 1px; }
+
+/* Icon-button, .btn-icon pattern (see Design/index.html #btn-icon) sized down to fit the row */
+.copy-btn {
+  display: inline-grid;
+  place-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-xs);
+  color: var(--icon-secondary);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.copy-btn .copy-icon { width: 14px; height: 14px; opacity: 1; }
+.copy-btn:hover, .copy-btn:focus-visible {
+  background: var(--blue-50);
+  color: var(--icon-brand);
+  outline: none;
+}
+.copy-btn.copied { color: var(--icon-brand); }
+
+.copy-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Truncated + copyable text cells (payment request identifier / order number) —
+   same .id-wrap pattern as Payment identifier, minus the link/navigation. */
+.text-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  cursor: default;
+}
+.text-truncate {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-brand);
+  font-variant-numeric: tabular-nums;
+}
+.text-wrap:focus-within {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--border-active);
+  border-radius: var(--radius-xxs);
+}
+
+/* Status chips (saturated — persistent entity state) */
+.chip {
+  display: inline-block;
+  font-size: var(--fs-body-xs);
+  font-weight: var(--fw-semibold);
+  padding: 3px var(--s-2-5);
+  border-radius: var(--radius-xxs);
+}
+.chip.success { background: var(--surface-status-success); color: var(--text-status-success); }
+.chip.error   { background: var(--surface-status-error);   color: var(--text-status-error); }
+.chip.warning { background: var(--surface-status-warning); color: var(--text-status-warning); }
+.chip.neutral { background: var(--surface-status-neutral); color: var(--text-status-neutral); }
+
+/* Tooltip (overlay — shadow allowed) */
+.tooltip {
+  position: fixed;
+  background: var(--grey-900);
+  color: var(--text-invert);
+  font-family: var(--font-brand);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-body-xs);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-tooltip);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+  z-index: 50;
+  white-space: nowrap;
+}
+.tooltip.visible { opacity: 1; transform: translateY(0); }
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: var(--s-4);
+  border: 5px solid transparent;
+  border-top-color: var(--grey-900);
+}
+
+/* Snackbar (plain toast — no sentiment colour) */
+.snackbar {
+  position: fixed;
+  left: 50%;
+  bottom: var(--s-6);
+  transform: translate(-50%, 12px);
+  background: var(--surface-primary);
+  color: var(--text-primary);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-regular);
+  padding: var(--s-3) var(--s-5);
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-tooltip);
+  border: 1px solid var(--border-secondary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+  z-index: 100;
+}
+.snackbar.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <h1>Payments</h1>
+  </div>
+  <p class="hint">Click a payment identifier to open its details · use the copy icon to copy · hover any identifier, reference, or the risk score to preview the full value</p>
+
+  <table>
+    <colgroup>
+      <col class="date"><col class="id"><col class="preqid"><col class="ordernum"><col class="email"><col class="amount"><col class="currency"><col class="risk"><col class="status"><col class="type">
+    </colgroup>
+    <thead>
+      <tr>
+        <th><span class="th-inner">Created at <svg class="th-icon th-icon--sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span></th>
+        <th><span class="th-inner">Payment identifier <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+        <th><span class="th-inner">Payment request identifier <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+        <th><span class="th-inner">Order number <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+        <th><span class="th-inner">Payer email address <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+        <th class="amount"><span class="th-inner" style="justify-content:flex-end;">Amount <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+        <th><span class="th-inner">Currency <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+        <th class="risk">Risk</th>
+        <th><span class="th-inner">Status <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+        <th><span class="th-inner">Type of payment <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+<div class="snackbar" id="snackbar"></div>
+
+<script>
+  const copySvg = `<svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  const checkSvg = `<svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+  const riskLabels = { low: "Low risk", medium: "Medium risk", high: "High risk", none: "Not scored" };
+
+  const payments = [
+    { pid: "4f9a2b1c-8e3d-4a91-9c77-e83d1b902af4", preqid: "INV-2026-04821", ordernum: "ORD-88213", email: "zoltan.kovacs@zoldkave.hu", amount: "128.40", currency: "EUR", risk: "low", score: 18, status: "success", label: "Completed", date: "May 21, 14:32", type: "Immediate" },
+    { pid: "a1d6e8f2-33c0-4b17-8f9e-2a7c5d1e690b", preqid: "a99ac3c-7923-4fd9-ba69-a425a9ceb01f-checkout-ref", ordernum: "webshop-order-2026-0512-77", email: "–", amount: "64.00", currency: "USD", risk: "medium", score: 52, status: "warning", label: "Pending", date: "May 21, 12:15", type: "Reservation" },
+    { pid: "9b2c4d6e-71a8-4f03-9d5c-6e8b0a2f4c17", preqid: "PL-REQ-33021", ordernum: "NS-2026-778821", email: "anna.nowak@novashop.pl", amount: "19.90", currency: "PLN", risk: "high", score: 88, status: "error", label: "Failed", date: "May 20, 09:00", type: "Immediate" },
+    { pid: "c7e1f3a5-8b2d-4906-9c3e-1a5f7b9d2c04", preqid: "req_8f3ac91b4e2d47c6a8b3f91c2e5d7a44", ordernum: "PT-ORDER-556672-EU-checkout-session-retry-02", email: "–", amount: "245.75", currency: "HUF", risk: "none", score: null, status: "success", label: "Completed", date: "May 20, 08:41", type: "Reservation" },
+    { pid: "2d4f6a8b-0c1e-4a53-b7d9-4e8c0a2f6b19", preqid: "MP-HU-2026-0091", ordernum: "ORD-2026-330912", email: "gabor.szabo@example.com", amount: "12.50", currency: "EUR", risk: "low", score: 24, status: "neutral", label: "Refunded", date: "May 19, 22:04", type: "Immediate" },
+    { pid: "6e8b0a2f-4c17-4e19-a3d5-9c7e1f3b5a08", preqid: "rc-pay-req-77213a", ordernum: "RC-ORD-4471", email: "petra.dvorak@rooibosco.cz", amount: "87.30", currency: "CZK", risk: "medium", score: 61, status: "success", label: "Completed", date: "May 19, 16:52", type: "Reservation" },
+    { pid: "5a7c9e1f-3b5d-4a08-9c2f-4e6a8b0c2d17", preqid: "CZ-PRAKTIK-REQ-2026-8834-webshop-checkout-final-attempt", ordernum: "PH-ORD-99012", email: "–", amount: "33.10", currency: "USD", risk: "high", score: 76, status: "warning", label: "Pending", date: "May 19, 10:18", type: "Immediate" }
+  ];
+
+  function shorten(guid) {
+    return { head: guid.slice(0, 8), tail: guid.slice(-6) };
+  }
+
+  const tbody = document.getElementById("rows");
+  payments.forEach(p => {
+    const tr = document.createElement("tr");
+
+    const pidShort = shorten(p.pid);
+    const riskLabel = riskLabels[p.risk];
+    const riskTitle = p.score === null ? "Not scored" : `${p.score} · ${riskLabel}`;
+    const riskText = p.score === null ? "–" : p.score;
+
+    tr.innerHTML = `
+      <td class="date">${p.date}</td>
+      <td>
+        <span class="id-wrap" data-full="${p.pid}">
+          <a href="#" class="id-link" data-full="${p.pid}" aria-label="Payment ID ${p.pid}">
+            ${pidShort.head}<span class="dots">···</span>${pidShort.tail}
+          </a>
+          <button type="button" class="copy-btn" data-full="${p.pid}" data-label="Payment ID" aria-label="Copy payment ID ${p.pid}">
+            ${copySvg}
+          </button>
+        </span>
+      </td>
+      <td>
+        <span class="text-wrap" data-full="${p.preqid}">
+          <span class="text-truncate">${p.preqid}</span>
+          <button type="button" class="copy-btn" data-full="${p.preqid}" data-label="Payment request identifier" aria-label="Copy payment request identifier ${p.preqid}">
+            ${copySvg}
+          </button>
+        </span>
+      </td>
+      <td>
+        <span class="text-wrap" data-full="${p.ordernum}">
+          <span class="text-truncate">${p.ordernum}</span>
+          <button type="button" class="copy-btn" data-full="${p.ordernum}" data-label="Order number" aria-label="Copy order number ${p.ordernum}">
+            ${copySvg}
+          </button>
+        </span>
+      </td>
+      <td class="email">${p.email}</td>
+      <td class="amount">${p.amount}</td>
+      <td class="currency">${p.currency}</td>
+      <td class="risk"><span class="risk-score ${p.risk}" title="${riskTitle}" aria-label="${riskTitle}">${riskText}</span></td>
+      <td><span class="chip ${p.status}">${p.label}</span></td>
+      <td class="type">${p.type}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // --- Tooltip ---
+  const tooltip = document.getElementById("tooltip");
+
+  function showTooltip(el, text) {
+    tooltip.textContent = text;
+    tooltip.classList.add("visible");
+    const rect = el.getBoundingClientRect();
+    tooltip.style.left = rect.left + "px";
+    tooltip.style.top = (rect.top - 36) + "px";
+  }
+  function hideTooltip() {
+    tooltip.classList.remove("visible");
+  }
+
+  // --- Snackbar ---
+  const snackbar = document.getElementById("snackbar");
+  let snackbarTimer;
+  function showSnackbar(text) {
+    clearTimeout(snackbarTimer);
+    snackbar.textContent = text;
+    snackbar.classList.add("visible");
+    snackbarTimer = setTimeout(() => snackbar.classList.remove("visible"), 2200);
+  }
+
+  // --- Copy (shared swap-to-checkmark + snackbar behavior) ---
+  function copyFromTrigger(el, full, label) {
+    const doCopySuccess = () => {
+      const icon = el.querySelector(".copy-icon");
+      icon.outerHTML = checkSvg;
+      el.classList.add("copied");
+      showSnackbar(`${label} copied to clipboard.`);
+      setTimeout(() => {
+        const chk = el.querySelector(".copy-icon");
+        chk.outerHTML = copySvg;
+        el.classList.remove("copied");
+      }, 1200);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(full).then(doCopySuccess).catch(doCopySuccess);
+    } else {
+      doCopySuccess();
+    }
+  }
+
+  // Payment identifier — real link (navigation only, no copy) + separate copy icon-button.
+  // Tooltip is attached to the wrapping .id-wrap so it covers both the link and the icon-button.
+  document.querySelectorAll(".id-wrap").forEach(el => {
+    el.addEventListener("mouseenter", () => showTooltip(el, el.getAttribute("data-full")));
+    el.addEventListener("mouseleave", hideTooltip);
+    el.addEventListener("focusin", () => showTooltip(el, el.getAttribute("data-full")));
+    el.addEventListener("focusout", hideTooltip);
+  });
+
+  document.querySelectorAll(".id-link").forEach(link => {
+    link.addEventListener("click", (e) => e.preventDefault()); // prototype has no real detail route
+  });
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", () => copyFromTrigger(btn, btn.getAttribute("data-full"), btn.getAttribute("data-label")));
+  });
+
+  // Payment request identifier / Order number — tooltip-only preview + copy button, not clickable/no navigation.
+  // Tooltip is attached to the wrapping .text-wrap so it covers both the truncated text and the icon-button,
+  // matching the .id-wrap pattern used for Payment identifier.
+  document.querySelectorAll(".text-wrap").forEach(el => {
+    el.addEventListener("mouseenter", () => showTooltip(el, el.getAttribute("data-full")));
+    el.addEventListener("mouseleave", hideTooltip);
+    el.addEventListener("focusin", () => showTooltip(el, el.getAttribute("data-full")));
+    el.addEventListener("focusout", hideTooltip);
+  });
+</script>
+
+</body>
+</html>
