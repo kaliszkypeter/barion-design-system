@@ -27,7 +27,6 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: "--model claude-sonnet-5 --allowedTools Bash,Read,Write,Edit,Glob,Grep"
-          show_full_output: "true"
           prompt: |
             You are syncing the Barion design system's `brand-tokens.css` with the current
             Figma Brand Guidelines file (ID: OmeynxsvYTEtnkZ4d6gWrR).
@@ -56,15 +55,34 @@ jobs:
             Read `brand-tokens.css` in full.
 
             ## Step 4 — Map and diff
-            Match each Figma style name to its corresponding CSS custom property using these rules:
-            - Style name segments map to the variable suffix: "Blue/Primary" → look for `--blue-primary` or similar
-            - Colour styles → hex values in the primitives section (`:root` block)
-            - Semantic aliases reference primitives; only update primitives — do NOT touch aliases unless a new primitive is added
-            - Text styles → `--fs-*` (font-size), `--fw-*` (weight), `--lh-*` (line-height), `--ls-*` (letter-spacing)
-            - Effect styles (shadows) → `--shadow-*`
 
-            Update `brand-tokens.css` only where a value differs from the Figma source.
-            Rules:
+            Run TWO passes over the fetched Figma data:
+
+            ### Pass A — Primitive color tokens
+            Match Figma color styles in namespaces like `Colours/Blue/*`, `Colours/Grey/*`,
+            `Colours/Green/*`, `Colours/Red/*`, `Colours/Accent/*` to CSS primitive variables
+            (`--blue-*`, `--grey-*`, `--green-*`, `--red-*`, `--accent-*`).
+            Name mapping: "Grey/900" → `--grey-900`, "Blue/Primary" → try `--blue-primary` or
+            the slot closest in the numbered scale (500 = primary, etc.).
+            For each match: if the Figma resolved hex ≠ the CSS hex value, update it.
+
+            ### Pass B — Semantic color aliases with direct hex values
+            Match Figma color styles whose names end in `text-*`, `surface-*`, `border-*`,
+            `icon-*` (e.g. `Colours/Semantic/Text/text-error`, or just `text-error`) to the
+            corresponding CSS variables (`--text-error`, `--surface-brand`, `--border-error`, etc.).
+            Take the last slash-delimited segment, lowercase it, and look for `--{segment}` in CSS.
+            For each matched CSS variable:
+            - If the CSS value is `var(--…)`: **skip** — CSS-level alias cascades from Pass A
+            - If the CSS value is a direct hex: compare to Figma's resolved hex for that style;
+              if they differ, **update the hex value** in brand-tokens.css
+            - **Exception**: if the CSS line contains `Archita audit` in its comment, skip it —
+              those values are intentional deviations from Figma
+
+            Text/typography styles → `--fs-*` (font-size), `--fw-*` (weight),
+            `--lh-*` (line-height), `--ls-*` (letter-spacing)
+            Effect styles → `--shadow-*`
+
+            Rules for all edits:
             - Preserve ALL existing variable names exactly
             - Keep the three-tier structure: primitives → semantic aliases → component tokens
             - Keep all inline comments (Archita audit, Figma alias, DEPRECATED, etc.)
