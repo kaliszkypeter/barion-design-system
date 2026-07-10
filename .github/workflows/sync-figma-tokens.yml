@@ -27,6 +27,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: "--allowedTools Bash,Read,Write,Edit,Glob,Grep"
+          show_full_output: "true"
           prompt: |
             You are syncing the Barion design system's `brand-tokens.css` with the current
             Figma Brand Guidelines file (ID: OmeynxsvYTEtnkZ4d6gWrR).
