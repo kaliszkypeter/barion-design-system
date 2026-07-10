@@ -31,44 +31,57 @@ jobs:
             You are syncing the Barion design system's `brand-tokens.css` with the current
             Figma Brand Guidelines file (ID: OmeynxsvYTEtnkZ4d6gWrR).
 
-            ## Step 1 — Fetch Figma variables
-            Use the Figma REST API to get all variable collections from the file:
+            This file uses Figma **Styles** (not Variables). Use the two-step Styles API.
 
+            ## Step 1 — Fetch all local styles (metadata + node IDs)
             ```bash
             curl -s \
               -H "X-Figma-Token: $FIGMA_ACCESS_TOKEN" \
-              "https://api.figma.com/v1/files/OmeynxsvYTEtnkZ4d6gWrR/variables/local"
+              "https://api.figma.com/v1/files/OmeynxsvYTEtnkZ4d6gWrR/styles"
             ```
+            This returns a list of styles, each with a `node_id` and a `name` (e.g. "Blue/Primary", "Grey/50").
 
-            ## Step 2 — Read current brand-tokens.css
-            Read the file `brand-tokens.css` in full.
+            ## Step 2 — Fetch the actual values for all style nodes
+            Collect all `node_id` values from Step 1 (URL-encode the colons as %3A), then:
+            ```bash
+            curl -s \
+              -H "X-Figma-Token: $FIGMA_ACCESS_TOKEN" \
+              "https://api.figma.com/v1/files/OmeynxsvYTEtnkZ4d6gWrR/nodes?ids=NODE_ID_1,NODE_ID_2,..."
+            ```
+            Each node returns its `fills` (for color styles) or `style` (for text styles).
+            Figma colors are floats 0–1; convert to hex: `hex = round(channel * 255)`.
 
-            ## Step 3 — Diff and update
-            Compare the Figma variable values to the current CSS custom properties.
-            Update `brand-tokens.css` where values differ. Rules:
+            ## Step 3 — Read current brand-tokens.css
+            Read `brand-tokens.css` in full.
 
-            - Preserve ALL existing variable names (--fs-*, --s-*, --text-*, --surface-*,
-              --border-*, --icon-*, --radius-*, --shadow-*, --gradient-*, --grey-*, --blue-*,
-              --accent-*, --red-*, --green-*, --fw-*, --lh-*, --ls-*, --dur-*, --ease-*)
+            ## Step 4 — Map and diff
+            Match each Figma style name to its corresponding CSS custom property using these rules:
+            - Style name segments map to the variable suffix: "Blue/Primary" → look for `--blue-primary` or similar
+            - Colour styles → hex values in the primitives section (`:root` block)
+            - Semantic aliases reference primitives; only update primitives — do NOT touch aliases unless a new primitive is added
+            - Text styles → `--fs-*` (font-size), `--fw-*` (weight), `--lh-*` (line-height), `--ls-*` (letter-spacing)
+            - Effect styles (shadows) → `--shadow-*`
+
+            Update `brand-tokens.css` only where a value differs from the Figma source.
+            Rules:
+            - Preserve ALL existing variable names exactly
             - Keep the three-tier structure: primitives → semantic aliases → component tokens
             - Keep all inline comments (Archita audit, Figma alias, DEPRECATED, etc.)
-            - Only change values that differ in Figma; do not rename or remove tokens
-            - If Figma has NEW variables with no CSS counterpart, append them at the bottom
-              of the relevant section with a comment: /* NEW from Figma sync YYYY-MM-DD */
-            - Never touch the base/semantic element styles below :root {}
+            - Do not rename or remove any existing tokens
+            - If Figma has a style with no CSS counterpart, append at the bottom of the relevant
+              section with comment: /* NEW from Figma sync YYYY-MM-DD */
+            - Never touch element styles below :root {}
 
-            ## Step 4 — Open a PR
-            After editing brand-tokens.css:
+            ## Step 5 — Open a PR if anything changed
+            If brand-tokens.css was modified:
+            1. `git checkout -b sync/figma-tokens-$(date +%Y-%m-%d)`
+            2. `git add brand-tokens.css && git commit -m "sync: Figma brand tokens $(date +%Y-%m-%d)"`
+            3. `git push origin HEAD`
+            4. `gh pr create --base main \
+                 --title "sync: Figma brand tokens – $(date +%Y-%m-%d)" \
+                 --body "$(echo 'Changed tokens:\n\n| Token | Old | New |\n|---|---|---|\n...\n\nNotes: ${{ github.event.inputs.notes }}')"`
 
-            1. Create a new branch: `git checkout -b sync/figma-tokens-$(date +%Y-%m-%d)`
-            2. Stage and commit: `git add brand-tokens.css && git commit -m "sync: Figma brand tokens $(date +%Y-%m-%d)"`
-            3. Push the branch: `git push origin HEAD`
-            4. Open a PR targeting `main` with:
-               - Title: `sync: Figma brand tokens – $(date +%Y-%m-%d)`
-               - Body: list every changed token (name | old value | new value), any new tokens,
-                 and the notes input if provided: "${{ github.event.inputs.notes }}"
-
-            Use `gh pr create` for the PR, with GITHUB_TOKEN already available in the environment.
+            If nothing changed, print "No token changes detected." and exit without creating a PR.
         env:
           FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
