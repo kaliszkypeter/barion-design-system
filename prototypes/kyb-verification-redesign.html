@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Barion — KYB verification redesign (prototype)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../brand-tokens.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--surface-canvas-soft);
+  font-family: var(--font-brand);
+}
+
+.icon { width: 20px; height: 20px; flex-shrink: 0; display: inline-block; vertical-align: middle; color: var(--icon-primary); }
+.icon--sm { width: 16px; height: 16px; }
+
+/* ---------- Top bar (matches Design/index.html admin nav) ---------- */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface-primary); border-bottom: 1px solid var(--border-secondary);
+  padding: var(--s-3) var(--s-6);
+}
+.topbar__brand { display: flex; align-items: center; gap: var(--s-2); font-weight: var(--fw-bold); color: var(--barion-blue); font-size: var(--fs-h4); }
+.topbar__nav { display: flex; gap: var(--s-5); }
+.topbar__nav a { color: var(--text-secondary); font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); }
+.topbar__nav a:hover { color: var(--text-brand); text-decoration: none; }
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-6) var(--s-24);
+}
+
+h1.page-title { margin-bottom: var(--s-6); }
+
+/* ---------- Debug control (prototype-only affordance, not production UI) ---------- */
+.debug-panel { background: var(--white-gray); border: 1px dashed var(--border-secondary); border-radius: var(--radius-m); padding: var(--s-3) var(--s-4); margin-bottom: var(--s-6); }
+.debug-panel summary { cursor: pointer; font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-brand); }
+.debug-panel__body { display: flex; gap: var(--s-3); margin-top: var(--s-3); flex-wrap: wrap; align-items: center; }
+
+/* ---------- Alert banner (reused as-is from index.html §15, + flex-wrap so a progress row can wrap under the text) ---------- */
+.alert-banner { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--radius-xs); border: 1px solid transparent; margin-bottom: var(--s-4); flex-wrap: wrap; }
+.alert-banner .snackbar__body { flex: 1; }
+.snackbar__icon { width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+.snackbar__icon .icon { width: 20px; height: 20px; color: inherit; }
+.snackbar__title { font-weight: var(--fw-bold); font-size: var(--fs-body-sm); color: var(--text-primary); display: block; }
+.snackbar__sub { font-weight: var(--fw-semilight); font-size: var(--fs-body-xs); color: var(--text-secondary); margin: 2px 0 0; }
+.alert-banner--success { background: var(--surface-alert-success); border-color: var(--border-alert-success); }
+.alert-banner--success .snackbar__icon { color: var(--green-700); }
+.alert-banner--error { background: var(--surface-alert-error); border-color: var(--border-alert-error); }
+.alert-banner--error .snackbar__icon { color: var(--text-error); }
+.alert-banner--alert { background: var(--surface-alert-warning); border-color: var(--border-alert-warning); }
+.alert-banner--alert .snackbar__icon { color: var(--accent-400); }
+
+/* ---------- NEW composed pattern: validity countdown embedded in the banner (highlighted text + progress row) ---------- */
+.fetch-banner__validity { font-weight: var(--fw-bold); color: var(--text-primary); }
+.alert-banner__progress { flex-basis: 100%; margin-left: var(--s-8); }
+.progress__track { height: 4px; border-radius: var(--radius-pill); background: var(--green-100); overflow: hidden; }
+.progress__fill { height: 100%; border-radius: var(--radius-pill); background: var(--green-700); transition: width var(--dur-base) var(--ease-out); }
+.alert-banner--alert .progress__track { background: var(--accent-100); }
+/* Note: this full-width accent-400 fill extends the DS "orange icon only" exception to a larger surface;
+   kept intentionally inside the expiring-soon warning banner — flagged for PM, not a token change. */
+.alert-banner--alert .progress__fill { background: var(--accent-400); }
+
+/* ---------- Chips (reused as-is from index.html §14) ---------- */
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 23px; padding: 4px 8px; border-radius: var(--radius-xxs); font-weight: 500; font-size: 14px; line-height: 1.2; white-space: nowrap; border: 0; box-shadow: none; }
+.chip--success { background: var(--surface-status-success); color: var(--text-status-success); }
+.chip--error   { background: var(--surface-status-error);   color: var(--text-status-error); }
+.chip--warning { background: var(--surface-status-warning); color: var(--text-status-warning); }
+.chip--neutral { background: var(--surface-status-neutral); color: var(--text-status-neutral); }
+.chip--outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border-secondary); }
+
+/* ---------- Buttons (reused as-is from index.html §9, + new approve variant) ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2); height: 46px; padding: 14px var(--s-4); border-radius: var(--radius-sm); font-family: var(--font-brand); font-weight: var(--fw-semibold); font-size: var(--fs-body); cursor: pointer; transition: filter var(--dur-button) var(--ease-in-out), background var(--dur-button) var(--ease-in-out); border: 0; box-shadow: none; line-height: 1; }
+.btn:focus-visible { box-shadow: var(--shadow-focus); outline: none; }
+.btn:disabled { background: var(--surface-disabled); color: var(--text-disabled); cursor: not-allowed; }
+.btn--sm { height: 32px; padding: 4px 10px 6px; font-size: var(--fs-body-sm); border-radius: var(--radius-xs); }
+.btn--secondary { background: var(--surface-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); }
+.btn--secondary:hover:not(:disabled) { background: var(--white-gray); }
+.btn--secondary.btn--delete { background: var(--surface-alert-error); color: var(--text-alert-error); border: 0; }
+.btn--secondary.btn--delete:hover:not(:disabled) { background: #FFD7DF; }
+.btn--secondary.btn--delete:disabled { background: var(--surface-alert-error); opacity: 0.6; }
+
+/* NEW — green approve variant, structural mirror of .btn--secondary.btn--delete, existing green tokens only */
+.btn--secondary.btn--approve { background: var(--surface-alert-success); color: var(--text-status-success); border: 0; }
+.btn--secondary.btn--approve:hover:not(:disabled) { background: var(--green-100); }
+.btn--secondary.btn--approve:active:not(:disabled) { background: var(--green-100); filter: brightness(0.96); }
+.btn--secondary.btn--approve:focus-visible { box-shadow: 0 0 0 3px rgba(31, 139, 60, 0.3); }
+/* Gated primary — the section/overall Approve is locked until prerequisites are met, so its disabled
+   state uses the unambiguous standard disabled tokens (not a dimmed green that still reads clickable). */
+.btn--secondary.btn--approve:disabled { background: var(--surface-disabled); color: var(--text-disabled); }
+
+/* Reject/delete gets the DS red-tinted focus ring (index.html §9), matching the approve ring's semantic colour. */
+.btn--secondary.btn--delete:focus-visible { box-shadow: 0 0 0 3px rgba(249, 135, 156, 0.3); }
+
+/* Loading state (reused as-is from index.html §9) — spinner replaces the label while an async action runs */
+.btn--loading { color: transparent !important; pointer-events: none; position: relative; }
+.btn--loading::after { content: ""; position: absolute; inset: 0; margin: auto; width: 18px; height: 18px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: btn-spin 600ms linear infinite; color: var(--text-invert); }
+.btn--secondary.btn--loading::after { color: var(--text-primary); }
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+.btn-icon { display: inline-grid; place-content: center; background: transparent; border: 0; border-radius: var(--radius-xs); color: var(--icon-primary); cursor: pointer; transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); flex-shrink: 0; }
+.btn-icon:hover:not(:disabled) { background: var(--blue-50); color: var(--text-brand); }
+.btn-icon--m { width: 24px; height: 24px; }
+.btn-icon--m .icon { width: 16px; height: 16px; }
+.btn-icon--l { width: 36px; height: 36px; }
+.btn-icon--l .icon { width: 20px; height: 20px; }
+
+/* ---------- Table (reused as-is from index.html §17 / payments-guid-table conventions) ---------- */
+.table { width: 100%; border-collapse: collapse; font-family: var(--font-brand); font-weight: var(--fw-semilight); font-size: var(--fs-body-sm); }
+.table th { text-align: left; padding: var(--s-2-5) var(--s-3); font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-secondary); border-bottom: 1px solid var(--border-primary); height: 40px; }
+.table td { padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--border-secondary); color: var(--text-primary); height: 48px; vertical-align: middle; }
+.table tr:nth-child(even) td { background: var(--surface-primary); }
+.table-scroll { overflow-x: auto; margin-bottom: var(--s-2); }
+
+/* ---------- NEW composed pattern: key/value summary grid ---------- */
+.kv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--s-4) var(--s-6); }
+.kv-row { display: flex; flex-direction: column; gap: 2px; }
+.kv-label { font-size: var(--fs-caption); font-weight: var(--fw-semilight); color: var(--text-secondary); }
+.kv-value { font-size: var(--fs-body-sm); font-weight: var(--fw-regular); color: var(--text-primary); display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-2); }
+
+.process-summary { background: var(--surface-primary); border-radius: var(--radius-m); padding: var(--s-5) var(--s-6); margin-bottom: var(--s-6); }
+.process-summary h2 { margin-bottom: var(--s-4); }
+
+/* ---------- NEW composed pattern: block-level data-provenance badge (one per block, not per field) ---------- */
+.block-badge { font-size: var(--fs-body-xs); }
+.block-badge .icon { width: 12px; height: 12px; }
+
+/* ---------- NEW composed pattern: bordered approval section ---------- */
+.approval-section { border: 1px solid var(--border-secondary); border-radius: var(--radius-m); padding: var(--s-6); margin-bottom: var(--s-6); background: var(--surface-primary); }
+.approval-section__header { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); margin-bottom: var(--s-4); flex-wrap: wrap; }
+.approval-section__title-group { display: flex; align-items: center; gap: var(--s-3); }
+.approval-section__actions { display: flex; gap: var(--s-3); }
+.approval-section__subhead { font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-secondary); margin: var(--s-5) 0 var(--s-3); }
+.approval-section--reverted { border-color: var(--border-error); }
+.approval-section__actions--footer { justify-content: flex-end; margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--border-secondary); }
+
+/* ---------- NEW composed pattern: collapsible section header — status stays visible even when collapsed ---------- */
+.approval-section__header { cursor: pointer; user-select: none; }
+.approval-section__header:focus-visible { outline: none; box-shadow: var(--shadow-focus); border-radius: var(--radius-xs); }
+.approval-section__toggle { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: var(--icon-secondary); transform: rotate(180deg); transition: transform var(--dur-base) var(--ease-out); flex-shrink: 0; }
+.approval-section.is-collapsed .approval-section__toggle { transform: rotate(0deg); }
+.approval-section.is-collapsed .approval-section__body { display: none; }
+
+.dependency-note { font-size: var(--fs-body-sm); color: var(--text-tertiary); margin-bottom: var(--s-4); }
+.dependency-note a { font-weight: var(--fw-semibold); }
+</style>
+</head>
+<body data-eligible="true" data-expired="false">
+
+<svg style="display:none">
+  <defs>
+    <symbol id="i-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+    </symbol>
+    <symbol id="i-x-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+    </symbol>
+    <symbol id="i-alert-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+    </symbol>
+    <symbol id="i-clock-rewind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/>
+    </symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m6 9 6 6 6-6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="topbar__brand">barion</div>
+  <div class="topbar__nav">
+    <a href="#">Users</a><a href="#">Ticketing</a><a href="#">Verification</a><a href="#">Shops</a><a href="#">Finances</a><a href="#">Admin</a><a href="#">Monitoring</a>
+  </div>
+  <div class="topbar__nav"><a href="#">Kaliszky Péter</a></div>
+</div>
+
+<main>
+  <details class="debug-panel">
+    <summary>Prototype controls (not part of the shipped UI)</summary>
+    <div class="debug-panel__body">
+      <button class="btn btn--secondary btn--sm" onclick="showRegistryMatchState()">Simulate: trade register match found</button>
+      <button class="btn btn--secondary btn--sm" onclick="showManualReviewState()">Simulate: no trade register match (manual review)</button>
+      <button class="btn btn--secondary btn--sm" onclick="simulateExpiry()">Simulate: let document expire</button>
+      <button class="btn btn--secondary btn--sm" onclick="location.reload()">Reset demo</button>
+      <span class="body-xs">Toggles the page-level revert banner and both section statuses.</span>
+    </div>
+  </details>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap;margin-bottom:var(--s-6)">
+    <h1 class="page-title" style="margin-bottom:0">Verification process details</h1>
+    <div class="approval-section__actions" id="global-actions">
+      <button id="global-approve" class="btn btn--secondary btn--approve" disabled onclick="approveOverall()">Approve verification</button>
+      <button class="btn btn--secondary btn--delete" onclick="rejectOverall()">Reject verification</button>
+    </div>
+  </div>
+
+  <!-- Page-level revert banner — hidden by default, shown when data-expired="true" -->
+  <div id="revert-banner" class="alert-banner alert-banner--error" style="display:none">
+    <span class="snackbar__icon" aria-hidden="true"><svg class="icon"><use href="#i-x-circle"/></svg></span>
+    <div class="snackbar__body">
+      <strong class="snackbar__title">Verification reverted to unapproved</strong>
+      <p class="snackbar__sub" id="revert-banner-sub">The trade register document expired. Both sections below must be re-reviewed against a fresh document.</p>
+    </div>
+  </div>
+
+  <!-- Process details — condensed context header, not an approval section -->
+  <section class="process-summary">
+    <h2>Díjbeszedő Holding Zrt. <span id="overall-status" class="chip chip--neutral" style="margin-left:var(--s-2)">Pending review</span></h2>
+    <p class="body-sm" id="overall-hint" style="color:var(--text-tertiary);margin:var(--s-1) 0 0">Approve both sections below, then confirm here to finalize and trigger video verification.</p>
+    <div class="kv-grid" style="margin-top:var(--s-4)">
+      <div class="kv-row"><span class="kv-label">Login name</span><span class="kv-value"><a href="#">scheiber-balazs@dbrt.hu</a></span></div>
+      <div class="kv-row"><span class="kv-label">Ticket</span><span class="kv-value"><a href="#">#181493</a></span></div>
+      <div class="kv-row"><span class="kv-label">Wallet type</span><span class="kv-value">Organization</span></div>
+      <div class="kv-row"><span class="kv-label">Verification type</span><span class="kv-value">Video</span></div>
+      <div class="kv-row"><span class="kv-label">FaceKom room ID</span><span class="kv-value">—</span></div>
+      <div class="kv-row"><span class="kv-label">Created at</span><span class="kv-value">2026.07.24. 12:55:50</span></div>
+      <div class="kv-row"><span class="kv-label">Updated at</span><span class="kv-value">2026.07.24. 12:55:50</span></div>
+      <div class="kv-row"><span class="kv-label">Updated by customer at</span><span class="kv-value">—</span></div>
+      <div class="kv-row"><span class="kv-label">Completed at</span><span class="kv-value">—</span></div>
+      <div class="kv-row"><span class="kv-label">Result</span><span class="kv-value">—</span></div>
+      <div class="kv-row"><span class="kv-label">Customer language</span><span class="kv-value">hu-HU</span></div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 1 — Business & company data ================= -->
+  <section class="approval-section" id="section-1">
+    <div class="approval-section__header" role="button" tabindex="0" aria-expanded="true" aria-controls="section-1-body" onclick="toggleSection(1)" onkeydown="handleSectionHeaderKey(event,1)">
+      <div class="approval-section__title-group">
+        <h2>1 · Business &amp; company data</h2>
+        <span id="s1-status" class="chip chip--neutral">Pending review</span>
+      </div>
+      <span class="approval-section__toggle" aria-hidden="true"><svg class="icon"><use href="#i-chevron-down"/></svg></span>
+    </div>
+
+    <div class="approval-section__body" id="section-1-body">
+      <!-- Company-data provenance banner — resolved before this page loads; states are toggled via the debug controls, not simulated fetch delays.
+           Also carries the trade-register document's validity window, so severity (success → expiring soon) escalates as one compound message
+           instead of a duplicate indicator elsewhere on the page. -->
+      <div id="fetch-banner" class="alert-banner alert-banner--success">
+        <span class="snackbar__icon" aria-hidden="true"><svg class="icon"><use href="#i-check-circle"/></svg></span>
+        <div class="snackbar__body">
+          <strong class="snackbar__title">Company data verified via trade register API</strong>
+          <p class="snackbar__sub" id="fetch-banner-sub">Fields below reflect the authoritative source and replace the user-submitted values. <strong class="fetch-banner__validity">Valid for 12 more days.</strong></p>
+        </div>
+        <div class="alert-banner__progress"><div class="progress__track"><div id="fetch-banner-fill" class="progress__fill" style="width:40%"></div></div></div>
+      </div>
+      <button id="request-new-doc-btn" class="btn btn--secondary btn--sm" style="display:none;margin-bottom:var(--s-4)" onclick="requestNewDocument()">Request new trade register document</button>
+
+      <div class="approval-section__subhead">Client summary <span id="client-summary-badge" class="chip chip--outline block-badge" style="margin-left:var(--s-2);display:none"></span></div>
+      <div id="client-summary" class="kv-grid">
+        <div class="kv-row">
+          <span class="kv-label">Organization name</span>
+          <span class="kv-value" id="kv-org-name">Díjbeszedő Holding Zártkörűen Működő Részvénytársaság</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Tax number</span>
+          <span class="kv-value" id="kv-tax">10805246243</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Registration number</span>
+          <span class="kv-value" id="kv-regnum">0110042094</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Headquarter address</span>
+          <span class="kv-value" id="kv-address">1117, Budapest HUN, Budafoki út 107-109.</span>
+        </div>
+      </div>
+
+      <div class="approval-section__subhead">Documents</div>
+      <div class="table-scroll">
+        <table class="table">
+          <thead>
+            <tr><th>Category</th><th>Type</th><th>Document number</th><th>Expiration date</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Extract from the trade register or other official certificate of incorporation, registration</td><td>Deed of Foundation</td><td>—</td><td>—</td>
+              <td><button class="btn-icon btn-icon--l" aria-label="Download document"><svg class="icon"><use href="#i-download"/></svg></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="approval-section__actions approval-section__actions--footer">
+        <button id="s1-approve" class="btn btn--secondary btn--approve" onclick="approveSection(1)">Approve</button>
+        <button class="btn btn--secondary btn--delete" onclick="rejectSection(1)">Reject</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 2 — Beneficial owner structure ================= -->
+  <section class="approval-section" id="section-2">
+    <div class="approval-section__header" role="button" tabindex="0" aria-expanded="true" aria-controls="section-2-body" onclick="toggleSection(2)" onkeydown="handleSectionHeaderKey(event,2)">
+      <div class="approval-section__title-group">
+        <h2>2 · Beneficial owner structure</h2>
+        <span id="s2-status" class="chip chip--neutral">Pending review</span>
+      </div>
+      <span class="approval-section__toggle" aria-hidden="true"><svg class="icon"><use href="#i-chevron-down"/></svg></span>
+    </div>
+
+    <div class="approval-section__body" id="section-2-body">
+      <p class="dependency-note">Grounded in the same trade register document as <a href="#section-1">Business &amp; company data</a> above — if that document expires, this section reverts too.</p>
+
+      <div class="approval-section__subhead">Ownership structure documents</div>
+      <div class="table-scroll">
+        <table class="table">
+          <thead>
+            <tr><th>Category</th><th>Type</th><th>Document number</th><th>Expiration date</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Documents for checking the ownership structure</td><td>—</td><td>—</td><td>—</td>
+              <td><button class="btn-icon btn-icon--l" aria-label="Download document"><svg class="icon"><use href="#i-download"/></svg></button></td>
+            </tr>
+            <tr>
+              <td>Documents for checking the ownership structure</td><td>—</td><td>—</td><td>—</td>
+              <td><button class="btn-icon btn-icon--l" aria-label="Download document"><svg class="icon"><use href="#i-download"/></svg></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="approval-section__subhead">Representative(s)</div>
+      <div class="table-scroll">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>Position</th><th>Birthdate, place</th><th>Address</th><th>Politically exposed?</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="#">Balázs SCHEIBER</a></td><td>igazgatósági tag (vezető tisztségviselő)</td>
+              <td>February 18, 1974, at Pécs</td><td>2089, Telki, Áfonya utca 11</td>
+              <td><span class="chip chip--neutral">No</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="approval-section__subhead">Beneficial owner(s)</div>
+      <div class="table-scroll">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>Type of share</th><th>Birthdate, place</th><th>Address</th><th>Politically exposed?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="#">Anna Réka FÓNAI</a></td><td>Other management right</td><td>September 28, 1995, at Budapest</td><td>1037, Budapest, Domoszló útja 16/B</td><td><span class="chip chip--neutral">No</span></td></tr>
+            <tr><td><a href="#">Tímea Katalin DR. KÖREI-SZABÓ</a></td><td>Other management right</td><td>December 10, 1988, at Budapest</td><td>1144, Budapest, Vezér utca 53/B</td><td><span class="chip chip--neutral">No</span></td></tr>
+            <tr><td><a href="#">Viet NGUYEN HOANG</a></td><td>Other management right</td><td>April 26, 1969, at Hanoi</td><td>1053, Budapest, Múzeum körút 35</td><td><span class="chip chip--neutral">No</span></td></tr>
+            <tr><td><a href="#">Balázs SCHEIBER</a></td><td>Other management right</td><td>February 18, 1974, at Pécs</td><td>2089, Mogyoród, Áfonya utca 11</td><td><span class="chip chip--neutral">No</span></td></tr>
+            <tr><td><a href="#">András DR. NAGY</a></td><td>Other management right</td><td>May 31, 1982, at Budapest</td><td>2146, Mogyoród, Veresegyházi út 18/B</td><td><span class="chip chip--neutral">No</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="approval-section__actions approval-section__actions--footer">
+        <button id="s2-approve" class="btn btn--secondary btn--approve" onclick="approveSection(2)">Approve</button>
+        <button class="btn btn--secondary btn--delete" onclick="rejectSection(2)">Reject</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Log entries ================= -->
+  <section>
+    <h2 style="margin-bottom:var(--s-4)">Log entries</h2>
+    <div class="table-scroll">
+      <table class="table">
+        <thead><tr><th>Happened at</th><th>Source</th><th>Target</th><th>Title</th><th>Room ID</th></tr></thead>
+        <tbody><tr><td colspan="5" class="body-sm" style="color:var(--text-tertiary)">No log entries yet.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+// Accordion — the status chip lives in the header, outside the collapsible body, so it stays
+// visible regardless of open/closed state.
+function toggleSection(n) {
+  var section = document.getElementById('section-' + n);
+  var header = section.querySelector('.approval-section__header');
+  var collapsed = section.classList.toggle('is-collapsed');
+  header.setAttribute('aria-expanded', String(!collapsed));
+}
+function handleSectionHeaderKey(event, n) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    toggleSection(n);
+  }
+}
+
+// Single owner of each section's Approve button — drives visibility AND the disabled
+// attribute together, so a button can never be shown-but-dead or hidden-but-enabled.
+// (Root cause of the earlier state bugs was toggling these two independently.)
+function setApproveButton(n, opts) {
+  var btn = document.getElementById('s' + n + '-approve');
+  if (opts.visible !== undefined) btn.style.display = opts.visible ? '' : 'none';
+  if (opts.enabled !== undefined) btn.disabled = !opts.enabled;
+}
+
+// Terminal states (finalized or case-wide rejected) remove ALL per-section mutating controls
+// so the case can't be recomputed back into an actionable state. `show=true` restores them
+// (used by the debug re-render setters). Section-level Approve/Reject recovery is unaffected —
+// only the whole-case actions call this.
+function setSectionFootersVisible(show) {
+  document.querySelectorAll('.approval-section__actions--footer').forEach(function (f) {
+    f.style.display = show ? '' : 'none';
+  });
+}
+
+// Undo everything simulateExpiry() locked down and return both sections to a clean,
+// reviewable baseline. Every transition OUT of the expired state — request-new-doc, and
+// the debug registry/manual setters — must call this first so the lockdown can't persist.
+function resetExpiryLockdown() {
+  document.getElementById('revert-banner').style.display = 'none';
+  document.getElementById('global-actions').style.display = '';
+  document.getElementById('request-new-doc-btn').style.display = 'none';
+  setSectionFootersVisible(true);   // restore footers a prior terminal state may have hidden
+  document.getElementById('section-1').classList.remove('approval-section--reverted');
+  document.getElementById('section-2').classList.remove('approval-section--reverted');
+  ['1', '2'].forEach(function (n) {
+    var chip = document.getElementById('s' + n + '-status');
+    chip.className = 'chip chip--neutral';
+    chip.textContent = 'Pending review';
+    setApproveButton(n, { visible: true, enabled: true });
+  });
+}
+
+// The two section approvals are prerequisites, not the finalizing action — they unlock the
+// global Approve verification button above, but an explicit click is what actually finalizes
+// and triggers video verification. This gives admins one deliberate confirmation step.
+function updateOverallStatus() {
+  var s1 = document.getElementById('s1-status');
+  var s2 = document.getElementById('s2-status');
+  var overall = document.getElementById('overall-status');
+  var hint = document.getElementById('overall-hint');
+  var globalActions = document.getElementById('global-actions');
+  var globalApprove = document.getElementById('global-approve');
+  var rejected = s1.classList.contains('chip--error') || s2.classList.contains('chip--error');
+  var bothApproved = s1.classList.contains('chip--success') && s2.classList.contains('chip--success');
+
+  globalApprove.disabled = rejected || !bothApproved;
+
+  if (rejected) {
+    overall.className = 'chip chip--error';
+    overall.textContent = 'Rejected';
+    hint.textContent = 'This verification was rejected.';
+    // Terminal — no finalize/reject controls remain (reject also hides the section Approves).
+    globalActions.style.display = 'none';
+  } else if (bothApproved) {
+    // Positive "you're ready" state — neutral, not warning-orange (which reads as a caution).
+    overall.className = 'chip chip--neutral';
+    overall.textContent = 'Ready for final approval';
+    hint.textContent = 'Both sections are approved — click Approve verification to finalize and trigger video verification.';
+    globalActions.style.display = '';
+  } else {
+    overall.className = 'chip chip--neutral';
+    overall.textContent = 'Pending review';
+    hint.textContent = 'Approve both sections below, then confirm here to finalize and trigger video verification.';
+    globalActions.style.display = '';
+  }
+}
+
+function approveOverall() {
+  var overall = document.getElementById('overall-status');
+  overall.className = 'chip chip--success';
+  overall.textContent = 'Approved · video verification triggered';
+  document.getElementById('overall-hint').textContent = 'Verification approved — video verification has been triggered automatically.';
+  // The decision is final — leaving the buttons behind invites a redundant second click.
+  document.getElementById('global-actions').style.display = 'none';
+  setSectionFootersVisible(false);   // terminal — no per-section overrides remain
+}
+
+function rejectOverall() {
+  ['s1-status', 's2-status'].forEach(function (id) {
+    var chip = document.getElementById(id);
+    chip.className = 'chip chip--error';
+    chip.textContent = 'Rejected';
+  });
+  // Terminal reject — remove every per-section override so the case can't be silently
+  // re-approved into a "ready to finalize but the finalize button is gone" dead-end.
+  // updateOverallStatus() owns the global-actions visibility (hidden while rejected).
+  setSectionFootersVisible(false);
+  updateOverallStatus();
+}
+
+// Approving hides that section's own Approve button — Reject remains as the only override,
+// same treatment whether the approval was automatic (registry match) or manual.
+function approveSection(n) {
+  var chip = document.getElementById('s' + n + '-status');
+  chip.className = 'chip chip--success';
+  chip.textContent = 'Approved';
+  setApproveButton(n, { visible: false });
+  updateOverallStatus();
+}
+function rejectSection(n) {
+  var chip = document.getElementById('s' + n + '-status');
+  chip.className = 'chip chip--error';
+  chip.textContent = 'Rejected';
+  // Rejecting must never strand the section without a way back to Approve — show it and,
+  // crucially, re-enable it (never leave a visible-but-dead button).
+  setApproveButton(n, { visible: true, enabled: true });
+  updateOverallStatus();
+}
+
+// The trade-register validity window is embedded in the verification banner itself — one
+// compound message, escalating from success to "expiring soon" as the tone changes, rather
+// than a second, separate countdown indicator elsewhere on the page.
+function renderExpiry(daysRemaining) {
+  var banner = document.getElementById('fetch-banner');
+  var icon = banner.querySelector('.snackbar__icon');
+  var title = banner.querySelector('.snackbar__title');
+  var sub = document.getElementById('fetch-banner-sub');
+  var fill = document.getElementById('fetch-banner-fill');
+
+  if (daysRemaining <= 0) {
+    // The page-level revert banner + Request new document button already cover the expired state.
+    banner.style.display = 'none';
+    return;
+  }
+
+  banner.style.display = 'flex';
+  fill.style.width = Math.min(100, Math.round((daysRemaining / 30) * 100)) + '%';
+
+  if (daysRemaining <= 3) {
+    banner.className = 'alert-banner alert-banner--alert';
+    icon.innerHTML = '<svg class="icon"><use href="#i-alert-circle"/></svg>';
+    title.textContent = 'Company data verified via trade register API — expiring soon';
+    sub.innerHTML = 'Fields below reflect the authoritative source and replace the user-submitted values. <strong class="fetch-banner__validity">Only ' + daysRemaining + ' day' + (daysRemaining === 1 ? '' : 's') + ' left</strong> before this must be re-checked.';
+  } else {
+    banner.className = 'alert-banner alert-banner--success';
+    icon.innerHTML = '<svg class="icon"><use href="#i-check-circle"/></svg>';
+    title.textContent = 'Company data verified via trade register API';
+    sub.innerHTML = 'Fields below reflect the authoritative source and replace the user-submitted values. <strong class="fetch-banner__validity">Valid for ' + daysRemaining + ' more days.</strong>';
+  }
+}
+
+// One badge for the whole Client summary block, not one per field — and only shown when it adds
+// information the banner above doesn't already carry (a registry match is fully covered by the banner).
+function setClientSummaryBadge(type) {
+  var badge = document.getElementById('client-summary-badge');
+  if (type === 'user-provided') {
+    badge.className = 'chip chip--outline block-badge';
+    badge.textContent = 'User-provided';
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// Trade-register match — resolved before this page loads, so the page just renders the resolved state (no fetch/spinner simulation).
+function showRegistryMatchState(daysRemaining) {
+  if (daysRemaining === undefined) daysRemaining = 12;
+  document.body.setAttribute('data-eligible', 'true');
+  resetExpiryLockdown();   // clear any expiry lockdown and reset both sections before applying this state
+
+  setClientSummaryBadge(null);
+
+  var s1 = document.getElementById('s1-status');
+  s1.className = 'chip chip--success';
+  s1.textContent = 'Auto-approved';
+
+  // Approve is redundant once the data is auto-verified against an authoritative source — Reject remains as an override.
+  setApproveButton(1, { visible: false });
+
+  // A registry match means a trade-register document exists — the countdown applies, embedded in the banner.
+  renderExpiry(daysRemaining);
+  document.getElementById('request-new-doc-btn').style.display = 'none';
+
+  updateOverallStatus();
+}
+
+// No trade-register match — no authoritative document was found, so there's nothing to count down; falls back to manual comparison, Approve is required.
+function showManualReviewState() {
+  document.body.setAttribute('data-eligible', 'false');
+  resetExpiryLockdown();   // clear any expiry lockdown and reset both sections before applying this state
+  document.getElementById('fetch-banner').style.display = 'none';
+  document.getElementById('request-new-doc-btn').style.display = 'none';
+
+  setClientSummaryBadge('user-provided');
+
+  // s1 baseline (neutral "Pending review", Approve shown + enabled) is set by resetExpiryLockdown;
+  // manual review needs an explicit human approval, so nothing further to override here.
+  updateOverallStatus();
+}
+
+function simulateExpiry() {
+  document.getElementById('revert-banner').style.display = 'flex';
+  ['s1-status', 's2-status'].forEach(function (id) {
+    var chip = document.getElementById(id);
+    chip.className = 'chip chip--neutral';
+    chip.textContent = 'Unapproved';
+  });
+  // Lock only the two section Approve buttons — the global Approve is owned by
+  // updateOverallStatus (and the old broad selector also matched it by accident).
+  setApproveButton(1, { enabled: false });
+  setApproveButton(2, { enabled: false });
+  renderExpiry(0);
+  document.getElementById('section-1').classList.add('approval-section--reverted');
+  document.getElementById('section-2').classList.add('approval-section--reverted');
+  document.getElementById('request-new-doc-btn').style.display = '';
+  setClientSummaryBadge(null);
+  updateOverallStatus();
+  document.getElementById('overall-status').textContent = 'Unapproved';
+  document.getElementById('overall-hint').textContent = 'The trade register document expired. Request a new document to continue.';
+}
+
+// Admin action once expired — starts a fresh trade-register check and resets both sections for re-review.
+function requestNewDocument() {
+  // The trade-register check is a real background request — show the button's loading state
+  // rather than resolving instantly.
+  var btn = document.getElementById('request-new-doc-btn');
+  btn.classList.add('btn--loading');
+  btn.disabled = true;
+
+  setTimeout(function () {
+    btn.classList.remove('btn--loading');
+    btn.disabled = false;
+
+    // showRegistryMatchState → resetExpiryLockdown clears the revert banner, reverted borders,
+    // and re-enables/resets both sections; then applies the fresh 30-day auto-approved state.
+    showRegistryMatchState(30);
+  }, 1400);
+}
+
+// Resolved before this page loads — the page renders whichever state applies, no simulated fetch delay.
+document.addEventListener('DOMContentLoaded', function () {
+  var eligible = document.body.getAttribute('data-eligible') === 'true';
+  if (eligible) {
+    showRegistryMatchState();
+  } else {
+    showManualReviewState();
+  }
+});
+</script>
+
+</body>
+</html>
