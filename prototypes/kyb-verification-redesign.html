@@ -23,13 +23,19 @@ body {
   background: var(--surface-primary); border-bottom: 1px solid var(--border-secondary);
   padding: var(--s-3) var(--s-6);
 }
-.topbar__brand { display: flex; align-items: center; gap: var(--s-2); font-weight: var(--fw-bold); color: var(--barion-blue); font-size: var(--fs-h4); }
-.topbar__nav { display: flex; gap: var(--s-5); }
-.topbar__nav a { color: var(--text-secondary); font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); }
+.topbar__brand { display: flex; align-items: center; gap: var(--s-2); font-weight: var(--fw-bold); color: var(--barion-blue); font-size: var(--fs-h4); flex-shrink: 0; }
+/* The 7 nav links are wider than a phone viewport. Without min-width:0 the flex item refuses to
+   shrink below its content and pushes the whole document sideways (610px against a 375px viewport),
+   so the entire page rocks horizontally rather than just this strip. Scroll it in place instead. */
+.topbar__nav { display: flex; gap: var(--s-5); min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.topbar__nav::-webkit-scrollbar { display: none; }
+.topbar__nav a { color: var(--text-secondary); font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); white-space: nowrap; }
 .topbar__nav a:hover { color: var(--text-brand); text-decoration: none; }
 
+/* Admin surface, not a reading surface — 1280px lets the summary grid run 4 columns and the tables
+   breathe on a 1080p screen, without going full-bleed and leaving 200-character rows to scan. */
 main {
-  max-width: 960px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: var(--s-6) var(--s-6) var(--s-24);
 }
@@ -53,10 +59,16 @@ h1.page-title { margin-bottom: var(--s-6); }
 .alert-banner--error { background: var(--surface-alert-error); border-color: var(--border-alert-error); }
 .alert-banner--error .snackbar__icon { color: var(--text-error); }
 .alert-banner--alert { background: var(--surface-alert-warning); border-color: var(--border-alert-warning); }
-.alert-banner--alert .snackbar__icon { color: var(--accent-400); }
+.alert-banner--alert .snackbar__icon { color: var(--text-status-warning); }
+/* NEW — informational/neutral state: trade register document not yet requested. Flat surface, no status color, since nothing has been checked yet. */
+.alert-banner--neutral { background: var(--white-gray); border-color: var(--border-secondary); }
+.alert-banner--neutral .snackbar__icon { color: var(--icon-secondary); }
 
 /* ---------- NEW composed pattern: validity countdown embedded in the banner (highlighted text + progress row) ---------- */
 .fetch-banner__validity { font-weight: var(--fw-bold); color: var(--text-primary); }
+/* Trailing action slot — same position and shrink behaviour as the DS snackbar's close button, so
+   the banner stays one row: icon | message | action. */
+.alert-banner__action { flex-shrink: 0; }
 .alert-banner__progress { flex-basis: 100%; margin-left: var(--s-8); }
 .progress__track { height: 4px; border-radius: var(--radius-pill); background: var(--green-100); overflow: hidden; }
 .progress__fill { height: 100%; border-radius: var(--radius-pill); background: var(--green-700); transition: width var(--dur-base) var(--ease-out); }
@@ -77,28 +89,41 @@ h1.page-title { margin-bottom: var(--s-6); }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2); height: 46px; padding: 14px var(--s-4); border-radius: var(--radius-sm); font-family: var(--font-brand); font-weight: var(--fw-semibold); font-size: var(--fs-body); cursor: pointer; transition: filter var(--dur-button) var(--ease-in-out), background var(--dur-button) var(--ease-in-out); border: 0; box-shadow: none; line-height: 1; }
 .btn:focus-visible { box-shadow: var(--shadow-focus); outline: none; }
 .btn:disabled { background: var(--surface-disabled); color: var(--text-disabled); cursor: not-allowed; }
-.btn--sm { height: 32px; padding: 4px 10px 6px; font-size: var(--fs-body-sm); border-radius: var(--radius-xs); }
+.btn--sm { height: 32px; padding: 4px 10px 6px; font-size: var(--fs-body-sm); border-radius: var(--radius-xs); white-space: nowrap; }
 .btn--secondary { background: var(--surface-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); }
 .btn--secondary:hover:not(:disabled) { background: var(--white-gray); }
 .btn--secondary.btn--delete { background: var(--surface-alert-error); color: var(--text-alert-error); border: 0; }
-.btn--secondary.btn--delete:hover:not(:disabled) { background: #FFD7DF; }
+.btn--secondary.btn--delete:hover:not(:disabled) { background: var(--red-100); }
 .btn--secondary.btn--delete:disabled { background: var(--surface-alert-error); opacity: 0.6; }
 
-/* NEW — green approve variant, structural mirror of .btn--secondary.btn--delete, existing green tokens only */
-.btn--secondary.btn--approve { background: var(--surface-alert-success); color: var(--text-status-success); border: 0; }
-.btn--secondary.btn--approve:hover:not(:disabled) { background: var(--green-100); }
-.btn--secondary.btn--approve:active:not(:disabled) { background: var(--green-100); filter: brightness(0.96); }
-.btn--secondary.btn--approve:focus-visible { box-shadow: 0 0 0 3px rgba(31, 139, 60, 0.3); }
-/* Gated primary — the section/overall Approve is locked until prerequisites are met, so its disabled
-   state uses the unambiguous standard disabled tokens (not a dimmed green that still reads clickable). */
-.btn--secondary.btn--approve:disabled { background: var(--surface-disabled); color: var(--text-disabled); }
+/* Primary (reused as-is from index.html §9) — reserved for the confirming action inside a modal,
+   where it's the single obvious next step. The in-page Approve buttons use .btn--blue instead so
+   they sit at the same weight as the Reject beside them. */
+.btn--primary { background: var(--gradient-brand-button); color: var(--text-invert); }
+.btn--primary:hover:not(:disabled):not([aria-disabled="true"]) { background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)), var(--gradient-brand-button); }
+.btn--primary:active:not(:disabled):not([aria-disabled="true"]) { filter: brightness(0.78); box-shadow: none; }
+.btn--primary:focus-visible { box-shadow: 0 0 0 3px var(--blue-300); }
+.btn--primary:disabled,
+.btn--primary[aria-disabled="true"] { background: linear-gradient(172deg, rgba(0, 116, 199, 0.6) 22.75%, rgba(0, 151, 219, 0.6) 86.15%); color: var(--text-invert); opacity: 1; }
+.btn--primary.btn--loading::after { color: var(--text-invert); }
 
-/* Reject/delete gets the DS red-tinted focus ring (index.html §9), matching the approve ring's semantic colour. */
-.btn--secondary.btn--delete:focus-visible { box-shadow: 0 0 0 3px rgba(249, 135, 156, 0.3); }
+/* Light-blue secondary (reused from index.html §9) — the affirmative action on this page. There is no
+   green variant in the design system; Approve is .btn--blue, Reject is .btn--delete, which keeps the
+   two section actions at matching weight instead of making Approve the page's loudest control.
+   index.html hardcodes #EEFAFF / #DBF3FF here; these are the equivalent tokens. */
+.btn--secondary.btn--blue { background: var(--blue-50); color: var(--text-link-1); border: 0; }
+.btn--secondary.btn--blue:hover:not(:disabled):not([aria-disabled="true"]) { background: var(--blue-100); }
+.btn--secondary.btn--blue:active:not(:disabled):not([aria-disabled="true"]) { background: var(--blue-100); filter: brightness(0.96); box-shadow: none; }
+.btn--secondary.btn--blue:focus-visible { box-shadow: 0 0 0 3px var(--blue-200); }
+.btn--secondary.btn--blue:disabled,
+.btn--secondary.btn--blue[aria-disabled="true"] { background: var(--blue-50); color: var(--text-brand); opacity: 0.6; }
+.btn--secondary.btn--blue.btn--loading::after { color: var(--text-link-1); }
+
+.btn--secondary.btn--delete:focus-visible { box-shadow: var(--shadow-focus); }
 
 /* Loading state (reused as-is from index.html §9) — spinner replaces the label while an async action runs */
 .btn--loading { color: transparent !important; pointer-events: none; position: relative; }
-.btn--loading::after { content: ""; position: absolute; inset: 0; margin: auto; width: 18px; height: 18px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: btn-spin 600ms linear infinite; color: var(--text-invert); }
+.btn--loading::after { content: ""; pointer-events: none; position: absolute; inset: 0; margin: auto; width: 18px; height: 18px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: btn-spin 600ms linear infinite; color: var(--text-invert); }
 .btn--secondary.btn--loading::after { color: var(--text-primary); }
 @keyframes btn-spin { to { transform: rotate(360deg); } }
 
@@ -115,18 +140,82 @@ h1.page-title { margin-bottom: var(--s-6); }
 .table td { padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--border-secondary); color: var(--text-primary); height: 48px; vertical-align: middle; }
 .table tr:nth-child(even) td { background: var(--surface-primary); }
 .table-scroll { overflow-x: auto; margin-bottom: var(--s-2); }
+/* Stays a real table-cell — a display:flex td drops out of table column sizing, so its content
+   overflowed the computed table width and got clipped at the right edge on narrow viewports
+   instead of extending the .table-scroll container. Inline layout keeps the column honest. */
+.table td.actions-cell { white-space: nowrap; height: 48px; }
+.table td.actions-cell > * { vertical-align: middle; }
+.table td.actions-cell > * + * { margin-left: var(--s-1); }
 
 /* ---------- NEW composed pattern: key/value summary grid ---------- */
 .kv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--s-4) var(--s-6); }
 .kv-row { display: flex; flex-direction: column; gap: 2px; }
 .kv-label { font-size: var(--fs-caption); font-weight: var(--fw-semilight); color: var(--text-secondary); }
 .kv-value { font-size: var(--fs-body-sm); font-weight: var(--fw-regular); color: var(--text-primary); display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-2); }
+/* NEW — field-level mismatch indicator: reuses the DS "orange icon only" exception (accent-400 is otherwise
+   reserved for icons, never large fills) plus a struck-through secondary line for the value it replaced. */
+/* --text-status-warning, not --accent-400: this icon is the sole signal in the Status column, so it
+   carries meaning and owes 3:1 non-text contrast. On the --surface-alert-warning tint of a diff row
+   --accent-400 measures 2.65:1; --text-status-warning measures 4.74:1. */
+.mismatch-icon { color: var(--text-status-warning); }
+.match-icon { color: var(--green-700); }
+/* Value text + icon are grouped in one wrapper so they wrap together as a unit — as direct
+   flex children of .kv-value they'd wrap independently, stranding the icon on its own line
+   whenever the value text itself wraps to two lines (e.g. a long legal entity name). */
+.kv-value__main { display: inline; }
+.kv-value__old { flex-basis: 100%; font-size: var(--fs-caption); font-weight: var(--fw-semilight); color: var(--text-tertiary); text-decoration: line-through; }
+/* NEW — pending authoritative write. Per spec §5.c the authoritative response overwrites the
+   profile only once the Business & company data section is approved, so before that point the
+   submitted value stays primary and the authoritative one is shown beneath it as a proposal. */
+.kv-value__proposed { flex-basis: 100%; display: flex; align-items: baseline; gap: var(--s-1); font-size: var(--fs-caption); font-weight: var(--fw-semibold); color: var(--text-primary); }
+.kv-value__proposed .icon { width: 14px; height: 14px; }
+/* Label never wraps — it's a fixed prefix, so only the value text reflows on a narrow column. */
+.kv-value__proposed-label { font-weight: var(--fw-semilight); color: var(--text-secondary); white-space: nowrap; }
+
+/* ---------- NEW composed pattern: field comparison table (submitted vs. authoritative source) ----------
+   A differing row is marked with a left accent bar and a very light warning tint — deliberately lighter
+   than the alert-banner surface, because this repeats across full-width rows and the brand keeps orange
+   small. The bar plus the highlighted substring do the signalling; the fill is only a locator. */
+/* Fixed layout so every comparison table on the page shares one column grid — the client summary and
+   each representative block must line up with each other, which auto layout can't guarantee since it
+   sizes each table independently from its own content. */
+/* min-width is what makes .table-scroll do its job: without it the fixed layout compresses the
+   percentage columns to fit a narrow viewport, truncating the Status header and overlapping the row
+   header with the Submitted column instead of overflowing into a horizontal scroll. */
+.compare-table { table-layout: fixed; min-width: 640px; }
+.compare-table th:nth-child(1), .compare-table td:nth-child(1) { width: 20%; }
+.compare-table th:nth-child(2), .compare-table td:nth-child(2) { width: 34%; }
+.compare-table th:nth-child(3), .compare-table td:nth-child(3) { width: 34%; }
+.compare-table th:nth-child(4), .compare-table td:nth-child(4) { width: 12%; }
+.compare-table th[scope="row"] { font-weight: var(--fw-semibold); color: var(--text-secondary); text-align: left; padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--border-secondary); height: 48px; vertical-align: middle; }
+.compare-table td { vertical-align: middle; overflow-wrap: anywhere; }
+.compare-table .compare-status-col { text-align: center; }
+.compare-table .compare-status { text-align: center; }
+.compare-row--diff > *:first-child { box-shadow: inset 3px 0 0 0 var(--accent-400); }
+.compare-row--diff > td, .compare-row--diff > th { background: var(--surface-alert-warning) !important; }
+.compare-register { font-weight: var(--fw-regular); }
+/* One comparison block per representative — same table shape as the Client summary. */
+.rep-block { margin-bottom: var(--s-4); }
+.rep-block__title { font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); margin: var(--s-4) 0 var(--s-2); }
+.compare-awaiting { color: var(--text-tertiary); }
+/* After the write: submitted becomes history, register becomes the profile's value. */
+.compare-row--committed .compare-submitted { text-decoration: line-through; color: var(--text-tertiary); }
+.compare-row--committed .compare-register { font-weight: var(--fw-semibold); }
 
 .process-summary { background: var(--surface-primary); border-radius: var(--radius-m); padding: var(--s-5) var(--s-6); margin-bottom: var(--s-6); }
 .process-summary h2 { margin-bottom: var(--s-4); }
 
 /* ---------- NEW composed pattern: block-level data-provenance badge (one per block, not per field) ---------- */
 .block-badge { font-size: var(--fs-body-xs); }
+/* Expiry status in the Documents table — the table owns validity, so it carries the signal. Dot +
+   remaining time on a second line, rather than a chip competing with the date it describes. */
+.expiry-status { display: flex; align-items: center; gap: 6px; margin-top: 2px; font-size: var(--fs-body-xs); font-weight: var(--fw-semibold); }
+.expiry-dot { width: 7px; height: 7px; border-radius: var(--radius-pill); background: currentColor; flex-shrink: 0; }
+.expiry-status--valid { color: var(--green-700); }
+/* --accent-400 as 12px text is 2.94:1 on white — below the 4.5:1 floor. --text-status-warning is the
+   warning-family text token (6.0:1); the dot inherits it via currentColor and stays legible too. */
+.expiry-status--expiring { color: var(--text-status-warning); }
+.expiry-status--expired { color: var(--text-error); }
 .block-badge .icon { width: 12px; height: 12px; }
 
 /* ---------- NEW composed pattern: bordered approval section ---------- */
@@ -136,7 +225,36 @@ h1.page-title { margin-bottom: var(--s-6); }
 .approval-section__actions { display: flex; gap: var(--s-3); }
 .approval-section__subhead { font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-secondary); margin: var(--s-5) 0 var(--s-3); }
 .approval-section--reverted { border-color: var(--border-error); }
-.approval-section__actions--footer { justify-content: flex-end; margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--border-secondary); }
+.approval-section__actions--footer { justify-content: flex-end; align-items: center; margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--border-secondary); }
+/* ---------- Tooltip (reused as-is from index.html §12 — .tooltip / .tooltip--dark / .tooltip--top),
+   used to explain why a gated Approve button won't act. Gated buttons carry aria-disabled rather
+   than the disabled attribute: a truly disabled button fires no hover events and can't be focused,
+   so the explanation would be unreachable by both mouse and keyboard. The click is blocked in JS. ---------- */
+.tooltip-anchor { position: relative; display: inline-flex; }
+.tooltip { position: absolute; padding: 8px 12px; font-family: var(--font-brand); font-weight: var(--fw-semibold); font-size: var(--fs-body-xs); border-radius: var(--radius-xs); box-shadow: var(--shadow-tooltip); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); }
+.tooltip--dark { background: var(--blue-gray); color: var(--text-invert); }
+.tooltip--top { bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%); }
+.tooltip--top::before { content: ""; position: absolute; bottom: -4px; left: 50%; margin-left: -4px; width: 8px; height: 8px; transform: rotate(45deg); background: var(--blue-gray); }
+/* Hover-intent, not contact. Without a delay the tooltip fires the instant the pointer touches the
+   button — including when it's already sitting there because you just clicked it, so your own action
+   is answered by a black box appearing under the cursor. Open is delayed, close is immediate: a
+   tooltip that lingers is worse than one that's slow to arrive. No DS token exists for this yet —
+   candidate to promote into index.html §12 if it holds up. */
+.tooltip-anchor { --tooltip-delay: 400ms; }
+.tooltip-anchor:hover .tooltip { opacity: 1; transition-delay: var(--tooltip-delay); }
+/* Keyboard focus is exempt from the delay: focus is never incidental the way a passing cursor is,
+   and a keyboard user needs the reason for a gate immediately. */
+.tooltip-anchor:focus-within .tooltip { opacity: 1; transition-delay: 0s; }
+/* Set when a button is gated by the user's own click while the pointer or focus is still resting on
+   it. Stays quiet until they move away and come back — the state change already announced itself
+   through the chip and the button's disabled styling. aria-describedby is untouched, so screen
+   readers still get the reason. */
+.tooltip-anchor.is-quiet:hover .tooltip, .tooltip-anchor.is-quiet:focus-within .tooltip { opacity: 0; transition-delay: 0s; }
+.tooltip[hidden] { display: none; }
+
+/* Gated = looks and behaves disabled, but stays hoverable and focusable so its tooltip is reachable.
+   Each variant reuses its own DS disabled appearance (see .btn--blue[aria-disabled] above). */
+.btn[aria-disabled="true"] { cursor: not-allowed; }
 
 /* ---------- NEW composed pattern: collapsible section header — status stays visible even when collapsed ---------- */
 .approval-section__header { cursor: pointer; user-select: none; }
@@ -147,9 +265,48 @@ h1.page-title { margin-bottom: var(--s-6); }
 
 .dependency-note { font-size: var(--fs-body-sm); color: var(--text-tertiary); margin-bottom: var(--s-4); }
 .dependency-note a { font-weight: var(--fw-semibold); }
+
+/* ---------- Global approve gate — "Approve verification" is hard-gated: disabled until both
+   sections are approved (spec: "When both UBO and company data are approved by the admin, the
+   verification request is ready for KYC"). The adjacent chip states the unmet prerequisite in
+   place, so the disabled control is never a dead end without an explanation. ---------- */
+#global-actions { margin-left: auto; }
+
+/* ---------- Modal (reused from index.html §19 — .modal-card / .field, adapted to a real fixed
+   overlay here since the catalogue's versions are static swatches embedded in the page flow). ---------- */
+.modal-scrim { position: fixed; inset: 0; z-index: 100; background: rgba(44, 52, 70, 0.55); display: flex; align-items: center; justify-content: center; padding: var(--s-6); }
+.modal-card { background: var(--surface-primary); border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); padding: var(--s-6); max-width: 440px; width: 100%; }
+.modal-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-3); }
+.modal-card__title { font-size: var(--fs-h4); font-weight: var(--fw-semibold); color: var(--text-primary); margin: 0; }
+.modal-card__close { border: 0; background: none; cursor: pointer; color: var(--icon-secondary); padding: 2px; border-radius: var(--radius-xs); flex-shrink: 0; display: flex; }
+.modal-card__close:hover { background: var(--white-gray); color: var(--icon-primary); }
+.modal-card__body { color: var(--text-secondary); margin: 0 0 var(--s-5); line-height: 1.5; font-size: var(--fs-body-sm); }
+.modal-card .actions { display: flex; justify-content: flex-end; gap: var(--s-3); }
+.btn--tertiary { background: transparent; color: var(--text-brand); border: 0; box-shadow: none; }
+.btn--tertiary:hover:not(:disabled) { background: var(--white-gray); }
+.btn--tertiary:focus-visible { box-shadow: var(--shadow-focus); }
+
+/* The multiple-representatives warning reuses .alert-banner--alert rather than a parallel callout
+   class — one warning surface in the system, not two. These only add the list + acknowledgement row. */
+/* Tall banner variant — the default centres its icon, which strands it mid-block once the body runs
+   to several lines. Top-align so the icon reads against the title. */
+.alert-banner--stacked { align-items: flex-start; }
+.ack-row { display: flex; align-items: flex-start; gap: var(--s-2); margin-top: var(--s-3); font-size: var(--fs-body-sm); color: var(--text-primary); }
+.ack-row input { margin: 2px 0 0; accent-color: var(--barion-blue); width: 16px; height: 16px; flex-shrink: 0; }
+.ack-row label { cursor: pointer; }
+
+/* Reject-reason field (reused from index.html §8 form patterns) */
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: var(--s-5); }
+.field__label { font-family: var(--font-brand); font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-primary); }
+.field__textarea { width: 100%; min-height: 88px; resize: vertical; padding: 10px 12px; border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); background: var(--surface-primary); font: inherit; font-size: var(--fs-body-sm); color: var(--text-primary); line-height: 1.5; outline: none; }
+.field__textarea:focus { border-color: var(--focus-blue); box-shadow: var(--shadow-focus); }
+.field__textarea::placeholder { color: var(--text-inactive); }
+.field__helper { font-family: var(--font-brand); font-weight: var(--fw-semilight); font-size: var(--fs-body-xs); color: var(--text-secondary); }
+.field--error .field__textarea { border-color: var(--border-error); }
+.field--error .field__helper { color: var(--text-error); }
 </style>
 </head>
-<body data-eligible="true" data-expired="false">
+<body>
 
 <svg style="display:none">
   <defs>
@@ -171,6 +328,9 @@ h1.page-title { margin-bottom: var(--s-6); }
     <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="m6 9 6 6 6-6"/>
     </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+    </symbol>
   </defs>
 </svg>
 
@@ -186,39 +346,54 @@ h1.page-title { margin-bottom: var(--s-6); }
   <details class="debug-panel">
     <summary>Prototype controls (not part of the shipped UI)</summary>
     <div class="debug-panel__body">
-      <button class="btn btn--secondary btn--sm" onclick="showRegistryMatchState()">Simulate: trade register match found</button>
-      <button class="btn btn--secondary btn--sm" onclick="showManualReviewState()">Simulate: no trade register match (manual review)</button>
-      <button class="btn btn--secondary btn--sm" onclick="simulateExpiry()">Simulate: let document expire</button>
-      <button class="btn btn--secondary btn--sm" onclick="location.reload()">Reset demo</button>
-      <span class="body-xs">Toggles the page-level revert banner and both section statuses.</span>
+      <button class="btn btn--secondary btn--sm" onclick="debugShowAwaiting()">Simulate: awaiting request</button>
+      <button class="btn btn--secondary btn--sm" onclick="debugShowMultiRep()">Simulate: multiple representatives</button>
+      <button class="btn btn--secondary btn--sm" onclick="debugShowSoleTrader()">Simulate: sole entrepreneur</button>
+      <button class="btn btn--secondary btn--sm" onclick="debugShowFailed()">Simulate: trade register request failed</button>
+      <button class="btn btn--secondary btn--sm" onclick="debugShowNoPrefill()">Simulate: no prefill (manual upload)</button>
+      <button class="btn btn--secondary btn--sm" onclick="debugShowExpired()">Simulate: document expired</button>
+      <button class="btn btn--secondary btn--sm" onclick="debugReset()">Reset demo</button>
+      <span class="body-xs">Jumps straight to each resolved state — the real flow is still the "Request trade register document" button above.</span>
     </div>
   </details>
 
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap;margin-bottom:var(--s-6)">
+  <!-- margin-left:auto on the action group keeps it hard right even when it wraps to its own line
+       on a narrow viewport, which justify-content alone doesn't survive. -->
+  <div style="display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap;margin-bottom:var(--s-6)">
     <h1 class="page-title" style="margin-bottom:0">Verification process details</h1>
+    <!-- Reject sits left of Approve throughout — the affirmative action is the rightmost one on
+         every action row on this page. The "why is Approve disabled" explanation lives on the
+         process-summary hint below rather than a chip here, so the button still has something to
+         point at for a screen reader. -->
     <div class="approval-section__actions" id="global-actions">
-      <button id="global-approve" class="btn btn--secondary btn--approve" disabled onclick="approveOverall()">Approve verification</button>
-      <button class="btn btn--secondary btn--delete" onclick="rejectOverall()">Reject verification</button>
+      <span class="tooltip-anchor">
+        <button id="global-reject" class="btn btn--secondary btn--delete" onclick="openRejectModal()" aria-describedby="global-reject-tip">Reject verification</button>
+        <span class="tooltip tooltip--dark tooltip--top" id="global-reject-tip" role="tooltip" hidden></span>
+      </span>
+      <span class="tooltip-anchor">
+        <button id="global-approve" class="btn btn--secondary btn--blue" onclick="openApproveModal()" aria-describedby="global-approve-tip">Approve verification</button>
+        <span class="tooltip tooltip--dark tooltip--top" id="global-approve-tip" role="tooltip" hidden></span>
+      </span>
     </div>
   </div>
 
-  <!-- Page-level revert banner — hidden by default, shown when data-expired="true" -->
+  <!-- Page-level revert banner — hidden by default, shown once the trade register document has expired -->
   <div id="revert-banner" class="alert-banner alert-banner--error" style="display:none">
     <span class="snackbar__icon" aria-hidden="true"><svg class="icon"><use href="#i-x-circle"/></svg></span>
     <div class="snackbar__body">
-      <strong class="snackbar__title">Verification reverted to unapproved</strong>
-      <p class="snackbar__sub" id="revert-banner-sub">The trade register document expired. Both sections below must be re-reviewed against a fresh document.</p>
+      <strong class="snackbar__title">Business &amp; company data reverted to unapproved</strong>
+      <p class="snackbar__sub" id="revert-banner-sub">The trade register document expired. Business &amp; company data must be re-reviewed against a fresh document. The beneficial owner approval rests on separate documents and is unaffected.</p>
     </div>
   </div>
 
   <!-- Process details — condensed context header, not an approval section -->
   <section class="process-summary">
     <h2>Díjbeszedő Holding Zrt. <span id="overall-status" class="chip chip--neutral" style="margin-left:var(--s-2)">Pending review</span></h2>
-    <p class="body-sm" id="overall-hint" style="color:var(--text-tertiary);margin:var(--s-1) 0 0">Approve both sections below, then confirm here to finalize and trigger video verification.</p>
+    <p class="body-sm" id="overall-hint" style="color:var(--text-tertiary);margin:var(--s-1) 0 0">0 of 2 sections approved. Approve both, then confirm above to finalize and trigger video verification.</p>
     <div class="kv-grid" style="margin-top:var(--s-4)">
       <div class="kv-row"><span class="kv-label">Login name</span><span class="kv-value"><a href="#">kovacs.janos@example.com</a></span></div>
       <div class="kv-row"><span class="kv-label">Ticket</span><span class="kv-value"><a href="#">#181493</a></span></div>
-      <div class="kv-row"><span class="kv-label">Wallet type</span><span class="kv-value">Organization</span></div>
+      <div class="kv-row"><span class="kv-label">Wallet type</span><span class="kv-value" id="summary-wallet-type">Organization</span></div>
       <div class="kv-row"><span class="kv-label">Verification type</span><span class="kv-value">Video</span></div>
       <div class="kv-row"><span class="kv-label">FaceKom room ID</span><span class="kv-value">—</span></div>
       <div class="kv-row"><span class="kv-label">Created at</span><span class="kv-value">2026.07.24. 12:55:50</span></div>
@@ -230,119 +405,18 @@ h1.page-title { margin-bottom: var(--s-6); }
     </div>
   </section>
 
-  <!-- ================= SECTION 1 — Business & company data ================= -->
+  <!-- ================= SECTION 1 — Beneficial owner structure (reviewed first — usually needs more iteration / customer comms) ================= -->
   <section class="approval-section" id="section-1">
     <div class="approval-section__header" role="button" tabindex="0" aria-expanded="true" aria-controls="section-1-body" onclick="toggleSection(1)" onkeydown="handleSectionHeaderKey(event,1)">
       <div class="approval-section__title-group">
-        <h2>1 · Business &amp; company data</h2>
+        <h2>1 · Beneficial owner structure</h2>
         <span id="s1-status" class="chip chip--neutral">Pending review</span>
       </div>
       <span class="approval-section__toggle" aria-hidden="true"><svg class="icon"><use href="#i-chevron-down"/></svg></span>
     </div>
 
     <div class="approval-section__body" id="section-1-body">
-      <!-- Company-data provenance banner — resolved before this page loads; states are toggled via the debug controls, not simulated fetch delays.
-           Also carries the trade-register document's validity window, so severity (success → expiring soon) escalates as one compound message
-           instead of a duplicate indicator elsewhere on the page. -->
-      <div id="fetch-banner" class="alert-banner alert-banner--success">
-        <span class="snackbar__icon" aria-hidden="true"><svg class="icon"><use href="#i-check-circle"/></svg></span>
-        <div class="snackbar__body">
-          <strong class="snackbar__title">Company data verified via trade register API</strong>
-          <p class="snackbar__sub" id="fetch-banner-sub">Fields below reflect the authoritative source and replace the user-submitted values. <strong class="fetch-banner__validity">Valid for 12 more days.</strong></p>
-        </div>
-        <div class="alert-banner__progress"><div class="progress__track"><div id="fetch-banner-fill" class="progress__fill" style="width:40%"></div></div></div>
-      </div>
-      <button id="request-new-doc-btn" class="btn btn--secondary btn--sm" style="display:none;margin-bottom:var(--s-4)" onclick="requestNewDocument()">Request new trade register document</button>
-
-      <div class="approval-section__subhead">Client summary <span id="client-summary-badge" class="chip chip--outline block-badge" style="margin-left:var(--s-2);display:none"></span></div>
-      <div id="client-summary" class="kv-grid">
-        <div class="kv-row">
-          <span class="kv-label">Organization name</span>
-          <span class="kv-value" id="kv-org-name">Díjbeszedő Holding Zártkörűen Működő Részvénytársaság</span>
-        </div>
-        <div class="kv-row">
-          <span class="kv-label">Tax number</span>
-          <span class="kv-value" id="kv-tax">10805246243</span>
-        </div>
-        <div class="kv-row">
-          <span class="kv-label">Registration number</span>
-          <span class="kv-value" id="kv-regnum">0110042094</span>
-        </div>
-        <div class="kv-row">
-          <span class="kv-label">Headquarter address</span>
-          <span class="kv-value" id="kv-address">1117, Budapest HUN, Budafoki út 107-109.</span>
-        </div>
-      </div>
-
-      <div class="approval-section__subhead">Documents</div>
-      <div class="table-scroll">
-        <table class="table">
-          <thead>
-            <tr><th>Category</th><th>Type</th><th>Document number</th><th>Expiration date</th><th>Action</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Extract from the trade register or other official certificate of incorporation, registration</td><td>Deed of Foundation</td><td>—</td><td>—</td>
-              <td><button class="btn-icon btn-icon--l" aria-label="Download document"><svg class="icon"><use href="#i-download"/></svg></button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="approval-section__actions approval-section__actions--footer">
-        <button id="s1-approve" class="btn btn--secondary btn--approve" onclick="approveSection(1)">Approve</button>
-        <button class="btn btn--secondary btn--delete" onclick="rejectSection(1)">Reject</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= SECTION 2 — Beneficial owner structure ================= -->
-  <section class="approval-section" id="section-2">
-    <div class="approval-section__header" role="button" tabindex="0" aria-expanded="true" aria-controls="section-2-body" onclick="toggleSection(2)" onkeydown="handleSectionHeaderKey(event,2)">
-      <div class="approval-section__title-group">
-        <h2>2 · Beneficial owner structure</h2>
-        <span id="s2-status" class="chip chip--neutral">Pending review</span>
-      </div>
-      <span class="approval-section__toggle" aria-hidden="true"><svg class="icon"><use href="#i-chevron-down"/></svg></span>
-    </div>
-
-    <div class="approval-section__body" id="section-2-body">
-      <p class="dependency-note">Grounded in the same trade register document as <a href="#section-1">Business &amp; company data</a> above — if that document expires, this section reverts too.</p>
-
-      <div class="approval-section__subhead">Ownership structure documents</div>
-      <div class="table-scroll">
-        <table class="table">
-          <thead>
-            <tr><th>Category</th><th>Type</th><th>Document number</th><th>Expiration date</th><th>Action</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Documents for checking the ownership structure</td><td>—</td><td>—</td><td>—</td>
-              <td><button class="btn-icon btn-icon--l" aria-label="Download document"><svg class="icon"><use href="#i-download"/></svg></button></td>
-            </tr>
-            <tr>
-              <td>Documents for checking the ownership structure</td><td>—</td><td>—</td><td>—</td>
-              <td><button class="btn-icon btn-icon--l" aria-label="Download document"><svg class="icon"><use href="#i-download"/></svg></button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="approval-section__subhead">Representative(s)</div>
-      <div class="table-scroll">
-        <table class="table">
-          <thead>
-            <tr><th>Name</th><th>Position</th><th>Birthdate, place</th><th>Address</th><th>Politically exposed?</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="#">János KOVÁCS</a></td><td>igazgatósági tag (vezető tisztségviselő)</td>
-              <td>March 3, 1975, at Győr</td><td>2089, Telki, Akác utca 5</td>
-              <td><span class="chip chip--neutral">No</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <p class="dependency-note">Reviewed first — this section usually needs the most iteration and customer communication. It rests on the ownership-structure documents below, not on the trade register extract, so it is unaffected when that document expires.</p>
 
       <div class="approval-section__subhead">Beneficial owner(s)</div>
       <div class="table-scroll">
@@ -360,9 +434,142 @@ h1.page-title { margin-bottom: var(--s-6); }
         </table>
       </div>
 
+      <div class="approval-section__subhead">Ownership structure documents</div>
+      <div class="table-scroll">
+        <table class="table">
+          <thead>
+            <tr><th>Category</th><th>Type</th><th>Document number</th><th>Expiration date</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Documents for checking the ownership structure</td><td>—</td><td>—</td><td>—</td>
+              <td><button class="btn-icon btn-icon--l" aria-label="Download document" onclick="downloadDocument(this)"><svg class="icon"><use href="#i-download"/></svg></button></td>
+            </tr>
+            <tr>
+              <td>Documents for checking the ownership structure</td><td>—</td><td>—</td><td>—</td>
+              <td><button class="btn-icon btn-icon--l" aria-label="Download document" onclick="downloadDocument(this)"><svg class="icon"><use href="#i-download"/></svg></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="approval-section__actions approval-section__actions--footer">
-        <button id="s2-approve" class="btn btn--secondary btn--approve" onclick="approveSection(2)">Approve</button>
-        <button class="btn btn--secondary btn--delete" onclick="rejectSection(2)">Reject</button>
+        <span class="tooltip-anchor">
+          <button id="s1-reject" class="btn btn--secondary btn--delete" onclick="rejectSection(1)" aria-describedby="s1-reject-tip">Reject</button>
+          <span class="tooltip tooltip--dark tooltip--top" id="s1-reject-tip" role="tooltip" hidden></span>
+        </span>
+        <span class="tooltip-anchor">
+          <button id="s1-approve" class="btn btn--secondary btn--blue" onclick="approveSection(1)" aria-describedby="s1-gate-reason">Approve</button>
+          <span class="tooltip tooltip--dark tooltip--top" id="s1-gate-reason" role="tooltip" hidden></span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 2 — Business & company data (+ trade register check) ================= -->
+  <section class="approval-section" id="section-2">
+    <div class="approval-section__header" role="button" tabindex="0" aria-expanded="true" aria-controls="section-2-body" onclick="toggleSection(2)" onkeydown="handleSectionHeaderKey(event,2)">
+      <div class="approval-section__title-group">
+        <h2>2 · Business &amp; company data</h2>
+        <span id="s2-status" class="chip chip--neutral">Pending review</span>
+      </div>
+      <span class="approval-section__toggle" aria-hidden="true"><svg class="icon"><use href="#i-chevron-down"/></svg></span>
+    </div>
+
+    <div class="approval-section__body" id="section-2-body">
+      <!-- Trade register check banner — states: not yet requested (neutral) → loading → success/expiring soon → failed.
+           Hidden entirely when prefill wasn't used at registration, since in that case the merchant already
+           manually uploaded the cégkivonat and there is no authoritative API call to make. -->
+      <div id="fetch-banner" class="alert-banner alert-banner--neutral">
+        <span class="snackbar__icon" aria-hidden="true"><svg class="icon"><use href="#i-clock-rewind"/></svg></span>
+        <div class="snackbar__body">
+          <strong class="snackbar__title">Trade register document not yet requested</strong>
+          <p class="snackbar__sub" id="fetch-banner-sub">Fields below reflect the registration form. Request the trade register document to verify against the authoritative source.</p>
+        </div>
+        <div class="alert-banner__progress" style="display:none"><div class="progress__track"><div id="fetch-banner-fill" class="progress__fill" style="width:0%"></div></div></div>
+        <!-- The action lives inside the banner, in the same trailing slot the DS snackbar gives its
+             close button: the banner states that the document is missing, so the control that fixes
+             it belongs with the sentence that reports it, not floating underneath. -->
+        <div class="alert-banner__action">
+          <button id="request-doc-btn" class="btn btn--secondary btn--sm" onclick="requestTradeRegisterDocument()">Request trade register document</button>
+        </div>
+      </div>
+
+      <div class="approval-section__subhead">Client summary <span id="client-summary-badge" class="chip chip--outline block-badge" style="margin-left:var(--s-2);display:none"></span></div>
+      <!-- Comparison is a table, not a key/value grid: submitted and register values sit in fixed
+           side-by-side columns so the eye tracks one horizontal line per field instead of re-finding
+           the pair each time, and a matching row costs almost no attention. Representative is compared
+           here with the rest rather than in the UBO section, so the whole comparison set lives where
+           the authoritative call is made. Rows are populated by renderComparison(). -->
+      <div class="table-scroll">
+        <table class="table compare-table" id="client-summary">
+          <thead>
+            <tr><th scope="col">Field</th><th scope="col">Submitted</th><th scope="col" id="compare-source-col">Trade register</th><th scope="col" class="compare-status-col">Status</th></tr>
+          </thead>
+          <tbody id="compare-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Representatives get their own subsection rather than a row in the comparison table: a company
+           can have several, and each is a record in its own right, so one row per representative. -->
+      <div class="approval-section__subhead" id="representatives-subhead">Representative(s)</div>
+      <div id="representatives-blocks"></div>
+
+      <!-- Multiple representatives — the authoritative response lists more than one, so there is no
+           single value to compare or overwrite. Spec: mark for manual handling by the compliance
+           officer. This banner explains the case; the table above lists the people. -->
+      <div id="multirep-callout" class="alert-banner alert-banner--alert alert-banner--stacked" style="display:none;margin-top:var(--s-4)">
+        <span class="snackbar__icon" aria-hidden="true"><svg class="icon"><use href="#i-alert-circle"/></svg></span>
+        <div class="snackbar__body">
+          <strong class="snackbar__title">Multiple representatives — further action required</strong>
+          <p class="snackbar__sub">The trade register lists more than one representative, so they can't be compared or overwritten automatically. Verify the people listed above against the submitted data before approving.</p>
+          <div class="ack-row">
+            <input type="checkbox" id="multirep-ack" onchange="updateSection2Gate()">
+            <label for="multirep-ack">I have verified the representatives manually.</label>
+          </div>
+        </div>
+      </div>
+
+      <p class="dependency-note" id="pending-write-note" style="display:none;margin-top:var(--s-4);margin-bottom:0">Approving this section writes the authoritative values above into the merchant's profile, replacing the submitted ones.</p>
+
+      <div class="approval-section__subhead">Documents</div>
+      <div class="table-scroll">
+        <table class="table">
+          <thead>
+            <tr><th>Category</th><th>Type</th><th>Document number</th><th>Expiration date</th><th>Source</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <!-- Exactly one document lives here: the trade register extract, either fetched via the
+                 authoritative API or (no-prefill path) already manually uploaded by the merchant.
+                 Nothing to show until a request resolves. -->
+            <tr id="doc-table-empty">
+              <td colspan="6" class="body-sm" style="color:var(--text-tertiary)">No documents yet.</td>
+            </tr>
+            <tr id="tr-doc-row" style="display:none">
+              <td id="tr-doc-category">Extract from the trade register or other official certificate of incorporation, registration</td><td id="tr-doc-type">Cégkivonat</td>
+              <td id="tr-doc-number">—</td><td id="tr-doc-expiry">—</td>
+              <td id="tr-doc-source">—</td>
+              <!-- One download only: the official trade register document. The raw authoritative
+                   response stays retained per spec, but is surfaced on the failed-request banner
+                   rather than as a second button competing with this one. -->
+              <td class="actions-cell">
+                <button class="btn-icon btn-icon--l" aria-label="Download document" onclick="downloadDocument(this)"><svg class="icon"><use href="#i-download"/></svg></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="approval-section__actions approval-section__actions--footer">
+        <span class="tooltip-anchor">
+            <button id="s2-reject" class="btn btn--secondary btn--delete" onclick="rejectSection(2)" aria-describedby="s2-reject-tip">Reject</button>
+            <span class="tooltip tooltip--dark tooltip--top" id="s2-reject-tip" role="tooltip" hidden></span>
+          </span>
+        <!-- Why this Approve won't act lives in its tooltip now, not as always-on text in the row. -->
+        <span class="tooltip-anchor">
+          <button id="s2-approve" class="btn btn--secondary btn--blue" onclick="approveSection(2)" aria-describedby="s2-gate-reason">Approve</button>
+          <span class="tooltip tooltip--dark tooltip--top" id="s2-gate-reason" role="tooltip" hidden></span>
+        </span>
       </div>
     </div>
   </section>
@@ -373,13 +580,83 @@ h1.page-title { margin-bottom: var(--s-6); }
     <div class="table-scroll">
       <table class="table">
         <thead><tr><th>Happened at</th><th>Source</th><th>Target</th><th>Title</th><th>Room ID</th></tr></thead>
-        <tbody><tr><td colspan="5" class="body-sm" style="color:var(--text-tertiary)">No log entries yet.</td></tr></tbody>
+        <tbody id="log-entries-body">
+          <tr id="log-entries-empty"><td colspan="5" class="body-sm" style="color:var(--text-tertiary)">No log entries yet.</td></tr>
+        </tbody>
       </table>
     </div>
   </section>
 </main>
 
+<!-- Approve confirmation modal — only reachable once both sections are approved, since the button
+     itself is hard-gated. The modal exists for the irreversibility, not for a prerequisite override. -->
+<div id="approve-modal-scrim" class="modal-scrim" style="display:none">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="approve-modal-title">
+    <div class="modal-card__head">
+      <h3 class="modal-card__title" id="approve-modal-title">Approve verification?</h3>
+      <button class="modal-card__close" aria-label="Close" onclick="closeApproveModal()"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>
+    </div>
+    <p class="modal-card__body">This finalizes the verification and automatically triggers video verification. This can't be undone from this page.</p>
+    <div class="actions">
+      <button class="btn btn--tertiary" onclick="closeApproveModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="confirmApprove()">Approve verification</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject modal — requires a reason, since the merchant sees it and needs to know what to fix
+     before resubmitting. -->
+<div id="reject-modal-scrim" class="modal-scrim" style="display:none">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="reject-modal-title">
+    <div class="modal-card__head">
+      <h3 class="modal-card__title" id="reject-modal-title">Reject verification</h3>
+      <button class="modal-card__close" aria-label="Close" onclick="closeRejectModal()"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>
+    </div>
+    <p class="modal-card__body">The merchant will be notified and can edit their business profile again.</p>
+    <div class="field" id="reject-reason-field">
+      <label class="field__label" for="reject-reason">Rejection reason</label>
+      <textarea class="field__textarea" id="reject-reason" aria-describedby="reject-reason-helper" placeholder="Explain what needs to change before the merchant can resubmit…"></textarea>
+      <!-- aria-live so the validation message is announced, not just shown — the red border and
+           helper-text swap are otherwise silent to a screen reader. -->
+      <span class="field__helper" id="reject-reason-helper" aria-live="polite">Required — shown to the merchant.</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn--tertiary" onclick="closeRejectModal()">Cancel</button>
+      <button class="btn btn--secondary btn--delete" onclick="confirmReject()">Reject verification</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// Which branch of the flow to demonstrate: match | multirep | failed | noprefill | expired | approved.
+// Replaces the old on-page debug panel — the flow itself is now driven by the real
+// "Request trade register document" button; this only picks which outcome that button (or
+// the initial render, for states that precede any request) leads to, via a URL param so the
+// prototype stays link-shareable for stakeholder review without a visible dev-only control.
+// Which outcome the next 'Request document' call resolves to. Seeded from the URL, but held in a
+// variable so the debug panel can change it: reading the URL directly meant a page loaded at
+// ?scenario=failed kept failing forever, and no Simulate button could get back to a success —
+// pressing "awaiting request" then Request just failed again.
+var scenarioOutcome = new URLSearchParams(window.location.search).get('scenario') || 'match';
+function getScenario() { return scenarioOutcome; }
+// Debug jumps set the outcome the state they're simulating implies, so the panel and the request
+// button can't disagree about what the next call returns.
+function setScenario(s) { scenarioOutcome = s; }
+
+// Once true, the case is finalized (approved or rejected via the modals) — updateOverallStatus()
+// stops recomputing the "N of 2 approved" progress text over the terminal chip.
+var caseFinalized = false;
+// Set while an expiry has regressed a previously-approved section. Owns the page-level chip and
+// hint for as long as it holds, so a stray section click can't relabel a regressed case "Pending
+// review". Cleared by clearRevertedState() when a fresh document is requested.
+var caseReverted = false;
+function getSectionState(n) {
+  var chip = document.getElementById('s' + n + '-status');
+  if (chip.classList.contains('chip--success')) return 'approved';
+  if (chip.classList.contains('chip--error')) return 'rejected';
+  return 'pending';
+}
+
 // Accordion — the status chip lives in the header, outside the collapsible body, so it stays
 // visible regardless of open/closed state.
 function toggleSection(n) {
@@ -397,246 +674,1003 @@ function handleSectionHeaderKey(event, n) {
 
 // Single owner of each section's Approve button — drives visibility AND the disabled
 // attribute together, so a button can never be shown-but-dead or hidden-but-enabled.
-// (Root cause of the earlier state bugs was toggling these two independently.)
 function setApproveButton(n, opts) {
   var btn = document.getElementById('s' + n + '-approve');
   if (opts.visible !== undefined) btn.style.display = opts.visible ? '' : 'none';
-  if (opts.enabled !== undefined) btn.disabled = !opts.enabled;
-}
-
-// Terminal states (finalized or case-wide rejected) remove ALL per-section mutating controls
-// so the case can't be recomputed back into an actionable state. `show=true` restores them
-// (used by the debug re-render setters). Section-level Approve/Reject recovery is unaffected —
-// only the whole-case actions call this.
-function setSectionFootersVisible(show) {
-  document.querySelectorAll('.approval-section__actions--footer').forEach(function (f) {
-    f.style.display = show ? '' : 'none';
-  });
-}
-
-// Undo everything simulateExpiry() locked down and return both sections to a clean,
-// reviewable baseline. Every transition OUT of the expired state — request-new-doc, and
-// the debug registry/manual setters — must call this first so the lockdown can't persist.
-function resetExpiryLockdown() {
-  document.getElementById('revert-banner').style.display = 'none';
-  document.getElementById('global-actions').style.display = '';
-  document.getElementById('request-new-doc-btn').style.display = 'none';
-  setSectionFootersVisible(true);   // restore footers a prior terminal state may have hidden
-  document.getElementById('section-1').classList.remove('approval-section--reverted');
-  document.getElementById('section-2').classList.remove('approval-section--reverted');
-  ['1', '2'].forEach(function (n) {
-    var chip = document.getElementById('s' + n + '-status');
-    chip.className = 'chip chip--neutral';
-    chip.textContent = 'Pending review';
-    setApproveButton(n, { visible: true, enabled: true });
-  });
-}
-
-// The two section approvals are prerequisites, not the finalizing action — they unlock the
-// global Approve verification button above, but an explicit click is what actually finalizes
-// and triggers video verification. This gives admins one deliberate confirmation step.
-function updateOverallStatus() {
-  var s1 = document.getElementById('s1-status');
-  var s2 = document.getElementById('s2-status');
-  var overall = document.getElementById('overall-status');
-  var hint = document.getElementById('overall-hint');
-  var globalActions = document.getElementById('global-actions');
-  var globalApprove = document.getElementById('global-approve');
-  var rejected = s1.classList.contains('chip--error') || s2.classList.contains('chip--error');
-  var bothApproved = s1.classList.contains('chip--success') && s2.classList.contains('chip--success');
-
-  globalApprove.disabled = rejected || !bothApproved;
-
-  if (rejected) {
-    overall.className = 'chip chip--error';
-    overall.textContent = 'Rejected';
-    hint.textContent = 'This verification was rejected.';
-    // Terminal — no finalize/reject controls remain (reject also hides the section Approves).
-    globalActions.style.display = 'none';
-  } else if (bothApproved) {
-    // Positive "you're ready" state — neutral, not warning-orange (which reads as a caution).
-    overall.className = 'chip chip--neutral';
-    overall.textContent = 'Ready for final approval';
-    hint.textContent = 'Both sections are approved — click Approve verification to finalize and trigger video verification.';
-    globalActions.style.display = '';
-  } else {
-    overall.className = 'chip chip--neutral';
-    overall.textContent = 'Pending review';
-    hint.textContent = 'Approve both sections below, then confirm here to finalize and trigger video verification.';
-    globalActions.style.display = '';
+  if (opts.enabled !== undefined) {
+    setGated(btn, opts.enabled ? null : (opts.reason || 'Not available yet'));
   }
 }
 
-function approveOverall() {
+// Single owner of the gated-button state: aria-disabled + its tooltip text move together, so a
+// button can never look gated with a stale reason, or act while a reason is still showing.
+// Only null/undefined means "not gated" — an empty string would otherwise silently un-gate the
+// button while the caller believed it had disabled it.
+function setGated(btn, reason) {
+  var tip = document.getElementById(btn.getAttribute('aria-describedby'));
+  if (reason != null && reason !== '') {
+    btn.setAttribute('aria-disabled', 'true');
+    if (tip) { tip.textContent = reason; tip.hidden = false; }
+    quietTooltipIfPointerRests(btn);
+  } else {
+    btn.removeAttribute('aria-disabled');
+    if (tip) { tip.textContent = ''; tip.hidden = true; }
+  }
+}
+function isGated(btn) { return btn.getAttribute('aria-disabled') === 'true'; }
+
+// Clicking Approve leaves the pointer parked on a button that is now gated, and the click also moves
+// focus to it — so both :hover and :focus-within fire at once and the tooltip ambushes the user with
+// an explanation for a state they just deliberately created. Suppress it for this anchor until the
+// pointer and focus have both left; a later, deliberate hover gets the normal delayed tooltip.
+function quietTooltipIfPointerRests(btn) {
+  var anchor = btn.closest('.tooltip-anchor');
+  if (!anchor) return;
+  if (!btn.matches(':hover') && document.activeElement !== btn) return;
+  anchor.classList.add('is-quiet');
+  var release = function () {
+    // Deferred: during mouseleave/blur the :hover and activeElement state hasn't settled yet, and
+    // releasing while the other one still holds would hand the tooltip straight back.
+    setTimeout(function () {
+      if (anchor.matches(':hover') || document.activeElement === btn) return;
+      anchor.classList.remove('is-quiet');
+      anchor.removeEventListener('mouseleave', release);
+      btn.removeEventListener('blur', release);
+    }, 0);
+  };
+  anchor.addEventListener('mouseleave', release);
+  btn.addEventListener('blur', release);
+}
+
+// Section 2's Approve is gated on there actually being an authoritative result to approve. Without
+// this an officer can approve company data straight through a failed request — which defeats the
+// point of checking an authoritative source at all — or wave past an unresolved multi-representative
+// case. The no-prefill path is ungated: there's a manually uploaded cégkivonat to review instead.
+var s2Gate = 'awaiting';
+// Two of these name the document, which differs by entity type — so they're resolved through copy()
+// at read time rather than frozen at parse time.
+var GATE_REASONS = {
+  get awaiting() { return copy().gateAwaiting; },
+  failed:   'No authoritative result — retry before approving',
+  get expired() { return copy().gateExpired; },
+  multirep: 'Confirm you verified the representatives'
+};
+function setSection2Gate(state) {
+  s2Gate = state;
+  updateSection2Gate();
+}
+function updateSection2Gate() {
+  // Approved / terminal states own the button themselves; don't fight them.
+  if (caseFinalized || getSectionState(2) === 'approved') return;
+  var reason = '';
+  if (s2Gate === 'multirep') {
+    if (!document.getElementById('multirep-ack').checked) reason = GATE_REASONS.multirep;
+  } else if (GATE_REASONS[s2Gate]) {
+    reason = GATE_REASONS[s2Gate];
+  }
+  setApproveButton(2, { visible: true, enabled: !reason, reason: reason });
+}
+
+// Two different levels of finality, deliberately:
+//   • Section verdicts are reversible — approve ↔ reject toggles freely, so each verdict gates only
+//     its own button and leaves the opposite one live as the way back (see approve/rejectSection).
+//   • The case-level verdict is terminal. Once the verification is approved or rejected, it stays
+//     that way and every control on the page locks, including the sections beneath it.
+// Terminal controls are gated in place rather than removed: silently deleting a row of buttons
+// leaves the officer hunting for them, so the tooltip explains instead.
+var TERMINAL_REASON = 'This verification is already finalized';
+function setGlobalActionsEnabled(enabled) {
+  setGated(document.getElementById('global-reject'), enabled ? null : TERMINAL_REASON);
+  if (enabled) updateGlobalApproveIndicator();
+  else setGated(document.getElementById('global-approve'), TERMINAL_REASON);
+}
+// Whichever verdict a section currently holds gates its own button ("you can't set the state you're
+// already in"), and the opposite one stays live as the way back.
+var APPROVED_REASON = 'Already approved — reject to reopen this section';
+var REJECTED_REASON = 'Already rejected — approve to reopen this section';
+
+// Restores a section's two buttons to whatever that section's own state dictates. Lifting a
+// case-level lockdown (terminal, or an expiry revert) must not hand back an action the section
+// itself still forbids — re-enabling Approve on a section whose chip reads "Approved" makes the
+// verdict look re-actionable when nothing about it changed.
+function refreshSectionActions(n) {
+  var state = getSectionState(n);
+  setGated(document.getElementById('s' + n + '-reject'), state === 'rejected' ? REJECTED_REASON : null);
+  if (state === 'approved') setApproveButton(n, { visible: true, enabled: false, reason: APPROVED_REASON });
+  else if (n === 2) updateSection2Gate();
+  else setApproveButton(n, { visible: true, enabled: true });
+}
+function setSectionActionsEnabled(enabled) {
+  ACTIVE_SECTIONS.forEach(function (n) {
+    if (enabled) {
+      refreshSectionActions(n);
+    } else {
+      setGated(document.getElementById('s' + n + '-reject'), TERMINAL_REASON);
+      setApproveButton(n, { visible: true, enabled: false, reason: TERMINAL_REASON });
+    }
+  });
+}
+
+// Clears an expiry revert (or the preset "expired" demo) back to a clean, reviewable baseline.
+// Every transition that re-requests the document must call this first so the lockdown can't persist.
+// Only section 2 can be in a reverted state — expiry of the trade register extract invalidates the
+// company-data evidence, but the UBO approval rests on separate ownership documents and survives.
+function clearRevertedState() {
+  var wasReverted = caseReverted;
+  caseFinalized = false;
+  caseReverted = false;
+  document.getElementById('revert-banner').style.display = 'none';
+  document.getElementById('section-2').classList.remove('approval-section--reverted');
+  // Reset the regressed chip before the buttons: refreshSectionActions() reads the chip to decide
+  // what each section's Approve/Reject may do, so it has to see the cleared state, not the old one.
+  if (wasReverted) {
+    var chip = document.getElementById('s2-status');
+    chip.className = 'chip chip--neutral';
+    chip.textContent = 'Pending review';
+  }
+  setGlobalActionsEnabled(true);
+  setSectionActionsEnabled(true);
+  updateSection2Gate();
+}
+
+// The section chips are prerequisites the admin reviews, not an auto-finalizing signal — only
+// the global Approve/Reject modals actually finalize the case. This just keeps the progress hint
+// and the (never-disabled) Approve button's warning indicator in sync as sections change, and
+// stops touching either once the case is finalized so a stray section edit can't undo the
+// terminal chip.
+function updateOverallStatus() {
+  updateGlobalApproveIndicator();
+  if (caseFinalized) return;
+  var approvedCount = ACTIVE_SECTIONS.filter(function (n) { return getSectionState(n) === 'approved'; }).length;
+  var total = ACTIVE_SECTIONS.length;
+  var overall = document.getElementById('overall-status');
+  var hint = document.getElementById('overall-hint');
+  if (caseReverted) {
+    // Chip class and text move together — a warning-coloured chip reading "Unapproved" beside a
+    // neutral one saying "Pending review" is the same state described two contradictory ways.
+    overall.className = 'chip chip--warning';
+    overall.textContent = 'Unapproved';
+    hint.textContent = 'The trade register document expired. Business & company data must be re-approved against a fresh document — the beneficial owner approval stands.';
+    return;
+  }
+  overall.className = 'chip chip--neutral';
+  overall.textContent = 'Pending review';
+  // Once everything is approved the instruction to approve is stale — the only remaining step is the
+  // confirm, so say that instead of telling the officer to do what they've just done.
+  if (approvedCount === total) {
+    hint.textContent = (total > 1 ? 'Both sections approved' : 'Section approved') +
+      ' — confirm above to finalize and trigger video verification.';
+  } else {
+    hint.textContent = total > 1
+      ? approvedCount + ' of ' + total + ' sections approved. Approve both, then confirm above to finalize and trigger video verification.'
+      : approvedCount + ' of 1 section approved. Approve it, then confirm above to finalize and trigger video verification.';
+  }
+}
+
+// Hard gate: "Approve verification" is only enabled once both sections are approved, per spec
+// ("when both UBO and company data are approved … the verification request is ready for KYC").
+// The "N of 2 sections approved" hint in the process summary is what explains the disabled state —
+// the button points at it via aria-describedby, so there's no separate chip to keep in sync.
+function updateGlobalApproveIndicator() {
+  var btn = document.getElementById('global-approve');
+  if (!btn) return;
+  // In terminal state setGlobalActionsEnabled owns this button — recomputing here would overwrite
+  // TERMINAL_REASON with a progress count, and un-gate the button entirely once both sections read
+  // approved, handing back the finalize action on an already-finalized case.
+  if (caseFinalized) return;
+  var pending = ACTIVE_SECTIONS.filter(function (n) { return getSectionState(n) !== 'approved'; });
+  setGated(btn, pending.length
+    ? (pending.length > 1 ? pending.length + ' sections still need approval' : '1 section still needs approval')
+    : null);
+}
+
+// Approving disables that section's own Approve button in place rather than removing it — the state
+// can still change (Reject puts it back), so this is a disable case, not a hide case, and keeping
+// it in the flex row avoids shifting the neighbouring Reject button.
+// Neither section auto-approves, even on a clean trade-register match: the admin still makes
+// the explicit call after reviewing the comparison (per spec: "the admin decides on approval").
+// Approving section 2 is also the moment the authoritative data is written to the profile.
+function approveSection(n) {
+  // Defence in depth, same reasoning as openApproveModal — the gate is a compliance rule and
+  // shouldn't rest on the aria-disabled attribute alone. Gated buttons carry aria-disabled rather
+  // than the disabled attribute, so the click still reaches this handler and the guard is the only
+  // thing standing between a greyed button and a real state change.
+  if (caseFinalized) return;
+  if (isGated(document.getElementById('s' + n + '-approve'))) return;
+  var chip = document.getElementById('s' + n + '-status');
+  chip.className = 'chip chip--success';
+  chip.textContent = 'Approved';
+  setApproveButton(n, { visible: true, enabled: false, reason: APPROVED_REASON });
+  setGated(document.getElementById('s' + n + '-reject'), null);
+  if (n === 2 && document.getElementById('pending-write-note').style.display !== 'none') {
+    commitAuthoritativeData();
+  }
+  updateOverallStatus();
+}
+// Rejecting a section is a flag for the admin's own review, not a case-wide terminal action
+// anymore — only the global Reject verification modal (with a reason) actually terminates the case.
+// Symmetric with approveSection: whichever verdict is currently set has its own button gated (you
+// can't set the state you're already in), and the opposite one stays live as the way back.
+function rejectSection(n) {
+  if (caseFinalized) return;
+  if (isGated(document.getElementById('s' + n + '-reject'))) return;
+  var chip = document.getElementById('s' + n + '-status');
+  chip.className = 'chip chip--error';
+  chip.textContent = 'Rejected';
+  setGated(document.getElementById('s' + n + '-reject'), REJECTED_REASON);
+  // Section 2's Approve still answers to its own gate (a rejected section with no trade-register
+  // response must not become approvable just because it was rejected).
+  if (n === 2) updateSection2Gate(); else setApproveButton(n, { visible: true, enabled: true });
+  updateOverallStatus();
+}
+
+// ---------- Modal plumbing ----------
+// A dialog has to actually behave like one: focus moves in on open, Tab cycles inside it, Escape
+// closes it, and focus returns to whatever opened it. Without the trap, Tab reaches the buttons
+// behind the scrim and a second modal can be opened on top of the first from the keyboard alone.
+var openModalId = null;
+var modalReturnFocus = null;
+var FOCUSABLE = 'button:not(:disabled), [href], input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])';
+
+function openModal(id) {
+  if (openModalId) return;              // never stack modals
+  modalReturnFocus = document.activeElement;
+  openModalId = id;
+  document.getElementById(id).style.display = 'flex';
+  var first = document.getElementById(id).querySelector(FOCUSABLE);
+  if (first) first.focus();
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
+  if (openModalId === id) openModalId = null;
+  if (modalReturnFocus && document.contains(modalReturnFocus) && !modalReturnFocus.disabled) {
+    modalReturnFocus.focus();
+  }
+  modalReturnFocus = null;
+}
+
+document.addEventListener('keydown', function (e) {
+  if (!openModalId) return;
+  var card = document.getElementById(openModalId);
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    closeModal(openModalId);
+    return;
+  }
+  if (e.key !== 'Tab') return;
+  var items = Array.prototype.filter.call(card.querySelectorAll(FOCUSABLE), function (el) {
+    return el.offsetParent !== null;
+  });
+  if (!items.length) return;
+  var first = items[0];
+  var last = items[items.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  else if (!card.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+});
+
+// ---------- Global approve/reject modals ----------
+function openApproveModal() {
+  // Defence in depth — the button is disabled until both sections are approved, so this should
+  // be unreachable, but the gate is a compliance rule and shouldn't rest on the disabled attribute alone.
+  if (caseFinalized) return;
+  if (ACTIVE_SECTIONS.some(function (n) { return getSectionState(n) !== 'approved'; })) return;
+  openModal('approve-modal-scrim');
+}
+function closeApproveModal() {
+  closeModal('approve-modal-scrim');
+}
+function confirmApprove() {
+  closeApproveModal();
+  caseFinalized = true;
   var overall = document.getElementById('overall-status');
   overall.className = 'chip chip--success';
   overall.textContent = 'Approved · video verification triggered';
   document.getElementById('overall-hint').textContent = 'Verification approved — video verification has been triggered automatically.';
-  // The decision is final — leaving the buttons behind invites a redundant second click.
-  document.getElementById('global-actions').style.display = 'none';
-  setSectionFootersVisible(false);   // terminal — no per-section overrides remain
+  setGlobalActionsEnabled(false);
+  setSectionActionsEnabled(false);
+  addLogEntry('Verification approved', 'video verification triggered');
 }
 
-function rejectOverall() {
-  ['s1-status', 's2-status'].forEach(function (id) {
-    var chip = document.getElementById(id);
+function openRejectModal() {
+  if (isGated(document.getElementById('global-reject'))) return;
+  var reasonEl = document.getElementById('reject-reason');
+  reasonEl.value = '';
+  reasonEl.removeAttribute('aria-invalid');
+  document.getElementById('reject-reason-field').classList.remove('field--error');
+  document.getElementById('reject-reason-helper').textContent = 'Required — shown to the merchant.';
+  openModal('reject-modal-scrim');
+}
+function closeRejectModal() {
+  closeModal('reject-modal-scrim');
+}
+function confirmReject() {
+  var reasonEl = document.getElementById('reject-reason');
+  var reason = reasonEl.value.trim();
+  if (!reason) {
+    document.getElementById('reject-reason-field').classList.add('field--error');
+    document.getElementById('reject-reason-helper').textContent = 'Enter a reason before rejecting — the merchant will see this.';
+    reasonEl.setAttribute('aria-invalid', 'true');
+    reasonEl.focus();
+    return;
+  }
+  reasonEl.removeAttribute('aria-invalid');
+  closeRejectModal();
+  caseFinalized = true;
+  ACTIVE_SECTIONS.forEach(function (n) {
+    var chip = document.getElementById('s' + n + '-status');
     chip.className = 'chip chip--error';
     chip.textContent = 'Rejected';
   });
-  // Terminal reject — remove every per-section override so the case can't be silently
-  // re-approved into a "ready to finalize but the finalize button is gone" dead-end.
-  // updateOverallStatus() owns the global-actions visibility (hidden while rejected).
-  setSectionFootersVisible(false);
-  updateOverallStatus();
+  var overall = document.getElementById('overall-status');
+  overall.className = 'chip chip--error';
+  overall.textContent = 'Rejected';
+  document.getElementById('overall-hint').textContent = 'This verification was rejected — the merchant will be notified to edit their business profile.';
+  setGlobalActionsEnabled(false);
+  setSectionActionsEnabled(false);
+  addLogEntry('Verification rejected', reason);
 }
 
-// Approving hides that section's own Approve button — Reject remains as the only override,
-// same treatment whether the approval was automatic (registry match) or manual.
-function approveSection(n) {
-  var chip = document.getElementById('s' + n + '-status');
-  chip.className = 'chip chip--success';
-  chip.textContent = 'Approved';
-  setApproveButton(n, { visible: false });
-  updateOverallStatus();
-}
-function rejectSection(n) {
-  var chip = document.getElementById('s' + n + '-status');
-  chip.className = 'chip chip--error';
-  chip.textContent = 'Rejected';
-  // Rejecting must never strand the section without a way back to Approve — show it and,
-  // crucially, re-enable it (never leave a visible-but-dead button).
-  setApproveButton(n, { visible: true, enabled: true });
-  updateOverallStatus();
+function addLogEntry(title, detail) {
+  var empty = document.getElementById('log-entries-empty');
+  if (empty) empty.remove();
+  var now = new Date();
+  var timestamp = formatDate(now) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  var tr = document.createElement('tr');
+  var cells = [timestamp, 'Teszt Admin', 'Verification', title + (detail ? ' — ' + detail : ''), '—'];
+  // esc() matters here specifically: `detail` carries the free-text rejection reason typed by the admin.
+  tr.innerHTML = cells.map(function (c) { return '<td>' + esc(c) + '</td>'; }).join('');
+  document.getElementById('log-entries-body').appendChild(tr);
 }
 
-// The trade-register validity window is embedded in the verification banner itself — one
-// compound message, escalating from success to "expiring soon" as the tone changes, rather
-// than a second, separate countdown indicator elsewhere on the page.
-function renderExpiry(daysRemaining) {
-  var banner = document.getElementById('fetch-banner');
-  var icon = banner.querySelector('.snackbar__icon');
-  var title = banner.querySelector('.snackbar__title');
-  var sub = document.getElementById('fetch-banner-sub');
-  var fill = document.getElementById('fetch-banner-fill');
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function formatDate(d) { return d.getFullYear() + '.' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()) + '.'; }
 
-  if (daysRemaining <= 0) {
-    // The page-level revert banner + Request new document button already cover the expired state.
-    banner.style.display = 'none';
-    return;
+// ---------- Document downloads ----------
+// There's no document store behind a prototype, but an icon button that silently does nothing reads
+// as a *broken* download rather than an unbuilt one — the officer clicks, nothing happens, and the
+// prototype has taught them the wrong thing about the flow. So every Action-column button hands back
+// a placeholder file naming the document it stands in for.
+function triggerDownload(filename, text) {
+  var url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+function slugify(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // "Cégkivonat" → "cegkivonat", not "c-gkivonat"
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'document';
+}
+// Reads the row against its own table's headers rather than by column index — the ownership table has
+// 5 columns and the trade register table 6, and hardcoding positions would silently mislabel one.
+// Expired documents stay downloadable on purpose: the expired extract is still the record of what was
+// verified, and it's the first thing an officer wants to open when a case reverts.
+function downloadDocument(btn) {
+  var row = btn.closest('tr');
+  var headers = [].map.call(row.closest('table').querySelectorAll('thead th'), function (th) { return th.textContent.trim(); });
+  var cells = row.querySelectorAll('td');
+  function field(name) {
+    var i = headers.indexOf(name);
+    var v = i > -1 && cells[i] ? cells[i].innerText.replace(/\s+/g, ' ').trim() : '';
+    return v === '—' ? '' : v;
   }
-
-  banner.style.display = 'flex';
-  fill.style.width = Math.min(100, Math.round((daysRemaining / 30) * 100)) + '%';
-
-  if (daysRemaining <= 3) {
-    banner.className = 'alert-banner alert-banner--alert';
-    icon.innerHTML = '<svg class="icon"><use href="#i-alert-circle"/></svg>';
-    title.textContent = 'Company data verified via trade register API — expiring soon';
-    sub.innerHTML = 'Fields below reflect the authoritative source and replace the user-submitted values. <strong class="fetch-banner__validity">Only ' + daysRemaining + ' day' + (daysRemaining === 1 ? '' : 's') + ' left</strong> before this must be re-checked.';
-  } else {
-    banner.className = 'alert-banner alert-banner--success';
-    icon.innerHTML = '<svg class="icon"><use href="#i-check-circle"/></svg>';
-    title.textContent = 'Company data verified via trade register API';
-    sub.innerHTML = 'Fields below reflect the authoritative source and replace the user-submitted values. <strong class="fetch-banner__validity">Valid for ' + daysRemaining + ' more days.</strong>';
-  }
+  var label = field('Type') || field('Category') || 'Document';
+  var number = field('Document number');
+  var lines = ['Barion KYB — prototype placeholder', 'This file stands in for the real document.', ''];
+  headers.forEach(function (h, i) {
+    if (h !== 'Action' && cells[i]) lines.push(h + ': ' + cells[i].innerText.replace(/\s+/g, ' ').trim());
+  });
+  triggerDownload(slugify(label + (number ? '-' + number : '')) + '.txt', lines.join('\n'));
+  // Document access is auditable in a KYB context, so the log entry is real behaviour, not just
+  // click feedback — though it doubles as the on-page confirmation that the click landed.
+  addLogEntry('Document downloaded', label + (number ? ' — ' + number : ''));
 }
 
-// One badge for the whole Client summary block, not one per field — and only shown when it adds
-// information the banner above doesn't already carry (a registry match is fully covered by the banner).
+// One badge for the whole Client summary block, not one per field. "Prefilled" covers the
+// awaiting-request state (Cégadat/ARES prefill, not yet checked against the authoritative source);
+// "User-provided" covers the no-prefill path where the merchant typed the data manually.
 function setClientSummaryBadge(type) {
   var badge = document.getElementById('client-summary-badge');
-  if (type === 'user-provided') {
-    badge.className = 'chip chip--outline block-badge';
-    badge.textContent = 'User-provided';
+  if (type === 'prefilled') {
+    badge.textContent = 'Prefilled — unverified';
+    badge.style.display = 'inline-flex';
+  } else if (type === 'user-provided') {
+    badge.textContent = 'User-provided — unverified';
     badge.style.display = 'inline-flex';
   } else {
     badge.style.display = 'none';
   }
 }
 
-// Trade-register match — resolved before this page loads, so the page just renders the resolved state (no fetch/spinner simulation).
-function showRegistryMatchState(daysRemaining) {
-  if (daysRemaining === undefined) daysRemaining = 12;
-  document.body.setAttribute('data-eligible', 'true');
-  resetExpiryLockdown();   // clear any expiry lockdown and reset both sections before applying this state
+// ---------- Entity type ----------
+// Sole entrepreneurs (egyéni vállalkozó) run a materially different flow, per the spec's
+// "Remove the UBO document section globally for sole entrepreneurs": there is no separate legal
+// person behind the business, so there is no ownership structure to establish and no beneficial
+// owner to verify. That removes section 1 entirely and leaves company data as the only approval.
+// The authoritative source differs too — Microsec has no sole-trader coverage, so HU sole traders
+// resolve through EAL via NAV.
+var isSoleTrader = false;
+// Which sections actually exist in the current flow. Everything that counts, gates or locks sections
+// reads this rather than a hardcoded [1, 2] — otherwise the sole-trader case reports "0 of 2
+// approved" and the global Approve waits forever on a section that isn't on the page.
+var ACTIVE_SECTIONS = [1, 2];
 
-  setClientSummaryBadge(null);
+// Strings that differ by entity type. Kept as one bundle rather than scattered conditionals so the
+// sole-trader screen can't half-update and end up citing Microsec next to a NAV document.
+var COPY = {
+  company: {
+    docCategory:   'Extract from the trade register or other official certificate of incorporation, registration',
+    docType:       'Cégkivonat',
+    docNumber:     'MC-2026-118203',
+    source:        'Trade register API (Microsec)',
+    compareColumn: 'Trade register',
+    requestBtn:    'Request trade register document',
+    requestBtnNew: 'Request new trade register document',
+    awaitingTitle: 'Trade register document not yet requested',
+    awaitingSub:   'Fields below reflect the registration form. Request the trade register document to verify against the authoritative source.',
+    successTitle:  'Company data verified via trade register API',
+    failedTitle:   'Trade register request failed',
+    gateAwaiting:  'Request the trade register document first',
+    gateExpired:   'Request a new trade register document first',
+    expiredTitle:  'Trade register document expired',
+    expiredSub:    'The document backing this section is no longer valid. Request a new one to re-verify the company data.',
+    sectionTitle:  '2 · Business & company data'
+  },
+  soleTrader: {
+    docCategory:   'Official certificate of registration (sole entrepreneur register)',
+    docType:       'Hatósági bizonyítvány',
+    docNumber:     'EAL-2026-004417',
+    source:        'NAV EAL API',
+    compareColumn: 'NAV EAL register',
+    requestBtn:    'Request registry document',
+    requestBtnNew: 'Request new registry document',
+    awaitingTitle: 'Registry document not yet requested',
+    awaitingSub:   'Fields below reflect the registration form. Request the registry document to verify against the authoritative source.',
+    successTitle:  'Sole entrepreneur data verified via NAV EAL API',
+    failedTitle:   'Registry request failed',
+    gateAwaiting:  'Request the registry document first',
+    gateExpired:   'Request a new registry document first',
+    expiredTitle:  'Registry document expired',
+    expiredSub:    'The document backing this section is no longer valid. Request a new one to re-verify the business data.',
+    // No number: with the UBO section gone this is the only section, so "2 ·" would point at a
+    // sequence that doesn't exist.
+    sectionTitle:  'Business & company data'
+  }
+};
+function copy() { return isSoleTrader ? COPY.soleTrader : COPY.company; }
+function docNumber() { return copy().docNumber; }
+function comparedFields() { return isSoleTrader ? SOLE_TRADER_FIELDS : COMPANY_FIELDS; }
 
-  var s1 = document.getElementById('s1-status');
-  s1.className = 'chip chip--success';
-  s1.textContent = 'Auto-approved';
+// Spec §5.b — sole entrepreneurs compare on exactly four fields, and Representative is not among
+// them: the individual *is* the business, so representation can't diverge from it and the
+// multiple-representatives case cannot arise here at all.
+var SOLE_TRADER_FIELDS = [
+  { id: 'org-name', label: 'Name',                    submitted: 'Kovács János e.v.',                    authoritative: 'Kovács János e.v.' },
+  { id: 'tax',      label: 'Tax number',              submitted: '68412357-1-33',                        authoritative: '68412357-1-33' },
+  { id: 'regnum',   label: 'Registration number',     submitted: '52194837',                             authoritative: '52194837' },
+  { id: 'address',  label: 'Registered seat address', submitted: '2089, Telki, Akác utca 5',             authoritative: '2089, Mogyoród, Akác utca 5' }
+];
 
-  // Approve is redundant once the data is auto-verified against an authoritative source — Reject remains as an override.
-  setApproveButton(1, { visible: false });
+// Spec §5.a — the fields compared against the trade register for companies, with what the merchant
+// submitted and what the authoritative source returns. Two differ, two agree.
+var COMPANY_FIELDS = [
+  { id: 'org-name', label: 'Organization name',   submitted: 'Díjbeszedő Holding Zrt.',              authoritative: 'Díjbeszedő Holding Zártkörűen Működő Részvénytársaság' },
+  { id: 'tax',      label: 'Tax number',          submitted: '10805246243',                          authoritative: '10805246243' },
+  { id: 'regnum',   label: 'Registration number', submitted: '0110042094',                           authoritative: '0110042094' },
+  { id: 'address',  label: 'Headquarter address', submitted: '1117, Budapest, Budafoki út 107-109.', authoritative: '1117, Budapest HUN, Budafoki út 107-109.' }
+];
 
-  // A registry match means a trade-register document exists — the countdown applies, embedded in the banner.
-  renderExpiry(daysRemaining);
-  document.getElementById('request-new-doc-btn').style.display = 'none';
+// Representatives live in their own table — a company can have several, and each is a full record
+// rather than a single value, so neither fits a row of the field-comparison table. Each representative
+// is compared as a submitted/register row pair, so every attribute still compares column by column.
+var REP_ATTRS = [
+  { key: 'name',      label: 'Name' },
+  { key: 'position',  label: 'Position' },
+  { key: 'birthdate', label: 'Birth date' },
+  { key: 'place',     label: 'Place' },
+  { key: 'address',   label: 'Address' }
+];
+var REPRESENTATIVES_SUBMITTED = [
+  { name: 'János KOVÁCS', position: 'igazgatósági tag (vezető tisztségviselő)', birthdate: 'March 3, 1975', place: 'Győr', address: '2089, Telki, Akác utca 5' }
+];
+// Single-representative case — the register agrees on identity but not on the registered address.
+var REPRESENTATIVES_AUTHORITATIVE = [
+  { name: 'János KOVÁCS', position: 'igazgatósági tag (vezető tisztségviselő)', birthdate: 'March 3, 1975', place: 'Győr', address: '2089, Mogyoród, Akác utca 5' }
+];
+// …and the multiple-representatives case, where no automatic comparison is possible.
+var MULTIPLE_REPRESENTATIVES = [
+  { name: 'János KOVÁCS',     position: 'igazgatósági tag (vezető tisztségviselő)', birthdate: 'March 3, 1975',      place: 'Győr',     address: '2089, Mogyoród, Akác utca 5' },
+  { name: 'Eszter KISS',      position: 'igazgatósági tag (vezető tisztségviselő)', birthdate: 'September 12, 1994', place: 'Budapest', address: '1037, Budapest, Liget utca 12' },
+  { name: 'Gábor DR. FARKAS', position: 'cégvezető',                                birthdate: 'May 20, 1983',       place: 'Budapest', address: '2146, Mogyoród, Fenyő utca 8' }
+];
 
-  updateOverallStatus();
+// Each representative renders as its own comparison table with exactly the same shape as the Client
+// summary above: the person's attributes are the rows, Submitted / Trade register / Status are the
+// columns. A company with several representatives gets one such block per person.
+function repBlock(title, submitted, authoritative, mode) {
+  var rows = REP_ATTRS.map(function (attr) {
+    var sub = submitted ? submitted[attr.key] : null;
+    var reg = authoritative ? authoritative[attr.key] : null;
+    var status, rowClass = '';
+
+    if (!authoritative) {                       // no register response yet
+      status = STATUS_ICONS.awaiting;
+    } else if (!submitted) {                    // register returned someone not in the submission
+      status = STATUS_ICONS.action;
+      rowClass = 'compare-row--diff';
+    } else if (sub !== reg) {
+      status = STATUS_ICONS.diff;
+      rowClass = 'compare-row--diff' + (mode === 'committed' ? ' compare-row--committed' : '');
+    } else {
+      status = STATUS_ICONS.match;
+    }
+
+    return '<tr class="' + rowClass + '">' +
+      '<th scope="row">' + esc(attr.label) + '</th>' +
+      '<td class="compare-submitted">' + (sub == null ? '<span class="compare-awaiting">—</span>' : esc(sub)) + '</td>' +
+      '<td class="compare-register">' + (reg == null
+        ? '<span class="compare-awaiting">' + (mode === 'manual' ? 'Not applicable' : 'Not requested yet') + '</span>'
+        : esc(reg)) + '</td>' +
+      '<td class="compare-status">' + status + '</td></tr>';
+  }).join('');
+
+  return (title ? '<div class="rep-block__title">' + esc(title) + '</div>' : '') +
+    '<div class="table-scroll rep-block">' +
+      '<table class="table compare-table">' +
+        '<thead><tr><th scope="col">Field</th><th scope="col">Submitted</th>' +
+        '<th scope="col">' + esc(copy().compareColumn) + '</th><th scope="col" class="compare-status-col">Status</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>' +
+    '</div>';
 }
 
-// No trade-register match — no authoritative document was found, so there's nothing to count down; falls back to manual comparison, Approve is required.
-function showManualReviewState() {
-  document.body.setAttribute('data-eligible', 'false');
-  resetExpiryLockdown();   // clear any expiry lockdown and reset both sections before applying this state
-  document.getElementById('fetch-banner').style.display = 'none';
-  document.getElementById('request-new-doc-btn').style.display = 'none';
+// `mode` mirrors renderComparison: 'awaiting' | 'manual' | 'proposed' | 'committed'.
+function renderRepresentatives(mode, opts) {
+  opts = opts || {};
+  var container = document.getElementById('representatives-blocks');
+  // A sole entrepreneur has no representatives to compare — the person and the business are the
+  // same legal entity, so an empty "Representative" block would invent a distinction that isn't there.
+  if (isSoleTrader) {
+    container.innerHTML = '';
+    document.getElementById('representatives-subhead').style.display = 'none';
+    return;
+  }
+  document.getElementById('representatives-subhead').style.display = '';
+  var submitted = REPRESENTATIVES_SUBMITTED[0];
+  var html;
 
-  setClientSummaryBadge('user-provided');
+  if (mode === 'awaiting' || mode === 'manual') {
+    html = repBlock(null, submitted, null, mode);
+  } else if (opts.multiRep) {
+    // Register people are matched to the submission by name where possible; the extra ones have no
+    // submitted counterpart, which is exactly what makes this a manual case.
+    html = MULTIPLE_REPRESENTATIVES.map(function (r, i) {
+      var pair = r.name === submitted.name ? submitted : null;
+      return repBlock('Representative ' + (i + 1) + ' · ' + r.name, pair, r, mode);
+    }).join('');
+  } else {
+    html = repBlock(null, submitted, REPRESENTATIVES_AUTHORITATIVE[0], mode);
+  }
+  document.getElementById('representatives-blocks').innerHTML = html;
+}
+// True once the authoritative values have actually been written into the profile (i.e. section 2
+// was approved). Keeps the expiry/reset paths from re-proposing an already-committed change.
+var authoritativeCommitted = false;
 
-  // s1 baseline (neutral "Pending review", Approve shown + enabled) is set by resetExpiryLockdown;
-  // manual review needs an explicit human approval, so nothing further to override here.
-  updateOverallStatus();
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function simulateExpiry() {
-  document.getElementById('revert-banner').style.display = 'flex';
-  ['s1-status', 's2-status'].forEach(function (id) {
-    var chip = document.getElementById(id);
-    chip.className = 'chip chip--neutral';
-    chip.textContent = 'Unapproved';
+var STATUS_ICONS = {
+  match:    '<svg class="icon icon--sm match-icon" role="img" aria-label="Matches the authoritative source"><use href="#i-check-circle"/></svg>',
+  diff:     '<svg class="icon icon--sm mismatch-icon" role="img" aria-label="Differs from the authoritative source"><use href="#i-alert-circle"/></svg>',
+  action:   '<svg class="icon icon--sm mismatch-icon" role="img" aria-label="Further action required"><use href="#i-alert-circle"/></svg>',
+  awaiting: ''
+};
+
+// Single renderer for the comparison table. `mode` is 'awaiting' (no response yet), 'proposed'
+// (response in, nothing written) or 'committed' (written on approval). Rebuilding the whole tbody
+// keeps every state derivable from one place — no partial cell updates left over from a prior state.
+function renderComparison(mode, opts) {
+  opts = opts || {};
+  var rows = comparedFields().map(function (f) {
+    var differs = f.submitted !== f.authoritative;
+    var register, status, rowClass = '';
+
+    if (mode === 'awaiting' || mode === 'manual') {
+      // 'manual' = no prefill was used, so no authoritative call is owed at all — distinct from
+      // 'awaiting', where a call is still expected.
+      register = '<span class="compare-awaiting">' +
+        (mode === 'manual' ? 'Not applicable — manual upload' : 'Not requested yet') + '</span>';
+      status = STATUS_ICONS.awaiting;
+    } else if (differs) {
+      // Flagged, not diffed — the warning icon and the row marker say "these don't match"; reading
+      // the two values side by side is the officer's job from there.
+      register = esc(f.authoritative);
+      status = STATUS_ICONS.diff;
+      rowClass = 'compare-row--diff' + (mode === 'committed' ? ' compare-row--committed' : '');
+    } else {
+      register = esc(f.authoritative);
+      status = STATUS_ICONS.match;
+    }
+
+    return '<tr class="' + rowClass + '">' +
+      '<th scope="row">' + esc(f.label) + '</th>' +
+      '<td class="compare-submitted">' + esc(f.submitted) + '</td>' +
+      '<td class="compare-register">' + register + '</td>' +
+      '<td class="compare-status">' + status + '</td>' +
+      '</tr>';
   });
-  // Lock only the two section Approve buttons — the global Approve is owned by
-  // updateOverallStatus (and the old broad selector also matched it by accident).
-  setApproveButton(1, { enabled: false });
-  setApproveButton(2, { enabled: false });
-  renderExpiry(0);
-  document.getElementById('section-1').classList.add('approval-section--reverted');
-  document.getElementById('section-2').classList.add('approval-section--reverted');
-  document.getElementById('request-new-doc-btn').style.display = '';
-  setClientSummaryBadge(null);
-  updateOverallStatus();
-  document.getElementById('overall-status').textContent = 'Unapproved';
-  document.getElementById('overall-hint').textContent = 'The trade register document expired. Request a new document to continue.';
+  // The column is named after whichever register actually answered — "Trade register" over a NAV EAL
+  // response would credit the wrong authority.
+  document.getElementById('compare-source-col').textContent = copy().compareColumn;
+  document.getElementById('compare-body').innerHTML = rows.join('');
+  renderRepresentatives(mode, opts);
 }
 
-// Admin action once expired — starts a fresh trade-register check and resets both sections for re-review.
-function requestNewDocument() {
-  // The trade-register check is a real background request — show the button's loading state
-  // rather than resolving instantly.
-  var btn = document.getElementById('request-new-doc-btn');
-  btn.classList.add('btn--loading');
-  btn.disabled = true;
+// Renders a resolved trade-register response as a review-time comparison — nothing is written yet.
+function showProposedAuthoritativeData() {
+  authoritativeCommitted = false;
+  setClientSummaryBadge(null);
+  renderComparison('proposed');
+  setMultiRepState(false);
+  var note = document.getElementById('pending-write-note');
+  note.textContent = "Approving this section writes the authoritative values above into the merchant's profile, replacing the submitted ones.";
+  note.style.display = '';
+  setSection2Gate('ready');
+}
 
-  setTimeout(function () {
-    btn.classList.remove('btn--loading');
+// Multiple-representatives branch: every other field still compares normally, but Representative
+// is flagged for manual handling instead of being compared or overwritten.
+function showMultiRepAuthoritativeData() {
+  showProposedAuthoritativeData();
+  // The row only points at the case — the banner below is the single place that explains it.
+  renderComparison('proposed', { multiRep: true });
+  setMultiRepState(true);
+  document.getElementById('pending-write-note').textContent =
+    "Approving this section writes the authoritative values above into the merchant's profile, replacing the submitted ones. The representative is left unchanged and must be resolved manually.";
+  setSection2Gate('multirep');
+}
+
+function setMultiRepState(on) {
+  document.getElementById('multirep-callout').style.display = on ? 'flex' : 'none';
+  document.getElementById('multirep-ack').checked = false;
+}
+
+// The actual profile write — spec §5.c: "the authoritative response overwrites user or prefill API
+// data once the Company data section is approved." Called from approveSection(2), never from the
+// fetch. Representatives are deliberately left unwritten in the multi-representative case.
+function commitAuthoritativeData() {
+  if (authoritativeCommitted) return;
+  var multiRep = document.getElementById('multirep-callout').style.display !== 'none';
+  var changed = comparedFields().filter(function (f) {
+    return f.submitted !== f.authoritative;
+  });
+  renderComparison('committed', { multiRep: multiRep });
+  authoritativeCommitted = true;
+  document.getElementById('pending-write-note').style.display = 'none';
+  addLogEntry('Company data overwritten from trade register',
+    changed.length + ' field' + (changed.length === 1 ? '' : 's') + ' replaced' +
+    (multiRep ? '; representatives left unchanged (multiple representatives)' : ''));
+}
+
+// The table is the single owner of document validity: the expiry date carries its own status flag
+// (valid / expiring soon / expired) so the banner doesn't have to restate it.
+// `status` is 'valid' | 'expiring' | 'expired' | 'none' ('none' = manual upload, no expiry tracked).
+// Only exceptions are marked. A document that's simply valid needs no annotation — the date says so
+// — so the marker appears exclusively when something needs attention: red when expired, amber when
+// close enough to matter. The text carries the meaning on its own, colour reinforces it.
+function expiryStatusMarkup(status, daysLeft) {
+  if (status === 'expired')  return '<span class="expiry-status expiry-status--expired"><span class="expiry-dot"></span>Expired</span>';
+  if (status === 'expiring') return '<span class="expiry-status expiry-status--expiring"><span class="expiry-dot"></span>' + daysLeft + ' day' + (daysLeft === 1 ? '' : 's') + ' left</span>';
+  return '';
+}
+function fillTradeRegisterRow(source, docNo, expiry, status, daysLeft) {
+  document.getElementById('doc-table-empty').style.display = 'none';
+  document.getElementById('tr-doc-row').style.display = '';
+  // Category and Type are entity-dependent: a sole entrepreneur's registry document is a hatósági
+  // bizonyítvány from NAV, not a cégkivonat from the trade register.
+  document.getElementById('tr-doc-category').textContent = copy().docCategory;
+  document.getElementById('tr-doc-type').textContent = copy().docType;
+  document.getElementById('tr-doc-number').textContent = docNo;
+  document.getElementById('tr-doc-expiry').innerHTML = expiry + expiryStatusMarkup(status, daysLeft);
+  document.getElementById('tr-doc-source').innerHTML = '<span class="chip chip--outline block-badge">' + source + '</span>';
+}
+
+// Trade-register banner — states: awaiting (not yet requested) / loading / success (with
+// expiring-soon escalation under 4 days) / failed / hidden (no-prefill path, no API call at all).
+function renderBanner(state, daysRemaining) {
+  var banner = document.getElementById('fetch-banner');
+  var icon = banner.querySelector('.snackbar__icon');
+  var title = banner.querySelector('.snackbar__title');
+  var sub = document.getElementById('fetch-banner-sub');
+  var progressWrap = banner.querySelector('.alert-banner__progress');
+  var fill = document.getElementById('fetch-banner-fill');
+  var btn = document.getElementById('request-doc-btn');
+
+  if (state === 'hidden') {
+    banner.style.display = 'none';
+    btn.style.display = 'none';
+    return;
+  }
+  banner.style.display = 'flex';
+
+  if (state === 'awaiting') {
+    banner.className = 'alert-banner alert-banner--neutral';
+    icon.innerHTML = '<svg class="icon"><use href="#i-clock-rewind"/></svg>';
+    title.textContent = copy().awaitingTitle;
+    sub.textContent = copy().awaitingSub;
+    progressWrap.style.display = 'none';
+    btn.textContent = copy().requestBtn;
+    btn.style.display = '';
     btn.disabled = false;
+    btn.classList.remove('btn--loading');
+  } else if (state === 'loading') {
+    btn.classList.add('btn--loading');
+    btn.disabled = true;
+  } else if (state === 'success') {
+    var expiring = daysRemaining <= 3;
+    banner.className = 'alert-banner ' + (expiring ? 'alert-banner--alert' : 'alert-banner--success');
+    icon.innerHTML = '<svg class="icon"><use href="#' + (expiring ? 'i-alert-circle' : 'i-check-circle') + '"/></svg>';
+    title.textContent = copy().successTitle + (expiring ? ' — expiring soon' : '');
+    // Validity isn't restated here — the Documents table below owns the expiry date and flags its
+    // status. The banner only reports what came back, so the same fact isn't in two places.
+    sub.textContent = 'Differences from the submitted data are flagged field by field below.';
+    progressWrap.style.display = 'none';
+    btn.style.display = 'none';
+  } else if (state === 'expired') {
+    // The page-level revert banner states the case-level consequence; this one states the section-level
+    // fact and carries the action that resolves it. Different altitudes, so not a duplicate message —
+    // and now that the button lives inside the banner, the section needs a banner to host it.
+    banner.className = 'alert-banner alert-banner--alert';
+    icon.innerHTML = '<svg class="icon"><use href="#i-alert-circle"/></svg>';
+    title.textContent = copy().expiredTitle;
+    sub.textContent = copy().expiredSub;
+    progressWrap.style.display = 'none';
+    btn.textContent = copy().requestBtnNew;
+    btn.style.display = '';
+    btn.disabled = false;
+    btn.classList.remove('btn--loading');
+  } else if (state === 'failed') {
+    banner.className = 'alert-banner alert-banner--error';
+    icon.innerHTML = '<svg class="icon"><use href="#i-x-circle"/></svg>';
+    title.textContent = copy().failedTitle;
+    // The raw response is still retained per spec ("regardless of outcome"), but it is deliberately
+    // not surfaced here — the banner's job is to tell the officer the request failed and offer the
+    // retry, not to compete for that attention with a provenance download.
+    sub.textContent = 'No authoritative match was returned. Retry the request or escalate manually — there is no manual-upload fallback in this flow.';
+    progressWrap.style.display = 'none';
+    btn.textContent = 'Retry request';
+    btn.style.display = '';
+    btn.disabled = false;
+    btn.classList.remove('btn--loading');
+  }
+}
 
-    // showRegistryMatchState → resetExpiryLockdown clears the revert banner, reverted borders,
-    // and re-enables/resets both sections; then applies the fresh 30-day auto-approved state.
-    showRegistryMatchState(30);
+// The real, admin-triggered check — spec: "an admin user manually triggers the 'Request trade
+// register document' via a button." Resolves per the demo scenario so the prototype stays
+// deterministic for review (?scenario=failed to see the failure branch, etc.).
+function requestTradeRegisterDocument() {
+  // clearRevertedState() below lifts the case-level lockdown, so without this a document request on
+  // a finalized case would silently re-open it. The button being hidden isn't a state guard.
+  if (caseFinalized) return;
+  renderBanner('loading');
+  setTimeout(function () {
+    clearRevertedState();
+    var scenario = getScenario();
+    if (scenario === 'failed') {
+      renderBanner('failed');
+      setSection2Gate('failed');
+      addLogEntry('Trade register request failed', 'no authoritative match returned');
+    } else {
+      if (scenario === 'multirep') showMultiRepAuthoritativeData();
+      else showProposedAuthoritativeData();
+      var expiry = new Date();
+      expiry.setDate(expiry.getDate() + 30);
+      fillTradeRegisterRow(copy().source, docNumber(), formatDate(expiry), 'valid', 30);
+      renderBanner('success', 30);
+      addLogEntry(copy().docType + ' requested', copy().source + ' — valid until ' + formatDate(expiry));
+    }
+    updateOverallStatus();
   }, 1400);
 }
 
-// Resolved before this page loads — the page renders whichever state applies, no simulated fetch delay.
+// No prefill at registration — the merchant already manually uploaded the cégkivonat, so there's
+// no authoritative API call to make; the admin reviews the uploaded document directly.
+function renderNoPrefillState() {
+  renderBanner('hidden');
+  setClientSummaryBadge('user-provided');
+  renderComparison('manual');
+  fillTradeRegisterRow('Manual upload', 'DOC-885521', '—', 'none');
+  // Ungated — there is a manually uploaded cégkivonat to review, so no authoritative call is owed.
+  setSection2Gate('manual');
+  updateOverallStatus();
+}
+
+// Demo: both sections were previously approved and the authoritative data was written to the
+// profile; the 30-day trade register document has since expired. Only section 2 reverts — its
+// approval rested on that document. The UBO approval rests on the ownership-structure documents
+// and stands. (Policy assumption, not spec text — flagged for compliance sign-off.)
+function renderExpiredDemo() {
+  showProposedAuthoritativeData();
+  commitAuthoritativeData();
+  fillTradeRegisterRow(copy().source, docNumber(), '2026.07.28.', 'expired');
+  renderBanner('expired');
+  document.getElementById('revert-banner').style.display = 'flex';
+  // Set before approveSection(1), which routes through updateOverallStatus — the reverted case has
+  // its own page-level chip and hint, and must not be re-described as routine pending work by any
+  // later section click either. Hence a state flag rather than patching the text after the fact.
+  caseReverted = true;
+  approveSection(1);
+  var chip = document.getElementById('s2-status');
+  // Warning, not neutral — a regressed section must not look identical to routine pending work once
+  // the page-level revert banner has been scrolled past.
+  chip.className = 'chip chip--warning';
+  chip.textContent = 'Unapproved';
+  setSection2Gate('expired');
+  document.getElementById('section-2').classList.add('approval-section--reverted');
+  updateOverallStatus();
+}
+
+// No renderApprovedDemo(): like the trade-register match, "fully approved" is an outcome rather than
+// a state the case can be found in. It is only ever reached by approving both sections and confirming
+// the modal, and jumping straight to it also skipped the confirm step that makes it terminal.
+// Reach it the way the product does.
+
+// ---------- Debug shortcuts (prototype-only) — jump straight to a resolved state instead of
+// driving the real button + timeout. Unlike clearRevertedState (used by the real flow, which only
+// clears an actual expiry lockdown), these fully reset both sections to a clean pending baseline
+// first, since a debug jump can come from any prior state including Rejected.
+function resetSectionsToPending() {
+  caseFinalized = false;
+  caseReverted = false;
+  authoritativeCommitted = false;
+  // A debug jump is a fresh case — carrying the previous run's log rows over is just confusing.
+  document.getElementById('log-entries-body').innerHTML =
+    '<tr id="log-entries-empty"><td colspan="5" class="body-sm" style="color:var(--text-tertiary)">No log entries yet.</td></tr>';
+  document.getElementById('revert-banner').style.display = 'none';
+  document.getElementById('section-1').classList.remove('approval-section--reverted');
+  document.getElementById('section-2').classList.remove('approval-section--reverted');
+  ['1', '2'].forEach(function (n) {
+    var chip = document.getElementById('s' + n + '-status');
+    chip.className = 'chip chip--neutral';
+    chip.textContent = 'Pending review';
+  });
+  // After the chips are back to pending, so the gates recompute against a clean state.
+  setGlobalActionsEnabled(true);
+  setSectionActionsEnabled(true);
+}
+function resetClientFields() {
+  renderComparison('awaiting');
+  setMultiRepState(false);
+  document.getElementById('pending-write-note').style.display = 'none';
+  authoritativeCommitted = false;
+  document.getElementById('tr-doc-row').style.display = 'none';
+  document.getElementById('doc-table-empty').style.display = '';
+  setSection2Gate('awaiting');
+}
+
+// Switches the page between the company and sole-entrepreneur flows. Everything entity-dependent is
+// driven from here so the two can't half-apply — a page showing "Beneficial owner structure" beside
+// a NAV document would misrepresent the flow to whoever is reviewing the prototype.
+function setSoleTraderMode(on) {
+  isSoleTrader = on;
+  ACTIVE_SECTIONS = on ? [2] : [1, 2];
+  // Section 1 is removed, not collapsed: for a sole entrepreneur there is no ownership structure to
+  // review at all, so a collapsed section would imply hidden work that simply doesn't exist.
+  document.getElementById('section-1').style.display = on ? 'none' : '';
+  document.getElementById('section-2').querySelector('h2').textContent = copy().sectionTitle;
+  // The merchant identity in the process summary — a sole trader is a person, not an organization.
+  var titleEl = document.querySelector('.process-summary h2');
+  titleEl.firstChild.textContent = (on ? 'Kovács János e.v. ' : 'Díjbeszedő Holding Zrt. ');
+  document.getElementById('summary-wallet-type').textContent = on ? 'Sole entrepreneur' : 'Organization';
+  // The expiry revert banner reasons about the UBO approval surviving — there isn't one here.
+  document.getElementById('revert-banner-sub').textContent = on
+    ? 'The registry document expired. Business & company data must be re-reviewed against a fresh document.'
+    : 'The trade register document expired. Business & company data must be re-reviewed against a fresh document. The beneficial owner approval rests on separate documents and is unaffected.';
+}
+
+// Demo: sole entrepreneur (egyéni vállalkozó) — no UBO section, four compared fields, NAV EAL as the
+// authoritative source. Entry state is the same as any other case: awaiting the admin's manual request.
+function renderSoleTraderState() {
+  setSoleTraderMode(true);
+  // Re-render after the mode switch: init and the debug resets both draw the comparison table before
+  // the entity type is known, so without this the sole-trader page keeps the company field set.
+  renderComparison('awaiting');
+  renderBanner('awaiting');
+  setClientSummaryBadge('prefilled');
+  setSection2Gate('awaiting');
+  updateOverallStatus();
+}
+
+function debugShowSoleTrader() {
+  setScenario('soletrader');
+  // Mode first: resetClientFields() re-renders the comparison table, and it must already know which
+  // field set to draw.
+  setSoleTraderMode(true);
+  resetSectionsToPending();
+  resetClientFields();
+  renderSoleTraderState();
+}
+function debugShowAwaiting() {
+  setScenario('match');
+  setSoleTraderMode(false);
+  resetSectionsToPending();
+  resetClientFields();
+  renderBanner('awaiting');
+  setClientSummaryBadge('prefilled');
+  updateOverallStatus();
+}
+// No debugShowMatch(): a resolved trade-register match is never an entry state. The admin always
+// triggers the request manually (spec: "An admin user manually triggers the 'Request trade register
+// document' via a button"), so the match is only ever the *outcome* of that click. Reach it the way
+// the product does — load the page and press the button.
+function debugShowMultiRep() {
+  setScenario('multirep');
+  setSoleTraderMode(false);
+  resetSectionsToPending();
+  resetClientFields();
+  showMultiRepAuthoritativeData();
+  var expiry = new Date();
+  expiry.setDate(expiry.getDate() + 30);
+  fillTradeRegisterRow(copy().source, docNumber(), formatDate(expiry), 'valid', 30);
+  renderBanner('success', 30);
+  updateOverallStatus();
+}
+function debugShowFailed() {
+  setScenario('failed');
+  setSoleTraderMode(false);
+  resetSectionsToPending();
+  resetClientFields();
+  setClientSummaryBadge('prefilled');
+  renderBanner('failed');
+  setSection2Gate('failed');
+  updateOverallStatus();
+}
+function debugShowNoPrefill() {
+  setScenario('noprefill');
+  setSoleTraderMode(false);
+  resetSectionsToPending();
+  resetClientFields();
+  renderNoPrefillState();
+}
+function debugShowExpired() {
+  setScenario('match');   // requesting a new document after an expiry must be able to succeed
+  setSoleTraderMode(false);
+  resetSectionsToPending();
+  resetClientFields();
+  renderExpiredDemo();
+}
+function debugReset() {
+  window.location.href = window.location.pathname;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
-  var eligible = document.body.getAttribute('data-eligible') === 'true';
-  if (eligible) {
-    showRegistryMatchState();
-  } else {
-    showManualReviewState();
+  var scenario = getScenario();
+  // The comparison tbody ships empty — every state renders it, so there's one source of truth.
+  renderComparison('awaiting');
+  if (scenario === 'expired') {
+    renderExpiredDemo();
+    return;
   }
+  if (scenario === 'noprefill') {
+    renderNoPrefillState();
+    return;
+  }
+  if (scenario === 'soletrader') {
+    renderSoleTraderState();
+    return;
+  }
+  // Default: prefill was used at registration — awaiting the admin's manual trade-register request.
+  renderBanner('awaiting');
+  setClientSummaryBadge('prefilled');
+  setSection2Gate('awaiting');
+  updateOverallStatus();
 });
 </script>
 
