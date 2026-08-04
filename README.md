@@ -8,7 +8,7 @@ Live mirror: <https://barion-design-system.vercel.app/>
 
 | File / folder | Role |
 |---|---|
-| `index.html` | The rendered component catalogue — 22 numbered sections (Color, Typography, Logo, Shape … Hard rules). The "what it should look like" reference. |
+| `index.html` | The rendered component catalogue — 23 numbered sections (Color, Typography, Logo, Shape … Hard rules). The "what it should look like" reference. |
 | `brand-tokens.css` | The canonical, machine-readable tokens — every colour, font size, weight, radius, shadow, spacing step, gradient and motion value as a CSS custom property. **The authoritative token source.** |
 | `assets/` | Logo SVGs (`barion-mark[-white].svg`, `barion-wordmark[-white].svg`). |
 | `icons/` | Icon PNGs (mostly superseded by inline `<symbol>` SVGs in `index.html`). |

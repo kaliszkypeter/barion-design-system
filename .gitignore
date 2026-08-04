@@ -5,3 +5,8 @@ node_modules/
 # Local dev tooling — not for the public repo
 CLAUDE.md
 .claude/
+.vscode/
+.playwright-mcp/
+
+# Ad-hoc test/reference screenshots — not repo assets
+/*.png

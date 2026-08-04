@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Barion — Gateway login (prototype)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../brand-tokens.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Fix: hidden attribute wins even when display:flex is set */
+[hidden] { display: none !important; }
+
+/* ---- Component styles (from index.html — brand-tokens.css only has tokens) ---- */
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2); height: 46px; padding: 14px var(--s-4); border-radius: var(--radius-sm); font-family: var(--font-brand); font-weight: var(--fw-semibold); font-size: var(--fs-body); cursor: pointer; transition: filter var(--dur-button) var(--ease-in-out), background var(--dur-button) var(--ease-in-out); border: 0; box-shadow: none; line-height: 1; }
+.btn:focus-visible { box-shadow: var(--shadow-focus); outline: none; }
+.btn--primary { background: var(--gradient-brand-button); color: var(--text-invert); }
+.btn--primary:hover:not(:disabled) { background-image: linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.05)), var(--gradient-brand-button); }
+.btn--primary:active:not(:disabled) { filter: brightness(0.78); }
+.btn--primary:focus-visible:not(:disabled) { background-image: linear-gradient(rgba(0,0,0,0.10),rgba(0,0,0,0.10)),var(--gradient-brand-button); box-shadow: 0 0 0 3px var(--blue-300); }
+.btn--secondary { background: var(--surface-primary); color: var(--text-primary); border: 1px solid var(--border-secondary); }
+.btn--secondary:hover:not(:disabled) { background: var(--white-gray); }
+.btn--link { background: transparent; color: var(--text-link-1); font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); padding: 0; height: auto; border: 0; cursor: pointer; font-family: var(--font-brand); }
+.btn--link:hover:not(:disabled) { text-decoration: underline; color: var(--text-link-2); }
+.btn-icon { display: inline-grid; place-content: center; background: transparent; border: 0; border-radius: var(--radius-xs); color: var(--icon-primary); cursor: pointer; transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); outline: none; flex-shrink: 0; }
+.btn-icon:hover:not(:disabled) { background: var(--blue-50); color: var(--text-brand); }
+.btn-icon--l { width: 36px; height: 36px; }
+.btn-icon--l .icon { width: 20px; height: 20px; }
+.icon { width: 20px; height: 20px; flex-shrink: 0; display: inline-block; vertical-align: middle; color: var(--icon-primary); }
+.btn--full { width: 100%; justify-content: center; }
+
+/* Inputs */
+.field { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.field__label { font-family: var(--font-brand); font-weight: var(--fw-semibold); font-size: var(--fs-body); color: var(--text-primary); }
+.field__input { height: 44px; padding: 10px 12px; border-radius: var(--radius-xs); border: 1px solid var(--border-secondary); background: var(--surface-primary); font-family: var(--font-brand); font-weight: var(--fw-semilight); font-size: var(--fs-body); color: var(--text-primary); transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); width: 100%; box-sizing: border-box; box-shadow: none; outline: none; }
+.field__input::placeholder { color: var(--text-inactive); }
+.field__input:hover:not(:disabled):not(:focus) { border-color: var(--border-strong); }
+.field__input:focus { border-color: var(--blue-200); box-shadow: var(--shadow-focus); }
+.field__input-wrap { position: relative; }
+.field__input-wrap .field__input { padding-right: 44px; }
+.field__input-wrap .btn-icon { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); color: var(--icon-secondary); }
+
+/* Avatars */
+.avatar { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--grey-200); color: var(--grey-700); font-family: var(--font-brand); font-weight: var(--fw-semibold); flex-shrink: 0; user-select: none; overflow: hidden; }
+.avatar--sm { width: 32px; height: 32px; font-size: 12px; }
+.avatar--darkblue { background: #047CD2; color: #FFFFFF; }
+
+/* ---- Auth forms (reused from login-prototype.html) ---- */
+.auth-form { display: flex; flex-direction: column; gap: var(--s-4); }
+.auth-form__title { font-weight: var(--fw-semibold); font-size: var(--fs-body); color: var(--text-primary); margin: 0; }
+
+.account-chip { display: flex; align-items: center; gap: var(--s-3); background: var(--white-gray); border-radius: var(--radius-xs); padding: var(--s-2) var(--s-3); }
+.account-chip__info { flex: 1; min-width: 0; }
+.account-chip__name { display: block; font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.account-chip__email { display: block; font-size: var(--fs-body-xs); font-weight: var(--fw-semilight); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.push-illus { display: flex; flex-direction: column; align-items: center; gap: var(--s-3); background: var(--blue-50); border-radius: var(--radius-sm); padding: var(--s-6) var(--s-5); text-align: center; }
+.push-illus__icon { width: 52px; height: 52px; background: var(--surface-primary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(44, 52, 70, 0.10); }
+.push-illus__icon svg { animation: push-pulse 2.4s var(--ease-out) infinite; }
+@keyframes push-pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.65; transform: scale(0.94); } 100% { opacity: 1; transform: scale(1); } }
+.push-illus__text { font-size: var(--fs-body-sm); font-weight: var(--fw-semilight); color: var(--text-secondary); line-height: var(--lh-body); margin: 0; max-width: 240px; }
+
+.login-divider { width: 100%; border: none; border-top: 1px solid var(--border-secondary); margin: 0; }
+.signup-prompt { font-size: var(--fs-body-sm); font-weight: var(--fw-semilight); color: var(--text-secondary); margin: 0; text-align: center; }
+.signup-prompt a { font-weight: var(--fw-semibold); color: var(--text-link-1); text-decoration: none; }
+.signup-prompt a:hover { text-decoration: underline; }
+
+/* ---- State transitions ---- */
+.wallet-state.is-out { opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); }
+.wallet-state.is-in { opacity: 1; transition: opacity var(--dur-base) var(--ease-out); }
+
+/* ================= Page shell ================= */
+body { margin: 0; min-height: 100vh; background: var(--white-gray); display: flex; align-items: center; justify-content: center; font-family: var(--font-brand); padding: var(--s-8) var(--s-4); }
+
+.context-label { position: fixed; top: var(--s-4); left: var(--s-4); font-size: var(--fs-body-xs); font-weight: var(--fw-semibold); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ================= Gateway payment-method card ================= */
+.gateway-card { background: var(--surface-primary); border: 1px solid var(--border-secondary); border-radius: var(--radius-md); width: 100%; max-width: 460px; overflow: hidden; }
+
+.method-row + .method-row { border-top: 1px solid var(--border-secondary); }
+
+.method-row__header { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-4) var(--s-5); cursor: default; }
+.method-icon { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--icon-primary); }
+.method-icon--wallet { width: 46px; height: 26px; border-radius: var(--radius-pill); background: var(--barion-blue); color: var(--text-invert); }
+.method-icon--wallet svg { width: 16px; height: 16px; }
+.method-label { flex: 1; font-weight: var(--fw-semibold); font-size: var(--fs-body); color: var(--text-primary); }
+.method-chevron { width: 20px; height: 20px; color: var(--text-secondary); flex-shrink: 0; }
+
+.method-row--open .method-row__header { padding-bottom: var(--s-2); }
+.method-row__body { padding: 0 var(--s-5) var(--s-6); display: flex; flex-direction: column; gap: var(--s-5); }
+
+/* Google Pay badge, closer to the real mark than an invented icon */
+.gpay-badge { display: inline-flex; align-items: center; justify-content: center; height: 26px; padding: 0 10px; border: 1px solid var(--border-secondary); border-radius: var(--radius-pill); font-family: var(--font-brand); font-size: var(--fs-body-xs); font-weight: var(--fw-semibold); color: var(--text-primary); }
+
+/* ---- Dev toggle (prototype only) ---- */
+.dev-toggle { position: fixed; bottom: var(--s-4); right: var(--s-4); background: var(--surface-primary); border: 1px solid var(--border-secondary); border-radius: var(--radius-sm); padding: var(--s-3) var(--s-4); box-shadow: var(--shadow-overlay); z-index: 999; display: flex; flex-direction: column; gap: var(--s-2); }
+.dev-toggle__label { font-size: var(--fs-body-xs); font-weight: var(--fw-semibold); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.dev-toggle__btns { display: flex; gap: var(--s-2); }
+.dev-toggle__btn { height: 30px; padding: 0 var(--s-3); background: var(--white-gray); border: 1px solid var(--border-secondary); border-radius: var(--radius-xs); font-family: var(--font-brand); font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-secondary); cursor: pointer; transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); white-space: nowrap; }
+.dev-toggle__btn:hover { background: var(--blue-50); color: var(--text-brand); }
+.dev-toggle__btn.is-active { background: var(--blue-50); color: var(--text-brand); border-color: var(--blue-200); }
+
+@media (max-width: 480px) {
+  .gateway-card { border-radius: 0; border-left: 0; border-right: 0; max-width: 100%; }
+  .dev-toggle { bottom: var(--s-3); right: var(--s-3); }
+}
+</style>
+</head>
+<body>
+
+<span class="context-label">Gateway checkout — Barion Wallet payment method</span>
+
+<div class="gateway-card">
+
+  <!-- Bank card row — collapsed, context only -->
+  <div class="method-row">
+    <div class="method-row__header">
+      <span class="method-icon">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+      </span>
+      <span class="method-label">Bank card</span>
+      <svg class="method-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+
+  <!-- Barion Wallet row — expanded, single last-used account -->
+  <div class="method-row method-row--open">
+    <div class="method-row__header">
+      <span class="method-icon method-icon--wallet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+      </span>
+      <span class="method-label">Barion Wallet</span>
+      <svg class="method-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="method-row__body">
+
+      <!-- ===== STATE: recognized (last-used account) ===== -->
+      <div id="state-recognized" class="wallet-state" style="display:flex;flex-direction:column;gap:var(--s-5)">
+        <div class="account-chip">
+          <span class="avatar avatar--sm avatar--darkblue" id="chip-avatar">CD</span>
+          <div class="account-chip__info">
+            <span class="account-chip__name" id="chip-name">Carolyn Demo</span>
+            <span class="account-chip__email" id="chip-email">carolyn@demo-family.com</span>
+          </div>
+          <button class="btn btn--link" style="font-size:var(--fs-body-sm);white-space:nowrap" onclick="go('unrecognized')">Not you?</button>
+        </div>
+
+        <!-- Password variant -->
+        <div id="auth-password" class="auth-form">
+          <div class="field">
+            <label class="field__label" for="field-password">Password</label>
+            <div class="field__input-wrap">
+              <input class="field__input" type="password" id="field-password" autocomplete="current-password">
+              <button class="btn-icon btn-icon--l" type="button" onclick="togglePassword()" title="Show password">
+                <svg class="icon" viewBox="0 0 20 20" fill="none">
+                  <path d="M1.5 10C1.5 10 4.5 4 10 4C15.5 4 18.5 10 18.5 10C18.5 10 15.5 16 10 16C4.5 16 1.5 10 1.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <button class="btn btn--primary btn--full" type="button">Log in and pay</button>
+          <div style="text-align:center">
+            <button class="btn btn--link" type="button">Forgot your password?</button>
+          </div>
+        </div>
+
+        <!-- Push / biometric variant -->
+        <div id="auth-push" class="auth-form" hidden>
+          <div class="push-illus">
+            <div class="push-illus__icon">
+              <svg width="30" height="30" viewBox="0 0 34 34" fill="none">
+                <rect x="9.5" y="3.5" width="15" height="24" rx="2.5" stroke="var(--barion-blue)" stroke-width="1.75"/>
+                <line x1="14" y1="7" x2="20" y2="7" stroke="var(--barion-blue)" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="17" cy="24" r="1.25" fill="var(--barion-blue)"/>
+                <circle cx="25.5" cy="9.5" r="5.5" fill="var(--barion-blue)"/>
+                <path d="M23 9.5L25 11.5L28.5 8" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <p class="push-illus__text">Approve the payment in your Barion app, or use biometrics on your registered device.</p>
+          </div>
+          <button class="btn btn--secondary btn--full" type="button" onclick="switchToPassword()">Use password instead</button>
+          <div style="text-align:center">
+            <button class="btn btn--link" type="button">Resend notification</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STATE: no recognized account on this device ===== -->
+      <div id="state-unrecognized" class="wallet-state" style="display:none;flex-direction:column;gap:var(--s-5)">
+        <div class="auth-form">
+          <div class="field">
+            <label class="field__label" for="field-email">E-mail address</label>
+            <input class="field__input" type="email" id="field-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <button class="btn btn--primary btn--full" type="button">Next</button>
+        </div>
+        <hr class="login-divider">
+        <p class="signup-prompt">Don't have a Barion Wallet? <a href="#">Sign up now!</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Google Pay row — collapsed, context only -->
+  <div class="method-row">
+    <div class="method-row__header">
+      <span class="method-icon"><span class="gpay-badge">G Pay</span></span>
+      <span class="method-label">Google Pay</span>
+      <svg class="method-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== DEV TOGGLE ==================== -->
+<div class="dev-toggle">
+  <span class="dev-toggle__label">Barion Wallet state</span>
+  <div class="dev-toggle__btns">
+    <button class="dev-toggle__btn is-active" onclick="setState('push')">Recognized · push</button>
+    <button class="dev-toggle__btn" onclick="setState('password')">Recognized · password</button>
+    <button class="dev-toggle__btn" onclick="setState('unrecognized')">Not recognized</button>
+  </div>
+</div>
+
+<script>
+let transitioning = false;
+
+function togglePassword() {
+  const f = document.getElementById("field-password");
+  f.type = f.type === "password" ? "text" : "password";
+}
+
+function switchToPassword() {
+  document.getElementById("auth-push").hidden     = true;
+  document.getElementById("auth-password").hidden = false;
+}
+
+function switchToPush() {
+  document.getElementById("auth-push").hidden     = false;
+  document.getElementById("auth-password").hidden = true;
+}
+
+// ---- State machine (recognized <-> unrecognized) ----
+function go(target) {
+  if (transitioning) return;
+  const recognized   = document.getElementById("state-recognized");
+  const unrecognized = document.getElementById("state-unrecognized");
+  const current = recognized.style.display !== "none" ? recognized : unrecognized;
+  const next    = target === "recognized" ? recognized : unrecognized;
+  if (current === next) return;
+
+  transitioning = true;
+  current.classList.add("is-out");
+  setTimeout(() => {
+    current.classList.remove("is-out");
+    current.style.display = "none";
+    next.style.display = "flex";
+    next.style.opacity = "0";
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      next.classList.add("is-in");
+      next.style.opacity = "1";
+      setTimeout(() => {
+        next.classList.remove("is-in");
+        next.style.opacity = "";
+        transitioning = false;
+      }, 220);
+    }));
+  }, 130);
+}
+
+// ---- Init: match default active dev-toggle button (Recognized · push) ----
+switchToPush();
+
+// ---- Dev toggle ----
+function setState(mode) {
+  document.querySelectorAll(".dev-toggle__btn").forEach((b, i) => {
+    b.classList.toggle("is-active", (mode === "push" && i === 0) || (mode === "password" && i === 1) || (mode === "unrecognized" && i === 2));
+  });
+  if (mode === "unrecognized") {
+    go("unrecognized");
+  } else {
+    go("recognized");
+    if (mode === "push") switchToPush(); else switchToPassword();
+  }
+}
+</script>
+
+</body>
+</html>

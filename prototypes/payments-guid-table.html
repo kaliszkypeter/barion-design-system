@@ -10,24 +10,28 @@
 
 body {
   margin: 0;
-  background: var(--white-gray);
-  padding: var(--s-10);
+  background: var(--surface-canvas-soft);
 }
 
-.card {
-  max-width: 1280px;
-  margin: 0 auto;
-  background: var(--surface-primary);
-  border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-md);
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--s-6);
   padding: var(--s-6);
+  min-height: 100vh;
 }
 
-.card-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: var(--s-4);
+/* ---------- Sidebar (copied from Design/index.html .sidebar / .sidebar-item / .sidebar-section, #nav) ---------- */
+.sidebar { background: var(--surface-primary); width: 240px; padding: var(--s-3); display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--border-secondary); border-radius: var(--radius-md); }
+.sidebar-item { display: flex; align-items: center; gap: var(--s-2); padding: 0 var(--s-3); height: 36px; border-radius: var(--radius-xs); color: var(--text-primary); font-weight: var(--fw-semibold); font-size: var(--fs-body-sm); text-decoration: none; }
+.sidebar-item:hover { background: var(--white-gray); color: var(--text-primary); text-decoration: none; }
+.sidebar-item--active { background: var(--surface-nav-active); color: var(--text-brand); }
+.sidebar-item .icon { width: 16px; height: 16px; color: var(--icon-secondary); }
+.sidebar-item--active .icon { color: var(--icon-brand); }
+.sidebar-section { font-size: var(--fs-body-xs); color: var(--text-secondary); padding: var(--s-3) var(--s-3) var(--s-2); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.content {
+  min-width: 0;
 }
 
 .hint {
@@ -37,8 +41,16 @@ body {
   margin: 0 0 var(--s-4);
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
 table {
-  width: 100%;
+  /* Definite width = sum of all <col> widths below (110+160+154+134+220+90+100+64+102+110 = 1244px).
+     table-layout:fixed only strictly clips cell content to declared <col> widths when the table
+     itself has a definite (non-auto) width — with width:auto, unbreakable long content
+     (e.g. long order numbers) would otherwise force individual columns wider than declared. */
+  width: 1244px;
   table-layout: fixed;
   border-collapse: collapse;
   font-size: var(--fs-body-sm);
@@ -48,7 +60,7 @@ col.date { width: 110px; }
 col.id { width: 160px; }
 col.preqid { width: 154px; }
 col.ordernum { width: 134px; }
-col.email { width: auto; }
+col.email { width: 220px; }
 col.amount { width: 90px; }
 col.currency { width: 100px; }
 col.risk { width: 64px; }
@@ -252,32 +264,80 @@ td.risk { text-align: right; }
 </head>
 <body>
 
-<div class="card">
-  <div class="card-header">
-    <h1>Payments</h1>
-  </div>
-  <p class="hint">Click a payment identifier to open its details · use the copy icon to copy · hover any identifier, reference, or the risk score to preview the full value</p>
+<!-- ============================================================ -->
+<!-- ICON SPRITE — subset needed for the sidebar, copied from Design/index.html (~line 670) -->
+<!-- ============================================================ -->
+<svg width="0" height="0" style="position:absolute;width:0;height:0" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    </symbol>
+    <symbol id="i-bank-transfer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2 3 7v1h18V7z"/>
+    </symbol>
+    <symbol id="i-top-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>
+    </symbol>
+    <symbol id="i-send-money" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>
+    </symbol>
+    <symbol id="i-statements" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>
+    </symbol>
+    <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>
+    </symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+    </symbol>
+  </defs>
+</svg>
 
-  <table>
-    <colgroup>
-      <col class="date"><col class="id"><col class="preqid"><col class="ordernum"><col class="email"><col class="amount"><col class="currency"><col class="risk"><col class="status"><col class="type">
-    </colgroup>
-    <thead>
-      <tr>
-        <th><span class="th-inner">Created at <svg class="th-icon th-icon--sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span></th>
-        <th><span class="th-inner">Payment identifier <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
-        <th><span class="th-inner">Payment request identifier <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
-        <th><span class="th-inner">Order number <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
-        <th><span class="th-inner">Payer email address <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
-        <th class="amount"><span class="th-inner" style="justify-content:flex-end;">Amount <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
-        <th><span class="th-inner">Currency <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
-        <th class="risk">Risk</th>
-        <th><span class="th-inner">Status <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
-        <th><span class="th-inner">Type of payment <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
+<div class="app-shell">
+  <nav class="sidebar">
+    <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-home"/></svg>Home</a>
+    <span class="sidebar-section">Barion account</span>
+    <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-card"/></svg>Balances</a>
+    <a href="#" class="sidebar-item sidebar-item--active"><svg class="icon"><use href="#i-statements"/></svg>Activity</a>
+    <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-top-up"/></svg>Top up</a>
+    <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-send-money"/></svg>Send money</a>
+    <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-bank-transfer"/></svg>Bank transfer</a>
+    <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-user"/></svg>Recipients</a>
+    <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-statements"/></svg>Statements</a>
+    <span class="sidebar-section">Business</span>
+    <a href="#" class="sidebar-item"><svg class="icon"><use href="#i-settings"/></svg>Shops</a>
+  </nav>
+
+  <main class="content">
+    <h1>Payments</h1>
+    <p class="hint">Click a payment identifier to open its details · use the copy icon to copy · hover any identifier, reference, or the risk score to preview the full value</p>
+
+    <div class="table-scroll">
+    <table>
+      <colgroup>
+        <col class="date"><col class="id"><col class="preqid"><col class="ordernum"><col class="email"><col class="amount"><col class="currency"><col class="risk"><col class="status"><col class="type">
+      </colgroup>
+      <thead>
+        <tr>
+          <th><span class="th-inner">Created at <svg class="th-icon th-icon--sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span></th>
+          <th><span class="th-inner">Payment identifier <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+          <th><span class="th-inner">Payment request identifier <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+          <th><span class="th-inner">Order number <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+          <th><span class="th-inner">Payer email address <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+          <th class="amount"><span class="th-inner" style="justify-content:flex-end;">Amount <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+          <th><span class="th-inner">Currency <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+          <th class="risk">Risk</th>
+          <th><span class="th-inner">Status <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+          <th><span class="th-inner">Type of payment <svg class="th-icon th-icon--filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    </div>
+  </main>
 </div>
 
 <div class="tooltip" id="tooltip"></div>
@@ -340,7 +400,14 @@ td.risk { text-align: right; }
           </button>
         </span>
       </td>
-      <td class="email">${p.email}</td>
+      <td class="email">${p.email === "–" ? p.email : `
+        <span class="text-wrap" data-full="${p.email}">
+          <span class="text-truncate">${p.email}</span>
+          <button type="button" class="copy-btn" data-full="${p.email}" data-label="Payer email address" aria-label="Copy payer email address ${p.email}">
+            ${copySvg}
+          </button>
+        </span>
+      `}</td>
       <td class="amount">${p.amount}</td>
       <td class="currency">${p.currency}</td>
       <td class="risk"><span class="risk-score ${p.risk}" title="${riskTitle}" aria-label="${riskTitle}">${riskText}</span></td>
